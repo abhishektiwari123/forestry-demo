@@ -17,9 +17,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-def upload_to_catbox(image_path: str) -> str:
+def upload_image(image_path: str) -> str:
     """
-    Upload image to catbox.moe for public URL.
+    Upload image to get public URL. Tries multiple services.
 
     Args:
         image_path: Path to image file
@@ -27,21 +27,51 @@ def upload_to_catbox(image_path: str) -> str:
     Returns:
         Public URL of uploaded image
     """
-    print(f"📤 Uploading image to catbox.moe...")
+    import base64
 
-    with open(image_path, 'rb') as f:
+    # Try catbox.moe first
+    try:
+        print(f"📤 Uploading image to catbox.moe...")
+        with open(image_path, 'rb') as f:
+            response = requests.post(
+                'https://catbox.moe/user/api.php',
+                data={'reqtype': 'fileupload'},
+                files={'fileToUpload': f},
+                timeout=30
+            )
+
+        if response.status_code == 200:
+            url = response.text.strip()
+            if url.startswith('http'):
+                print(f"✅ Uploaded to catbox: {url}")
+                return url
+    except Exception as e:
+        print(f"⚠️  Catbox upload failed: {e}")
+
+    # Try imgbb.com as backup
+    try:
+        print(f"📤 Trying imgbb.com...")
+        with open(image_path, 'rb') as f:
+            image_b64 = base64.b64encode(f.read()).decode('utf-8')
+
         response = requests.post(
-            'https://catbox.moe/user/api.php',
-            data={'reqtype': 'fileupload'},
-            files={'fileToUpload': f}
+            'https://api.imgbb.com/1/upload',
+            data={
+                'key': '7abd1e5ee53456c45ee1e0f0e8a04bc3',  # Public key
+                'image': image_b64
+            },
+            timeout=30
         )
 
-    if response.status_code == 200:
-        url = response.text.strip()
-        print(f"✅ Uploaded: {url}")
-        return url
-    else:
-        raise Exception(f"Failed to upload to catbox: {response.status_code}")
+        if response.status_code == 200:
+            result = response.json()
+            url = result['data']['url']
+            print(f"✅ Uploaded to imgbb: {url}")
+            return url
+    except Exception as e:
+        print(f"⚠️  Imgbb upload failed: {e}")
+
+    raise Exception("Failed to upload image to any service")
 
 def generate_video(image_path: str, prompt: str, output_path: str, segment_num: int) -> bool:
     """
@@ -67,7 +97,7 @@ def generate_video(image_path: str, prompt: str, output_path: str, segment_num: 
         print(f"📝 Motion prompt: {prompt[:100]}...")
 
         # Upload image to get public URL
-        image_url = upload_to_catbox(image_path)
+        image_url = upload_image(image_path)
 
         # Submit video generation request to KIE.ai
         print(f"🚀 Submitting to Kling API...")
@@ -77,14 +107,17 @@ def generate_video(image_path: str, prompt: str, output_path: str, segment_num: 
             "Content-Type": "application/json"
         }
 
-        # KIE.ai API for image-to-video (Kling)
+        # KIE.ai API for image-to-video (Seedance 1.5 Pro)
         payload = {
-            "model": "kling/v1.5/image-to-video",  # Adjust based on actual model name
+            "model": "bytedance/seedance-1.5-pro",
             "input": {
-                "image_url": image_url,
                 "prompt": prompt,
-                "duration": 5,  # Try 5 seconds first
-                "aspect_ratio": "16:9"
+                "input_urls": [image_url],  # Array of image URLs (0-2 images)
+                "aspect_ratio": "16:9",  # For documentary format
+                "resolution": "720p",  # High quality
+                "duration": "8",  # 8 seconds per clip
+                "fixed_lens": False,  # Allow camera movement as specified in prompts
+                "generate_audio": False  # We have our own narration
             }
         }
 
