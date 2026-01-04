@@ -1,4 +1,32 @@
-_site/
-.sass-cache/
+# API Keys and sensitive data
+scripts/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+
+# Generated assets
+*/assets/*.jpg
+*/assets/*.png
+*/composites/*.jpg
+*/videos/*.mp4
+*/audio/*.mp3
+*/sfx/*.mp3
+*/processed/*.mp4
+*_final.mp4
+
+# OS
 .DS_Store
-*/.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
