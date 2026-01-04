@@ -55,12 +55,12 @@ def generate_audio(text: str, output_path: str, segment_num: int, voice_id: str 
             use_speaker_boost=True  # Enhanced clarity
         )
 
-        # Generate audio
-        audio = client.generate(
+        # Generate audio using the correct API method
+        audio = client.text_to_speech.convert(
+            voice_id=voice_id,
             text=text,
-            voice=voice_id,
-            voice_settings=voice_settings,
-            model="eleven_multilingual_v2"  # or "eleven_turbo_v2" for faster
+            model_id="eleven_multilingual_v2",  # or "eleven_turbo_v2" for faster
+            voice_settings=voice_settings
         )
 
         # Save audio file
