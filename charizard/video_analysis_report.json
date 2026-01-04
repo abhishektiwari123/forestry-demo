@@ -1,0 +1,271 @@
+{
+  "pokemon": "charizard",
+  "total_segments": 18,
+  "technical_analysis": {
+    "segments": [
+      {
+        "segment": 1,
+        "file": "segment_01.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 9.583152770996094,
+          "bitrate_kbps": 9996.597,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 2,
+        "file": "segment_02.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 8.54858684539795,
+          "bitrate_kbps": 8917.397,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 3,
+        "file": "segment_03.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 9.811813354492188,
+          "bitrate_kbps": 10235.123,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 4,
+        "file": "segment_04.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 9.581735610961914,
+          "bitrate_kbps": 9995.119,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 5,
+        "file": "segment_05.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 9.200445175170898,
+          "bitrate_kbps": 9597.379,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 6,
+        "file": "segment_06.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 15.345620155334473,
+          "bitrate_kbps": 16007.675,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 7,
+        "file": "segment_07.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 10.531359672546387,
+          "bitrate_kbps": 10985.713,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 8,
+        "file": "segment_08.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 14.240241050720215,
+          "bitrate_kbps": 14854.606,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 9,
+        "file": "segment_09.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 11.322968482971191,
+          "bitrate_kbps": 11811.474,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 10,
+        "file": "segment_10.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 11.568917274475098,
+          "bitrate_kbps": 12068.034,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 11,
+        "file": "segment_11.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 14.496048927307129,
+          "bitrate_kbps": 15121.45,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 12,
+        "file": "segment_12.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 10.094035148620605,
+          "bitrate_kbps": 10529.521,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 13,
+        "file": "segment_13.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 8.208695411682129,
+          "bitrate_kbps": 8562.842,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 14,
+        "file": "segment_14.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 9.372946739196777,
+          "bitrate_kbps": 9777.323,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 15,
+        "file": "segment_15.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 15.021416664123535,
+          "bitrate_kbps": 15669.484,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 16,
+        "file": "segment_16.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 13.157794952392578,
+          "bitrate_kbps": 13725.46,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 17,
+        "file": "segment_17.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 8.900880813598633,
+          "bitrate_kbps": 9284.89,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      },
+      {
+        "segment": 18,
+        "file": "segment_18.mp4",
+        "metadata": {
+          "duration": 8.041667,
+          "size_mb": 9.77013111114502,
+          "bitrate_kbps": 10191.643,
+          "width": 1280,
+          "height": 720,
+          "codec": "h264",
+          "fps": 24.0,
+          "pixel_format": "yuv420p"
+        }
+      }
+    ],
+    "stats": {
+      "total_duration_seconds": 144.750006,
+      "average_duration_seconds": 8.041667,
+      "average_file_size_mb": 11.042043897840712
+    },
+    "issues": []
+  },
+  "consistency_analysis": {
+    "consistency_score": 4.0,
+    "full_analysis": "# Charizard Nature Documentary - Frame Analysis\n\n## Overall Consistency Score: 4/10\n\n## Character Appearance: **INCONSISTENT** with significant variations\n\n### Major Issues Identified:\n\n**COLOR ACCURACY PROBLEMS:**\n- **Segments 1, 4, 5, 10, 14, 18**: Wings appear predominantly **BLUE** (matching official design)\n- **Segments 3, 6, 11, 12, 13, 17**: Wings appear **ORANGE/BROWN** or darker tones (deviating from official design)\n- Official Charizard design features blue-green wing membranes with orange edges\n\n**DESIGN INCONSISTENCIES:**\n\n1. **Segment 4**: Charizard appears with white/cream chest and more angular, horn-forward design - noticeably different from other frames\n\n2. **Segment 6**: Wings appear completely orange with no blue coloring - significant deviation\n\n3. **Segment 11**: Very dark, reddish-brown appearance throughout; wings lack characteristic blue coloring\n\n4. **Segment 13**: Darker overall palette; wings appear brown/tan rather than blue\n\n5. **Segment 17**: Dramatically darker/silhouetted appearance; wings show orange glow edges but membrane appears dark rather than blue\n\n**SCALE/PROPORTION VARIATIONS:**\n- Body proportions shift between segments\n- Head size relative to body changes noticeably\n- Horn length and angle varies\n\n**FACIAL FEATURES:**\n- Eye color fluctuates between red, orange, and yellow\n- Snout shape and length inconsistent\n- Teeth/fang arrangement differs\n\n## Visual Quality Issues:\n\n**POSITIVE ASPECTS:**\n- High resolution and photorealistic rendering throughout\n- Excellent lighting and atmospheric effects\n- Strong environmental integration\n- Professional-grade CGI quality\n\n**NEGATIVE ASPECTS:**\n- **Segment 8**: No Charizard visible (landscape only)\n- **Segment 16**: No Charizard visible (volcanic landscape only)\n- Motion blur in Segments 6 and 9 reduces clarity\n- Segment 17 heavily backlit, making details difficult to assess\n\n## Continuity Issues:\n\n1. **Wing color is the most critical inconsistency** - switches between blue (correct) and orange/brown (incorrect) multiple times\n2. **No consistent character model** maintained across segments\n3. **Texture detail varies** - some frames show pronounced scales, others appear smoother\n4. **Belly/chest coloring** shifts from cream to tan to pale yellow\n5. Two segments lack the character entirely, breaking documentary flow\n\n## Color Accuracy Assessment:\n\n**Official Charizard Design:**\n- Body: Orange\n- Belly: Cream/tan\n- Wing membranes: **Blue-green/teal**\n- Wing edges: Orange\n- Tail flame: Orange/yellow\n\n**Segments matching official colors:** 1, 2, 4, 5, 9, 10, 14, 18 (partial match)\n\n**Segments with incorrect wing colors:** 3, 6, 11, 12, 13, 17\n\n## Recommendations:\n\n1. **CRITICAL: Standardize wing color** - Ensure all frames feature the iconic blue wing membranes with orange edges\n2. **Create a master character model** and maintain it across all segments\n3. **Establish color reference sheets** for consistency checking during production\n4. **Re-render problematic segments** (3, 6, 11, 12, 13, 17) with corrected wing colors\n5. **Add Charizard to segments 8 and 16** or remove these establishing shots if they don't serve the narrative\n6. **Lock down proportions** - create turnaround reference for size/scale consistency\n7. **Standardize eye color** to match official red/orange palette\n8. **Implement quality control pipeline** with frame-by-frame comparison to approved model\n9. **Consider lighting adjustments** that don't compromise character color accuracy (Segment 17)\n10. **Maintain texture detail consistency** across all angles and distances\n\n**Production Note:** This appears to be generated from multiple AI prompts or different generative models, resulting in the significant inconsistencies. A unified production pipeline with locked character assets is essential for documentary-style continuity.",
+    "frames_analyzed": 18
+  }
+}
