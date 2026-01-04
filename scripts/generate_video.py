@@ -29,7 +29,27 @@ def upload_image(image_path: str) -> str:
     """
     import base64
 
-    # Try catbox.moe first
+    # Try imgcdn.dev first (permanent hosting with Cloudflare CDN)
+    try:
+        print(f"📤 Uploading image to imgcdn.dev...")
+        with open(image_path, 'rb') as f:
+            response = requests.post(
+                'https://imgcdn.dev/api/1/upload',
+                data={'key': '5386e05a3562c7a8f984e73401540836', 'format': 'json'},
+                files={'source': f},
+                timeout=30
+            )
+
+        if response.status_code == 200:
+            result = response.json()
+            if result.get('status_code') == 200:
+                url = result['image']['url']
+                print(f"✅ Uploaded to imgcdn.dev: {url}")
+                return url
+    except Exception as e:
+        print(f"⚠️  ImgCDN upload failed: {e}")
+
+    # Try catbox.moe
     try:
         print(f"📤 Uploading image to catbox.moe...")
         with open(image_path, 'rb') as f:
@@ -48,30 +68,51 @@ def upload_image(image_path: str) -> str:
     except Exception as e:
         print(f"⚠️  Catbox upload failed: {e}")
 
-    # Try imgbb.com as backup
+    # Try ImgLink (no auth required)
     try:
-        print(f"📤 Trying imgbb.com...")
+        print(f"📤 Trying ImgLink...")
+        with open(image_path, 'rb') as f:
+            response = requests.post(
+                'https://imglink.io/api/upload',
+                files={'image': f},
+                timeout=30
+            )
+
+        if response.status_code == 200:
+            result = response.json()
+            url = result.get('url') or result.get('link')
+            if url:
+                print(f"✅ Uploaded to ImgLink: {url}")
+                return url
+    except Exception as e:
+        print(f"⚠️  ImgLink upload failed: {e}")
+
+    # Try freeimage.host
+    try:
+        print(f"📤 Trying freeimage.host...")
         with open(image_path, 'rb') as f:
             image_b64 = base64.b64encode(f.read()).decode('utf-8')
 
         response = requests.post(
-            'https://api.imgbb.com/1/upload',
+            'https://freeimage.host/api/1/upload',
             data={
-                'key': '7abd1e5ee53456c45ee1e0f0e8a04bc3',  # Public key
-                'image': image_b64
+                'key': '6d207e02198a847aa98d0a2a901485a5',
+                'source': image_b64,
+                'format': 'json'
             },
             timeout=30
         )
 
         if response.status_code == 200:
             result = response.json()
-            url = result['data']['url']
-            print(f"✅ Uploaded to imgbb: {url}")
-            return url
+            if result.get('status_code') == 200:
+                url = result['image']['url']
+                print(f"✅ Uploaded to freeimage.host: {url}")
+                return url
     except Exception as e:
-        print(f"⚠️  Imgbb upload failed: {e}")
+        print(f"⚠️  Freeimage.host upload failed: {e}")
 
-    raise Exception("Failed to upload image to any service")
+    raise Exception("Failed to upload image to any service. Try manual upload.")
 
 def generate_video(image_path: str, prompt: str, output_path: str, segment_num: int) -> bool:
     """
