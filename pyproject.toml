@@ -1,0 +1,26 @@
+[project]
+name = "pokemon-ai-video-generator"
+version = "0.1.0"
+description = "Production pipeline for creating photorealistic Pokémon nature documentaries"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40.0",
+    "google-generativeai>=0.8.0",
+    "elevenlabs>=1.0.0",
+    "pillow>=10.0.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "ffmpeg-python>=0.2.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.4.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
