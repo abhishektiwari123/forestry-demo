@@ -77,18 +77,20 @@ def generate_video(image_path: str, prompt: str, output_path: str, segment_num: 
             "Content-Type": "application/json"
         }
 
-        # Note: This is a template. Adjust based on actual KIE.ai API specification
+        # KIE.ai API for image-to-video (Kling)
         payload = {
-            "model": "kling-2.5-pro",
-            "image_url": image_url,
-            "prompt": prompt,
-            "duration": 10,  # 10 seconds (non-configurable for Kling)
-            "aspect_ratio": "16:9"
+            "model": "kling/v1.5/image-to-video",  # Adjust based on actual model name
+            "input": {
+                "image_url": image_url,
+                "prompt": prompt,
+                "duration": 5,  # Try 5 seconds first
+                "aspect_ratio": "16:9"
+            }
         }
 
         # Submit generation request
         response = requests.post(
-            "https://api.kie.ai/v1/video/generate",  # Placeholder URL
+            "https://api.kie.ai/api/v1/jobs/createTask",
             headers=headers,
             json=payload
         )
@@ -99,10 +101,16 @@ def generate_video(image_path: str, prompt: str, output_path: str, segment_num: 
             return False
 
         result = response.json()
-        task_id = result.get("task_id")
 
+        # Check for successful task creation
+        if result.get("code") != 200:
+            print(f"❌ Task creation failed: {result.get('msg', 'Unknown error')}")
+            return False
+
+        # Get task ID
+        task_id = result.get("data", {}).get("taskId")
         if not task_id:
-            print(f"❌ No task ID received")
+            print(f"❌ No task ID returned")
             return False
 
         print(f"⏳ Task ID: {task_id}")
@@ -113,46 +121,64 @@ def generate_video(image_path: str, prompt: str, output_path: str, segment_num: 
         attempt = 0
 
         while attempt < max_attempts:
-            time.sleep(5)  # Check every 5 seconds
+            time.sleep(5)
             attempt += 1
 
             # Check status
             status_response = requests.get(
-                f"https://api.kie.ai/v1/video/status/{task_id}",
-                headers=headers
+                f"https://api.kie.ai/api/v1/jobs/recordInfo?taskId={task_id}",
+                headers=headers,
+                timeout=30
             )
 
             if status_response.status_code != 200:
                 continue
 
             status_data = status_response.json()
-            status = status_data.get("status")
 
-            if status == "completed":
-                video_url = status_data.get("video_url")
-                print(f"✅ Video generated!")
-                print(f"📥 Downloading from: {video_url}")
+            if status_data.get("code") != 200:
+                continue
 
-                # Download video
-                video_response = requests.get(video_url)
-                output_path = Path(output_path)
-                output_path.parent.mkdir(parents=True, exist_ok=True)
+            data = status_data.get("data", {})
+            state = data.get("state")
 
-                with open(output_path, 'wb') as f:
-                    f.write(video_response.content)
+            if state == "success":
+                # Parse result JSON to get video URL
+                import json
+                result_json = json.loads(data.get("resultJson", "{}"))
+                result_urls = result_json.get("resultUrls", [])
 
-                print(f"✅ Video saved to: {output_path}")
-                return True
+                if result_urls:
+                    video_url = result_urls[0]
+                    print(f"✅ Video generated!")
+                    print(f"📥 Downloading from: {video_url}")
 
-            elif status == "failed":
+                    # Download video
+                    video_response = requests.get(video_url, timeout=60)
+                    output_path = Path(output_path)
+                    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+                    with open(output_path, 'wb') as f:
+                        f.write(video_response.content)
+
+                    print(f"✅ Video saved to: {output_path}")
+                    return True
+                else:
+                    print(f"❌ No video URLs in result")
+                    return False
+
+            elif state == "fail":
                 print(f"❌ Video generation failed")
-                print(f"Error: {status_data.get('error', 'Unknown error')}")
+                print(f"Error Code: {data.get('failCode', 'Unknown')}")
+                print(f"Error Message: {data.get('failMsg', 'Unknown error')}")
                 return False
 
-            else:
+            elif state == "waiting":
                 # Still processing
                 if attempt % 12 == 0:  # Every minute
                     print(f"⏳ Still processing... ({attempt * 5}s elapsed)")
+            else:
+                print(f"⚠️  Unknown state: {state}")
 
         print(f"❌ Timeout: Video generation took too long")
         return False
