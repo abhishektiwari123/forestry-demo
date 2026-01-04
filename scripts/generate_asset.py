@@ -49,15 +49,17 @@ def generate_asset(name: str, prompt: str, output_path: str) -> bool:
         print(f"🚀 Submitting to KIE.ai API...")
 
         payload = {
-            "prompt": prompt,
-            "aspect_ratio": "16:9",  # For 1920x1080 output
-            "output_format": "jpeg",
-            "output_quality": 95
+            "model": "seedream/4.5-text-to-image",
+            "input": {
+                "prompt": prompt,
+                "aspect_ratio": "16:9",  # For 1920x1080 output
+                "quality": "high"  # High quality for 4K images
+            }
         }
 
         # Submit generation request
         response = requests.post(
-            "https://api.kie.ai/v1/image/generate",
+            "https://api.kie.ai/api/v1/jobs/createTask",
             headers=headers,
             json=payload,
             timeout=60
@@ -70,59 +72,75 @@ def generate_asset(name: str, prompt: str, output_path: str) -> bool:
 
         result = response.json()
 
-        # Check if image URL is directly returned or if we need to poll
-        if "image_url" in result:
-            # Direct URL returned
-            image_url = result["image_url"]
-            print(f"✅ Image generated!")
+        # Check for successful task creation
+        if result.get("code") != 200:
+            print(f"❌ Task creation failed: {result.get('msg', 'Unknown error')}")
+            return False
 
-        elif "task_id" in result:
-            # Need to poll for completion
-            task_id = result["task_id"]
-            print(f"⏳ Task ID: {task_id}")
-            print(f"⏳ Waiting for image generation...")
+        # Get task ID
+        task_id = result.get("data", {}).get("taskId")
+        if not task_id:
+            print(f"❌ No task ID returned")
+            return False
 
-            # Poll for completion
-            max_attempts = 60  # 5 minutes max
-            attempt = 0
+        print(f"⏳ Task ID: {task_id}")
+        print(f"⏳ Waiting for image generation...")
 
-            while attempt < max_attempts:
-                time.sleep(5)
-                attempt += 1
+        # Poll for completion
+        max_attempts = 60  # 5 minutes max
+        attempt = 0
 
-                # Check status
-                status_response = requests.get(
-                    f"https://api.kie.ai/v1/image/status/{task_id}",
-                    headers=headers,
-                    timeout=30
-                )
+        while attempt < max_attempts:
+            time.sleep(5)
+            attempt += 1
 
-                if status_response.status_code != 200:
-                    continue
+            # Check status
+            status_response = requests.get(
+                f"https://api.kie.ai/api/v1/jobs/recordInfo?taskId={task_id}",
+                headers=headers,
+                timeout=30
+            )
 
-                status_data = status_response.json()
-                status = status_data.get("status")
+            if status_response.status_code != 200:
+                continue
 
-                if status == "completed":
-                    image_url = status_data.get("image_url")
+            status_data = status_response.json()
+
+            if status_data.get("code") != 200:
+                continue
+
+            data = status_data.get("data", {})
+            state = data.get("state")
+
+            if state == "success":
+                # Parse result JSON to get image URL
+                import json
+                result_json = json.loads(data.get("resultJson", "{}"))
+                result_urls = result_json.get("resultUrls", [])
+
+                if result_urls:
+                    image_url = result_urls[0]
                     print(f"✅ Image generated!")
                     break
-
-                elif status == "failed":
-                    print(f"❌ Image generation failed")
-                    print(f"Error: {status_data.get('error', 'Unknown error')}")
+                else:
+                    print(f"❌ No image URLs in result")
                     return False
 
-                else:
-                    # Still processing
-                    if attempt % 6 == 0:  # Every 30 seconds
-                        print(f"⏳ Still processing... ({attempt * 5}s elapsed)")
-
-            if attempt >= max_attempts:
-                print(f"❌ Timeout: Image generation took too long")
+            elif state == "fail":
+                print(f"❌ Image generation failed")
+                print(f"Error Code: {data.get('failCode', 'Unknown')}")
+                print(f"Error Message: {data.get('failMsg', 'Unknown error')}")
                 return False
-        else:
-            print(f"❌ Unexpected response format: {result}")
+
+            elif state == "waiting":
+                # Still processing
+                if attempt % 6 == 0:  # Every 30 seconds
+                    print(f"⏳ Still processing... ({attempt * 5}s elapsed)")
+            else:
+                print(f"⚠️  Unknown state: {state}")
+
+        if attempt >= max_attempts:
+            print(f"❌ Timeout: Image generation took too long")
             return False
 
         # Download image
