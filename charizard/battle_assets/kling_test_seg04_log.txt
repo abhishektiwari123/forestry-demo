@@ -1,0 +1,8 @@
+
+🎬 Generating Video: Segment 4 (KLING AI 2.6)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Prompt: Charizard roaring powerfully with battle cry, jaws opening wide, wing membranes flaring dramatically, tail flame intensifying from orange to blue, dramatic close-up pulling back to reveal stance
+⏱️  Duration: 5s
+📤 Uploading seg04_battle_begins_start.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting to Kling AI 2.6...

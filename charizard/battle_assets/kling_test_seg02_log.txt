@@ -1,0 +1,15 @@
+
+🎬 Generating Video: Segment 2 (KLING AI 2.6)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Prompt: Dragonite descending powerfully from storm clouds, wings spreading wide as it approaches valley, lightning crackling in background, dramatic low angle emphasizing power
+⏱️  Duration: 5s
+📤 Uploading seg02_rival_arrival_start.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting to Kling AI 2.6...
+⏳ Task ID: 45f28d454c398bb3b14ffa18bbe1d539
+⏳ Generating video...
+   Elapsed: 10s 20s 30s 40s 50s 60s 70s 80s 90s 
+✅ Video generated!
+📥 Downloading video...
+✅ Saved: charizard/battle_assets/videos/seg02_video.mp4 (8.63 MB)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

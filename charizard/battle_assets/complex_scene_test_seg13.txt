@@ -1,0 +1,74 @@
+🎯 COMPREHENSIVE MODEL COMPARISON TEST
+============================================================
+Testing Segment 13: Seismic Toss Spin
+Complexity: Very High - Rotation, dual subjects, complex camera work
+============================================================
+
+============================================================
+TEST 1: KLING AI 2.6
+============================================================
+
+🎬 Generating Video: Segment 13 (KLING AI 2.6)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Scene: Seismic Toss Spin
+📝 Complexity: Very High - Rotation, dual subjects, complex camera work
+📝 Prompt: Charizard spinning rapidly while ascending skyward, holding Dragonite firmly, spiraling upward violently through clouds, building massive momentum for legendary throw, spiraling camera following ascent dramatically
+📤 Uploading seg13_seismic_toss_setup_start.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting to Kling AI 2.6...
+⏳ Task ID: 2888c8678859597f0928f3bf9886e532
+⏳ Generating video...
+   Elapsed: 10s 20s 30s 40s 50s 60s 70s 80s 90s 
+✅ Video generated!
+📥 Downloading video...
+✅ Saved: charizard/battle_assets/videos/seg13_kling_test.mp4 (13.84 MB)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+============================================================
+TEST 2: VEO 3.1 FAST
+============================================================
+
+🎬 Generating Video: Segment 13 (VEO 3.1 VEO3_FAST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Scene: Seismic Toss Spin
+📝 Complexity: Very High - Rotation, dual subjects, complex camera work
+📝 Prompt: Charizard spinning rapidly while ascending skyward, holding Dragonite firmly, spiraling upward violently through clouds, building massive momentum for legendary throw, spiraling camera following ascent dramatically
+🤖 Model: veo3_fast
+📤 Uploading seg13_seismic_toss_setup_start.jpg...
+📤 Trying catbox.moe...
+❌ Upload failed: Failed to upload charizard/battle_assets/frame_pairs/seg13_seismic_toss_setup_start.jpg
+
+============================================================
+TEST 3: VEO 3.1 QUALITY
+============================================================
+
+🎬 Generating Video: Segment 13 (VEO 3.1 VEO3)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Scene: Seismic Toss Spin
+📝 Complexity: Very High - Rotation, dual subjects, complex camera work
+📝 Prompt: Charizard spinning rapidly while ascending skyward, holding Dragonite firmly, spiraling upward violently through clouds, building massive momentum for legendary throw, spiraling camera following ascent dramatically
+🤖 Model: veo3
+📤 Uploading seg13_seismic_toss_setup_start.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting to Veo 3.1 API...
+⏳ Task ID: f521b02e389b8ea0b281cdceafda2872
+⏳ Generating video...
+   Elapsed: 10s 20s 30s 40s 50s 60s 70s 80s 90s 100s 110s 120s 130s 140s 150s 160s 170s 180s 190s 200s 210s 220s 230s 240s 250s 260s 270s 280s 290s 300s 310s 320s 330s 340s 350s 360s 370s 380s 390s 400s 410s 420s 430s 440s 450s 460s 470s 480s 490s 500s 510s 520s 530s 540s 550s 560s 570s 580s 590s 600s 
+❌ Timeout after 600s
+
+============================================================
+🎉 COMPREHENSIVE TEST COMPLETE!
+============================================================
+✅ KLING: Success
+❌ VEO3_FAST: Failed
+❌ VEO3_QUALITY: Failed
+
+📊 COMPARISON FILES:
+  - Kling AI: seg13_kling_test.mp4
+
+📝 EVALUATION CRITERIA:
+  1. Particle effects quality (fire, electricity, energy)
+  2. Physics realism (movement, impacts, reactions)
+  3. Motion smoothness
+  4. Detail preservation in action
+  5. Overall cinematic quality
