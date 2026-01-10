@@ -1,0 +1,94 @@
+🎯 REGENERATING SIZE-CORRECTED IMAGES
+============================================================
+Fixing Pokemon sizes: Dragonite 30% LARGER than Charizard
+Segments: 3, 6, 12, 13, 14 (10 images total)
+============================================================
+
+============================================================
+SEGMENT 3
+============================================================
+
+🎨 Generating: seg03_size_corrected_start.jpg
+📝 Prompt length: 607 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 00046565c06ee3e6994f6331974a328a
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 
+✅ Generated!
+📥 Downloading...
+
+❌ Failed to download
+
+🎨 Generating: seg03_size_corrected_end.jpg
+📝 Prompt length: 497 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 2f13a2f9892f13eccbe4438ecfd78ef9
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 
+✅ Generated!
+📥 Downloading...
+
+❌ Failed to download
+
+============================================================
+SEGMENT 6
+============================================================
+
+🎨 Generating: seg06_size_corrected_start.jpg
+📝 Prompt length: 431 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 7a007b86dba24b7b7aeb0f70d8deeaad
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 
+✅ Generated!
+📥 Downloading...
+✅ Saved: charizard/battle_assets/frame_pairs/seg06_size_corrected_start.jpg (7.81 MB)
+
+🎨 Generating: seg06_size_corrected_end.jpg
+📝 Prompt length: 445 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 21d9e6d4c608252903652920165e0c3d
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 
+✅ Generated!
+📥 Downloading...
+✅ Saved: charizard/battle_assets/frame_pairs/seg06_size_corrected_end.jpg (8.16 MB)
+
+============================================================
+SEGMENT 12
+============================================================
+
+🎨 Generating: seg12_size_corrected_start.jpg
+📝 Prompt length: 586 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 4c05b5a214e7c41c456b9e041fd40f74
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 60s 
+✅ Generated!
+📥 Downloading...
+✅ Saved: charizard/battle_assets/frame_pairs/seg12_size_corrected_start.jpg (7.72 MB)
+
+🎨 Generating: seg12_size_corrected_end.jpg
+📝 Prompt length: 520 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 05cfea53d25b362ac89bf543336d893b
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 
+✅ Generated!
+📥 Downloading...
+✅ Saved: charizard/battle_assets/frame_pairs/seg12_size_corrected_end.jpg (7.53 MB)
+
+============================================================
+SEGMENT 13
+============================================================
+
+🎨 Generating: seg13_size_corrected_start.jpg
+📝 Prompt length: 582 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 05e80afa776a3c962cea89cc0a21eb5a
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 60s 
+✅ Generated!
+📥 Downloading...
+✅ Saved: charizard/battle_assets/frame_pairs/seg13_size_corrected_start.jpg (7.73 MB)
+
+🎨 Generating: seg13_size_corrected_end.jpg
+📝 Prompt length: 415 chars
+🚀 Submitting to Nano Banana Pro...
+⏳ Task ID: 3f2bfa95793f3aaa14732e42455652b0
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 60s 
+✅ Generated!
+📥 Downloading...
