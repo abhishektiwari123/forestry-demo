@@ -1,0 +1,15 @@
+
+🎬 Generating Video: Segment 1 (KLING AI 2.6)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Prompt: Charizard soaring majestically over volcanic peaks, wings beating rhythmically, flying closer toward camera, cinematic aerial tracking shot following patrol flight
+⏱️  Duration: 5s
+📤 Uploading seg01_valley_patrol_start.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting to Kling AI 2.6...
+⏳ Task ID: 06ff02c16ceac505bfe75f5da9b7b1bc
+⏳ Generating video...
+   Elapsed: 10s 20s 30s 40s 50s 60s 70s 80s 90s 
+✅ Video generated!
+📥 Downloading video...
+✅ Saved: charizard/battle_assets/videos/seg01_video.mp4 (13.79 MB)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
