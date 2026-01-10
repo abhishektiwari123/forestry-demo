@@ -1,0 +1,33 @@
+============================================================
+🎯 COMPLEX SCENE CONTINUITY TEST (SEG03)
+============================================================
+
+Video 1: Aerial clash + Flamethrower
+Video 2: Fire Spin tornado + Seismic Toss (VERY DIFFERENT!)
+
+Strategy: Video-to-video continuity
+============================================================
+
+============================================================
+STEP 1: Generate Video 1 (Aerial Clash)
+============================================================
+
+============================================================
+🎬 GENERATING: seg03_compare_kling.mp4
+============================================================
+📝 Prompt: Epic aerial clash, Charizard (5'7" fire dragon) launching massive orange Flameth...
+⚠️  Compressing 7.80 MB image...
+✅ Compressed: 7.80 MB → 0.11 MB
+📤 Uploading seg03_continuous_start_compressed.jpg...
+✅ Uploaded: https://s6.imgcdn.dev/YzRBSn.jpg
+🚀 Submitting to Kling AI 2.6...
+⏳ Generating... 10s 20s 30s 40s 50s 61s 71s 81s 91s 101s 112s 
+✅ Generated!
+📥 Downloading...
+✅ Saved: 16.58 MB | 115.9s
+
+============================================================
+STEP 2: Extract Last Frame from Video 1
+============================================================
+🎞️  Extracting last frame...
+❌ Failed at Step 2
