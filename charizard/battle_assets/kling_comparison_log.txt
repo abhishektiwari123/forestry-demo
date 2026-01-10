@@ -1,0 +1,11 @@
+🎯 KLING AI vs SEEDANCE COMPARISON TEST
+============================================================
+Test Segment: 1 - valley_patrol
+Start Frame: charizard/battle_assets/frame_pairs/seg01_valley_patrol_start.jpg
+End Frame: charizard/battle_assets/frame_pairs/seg01_valley_patrol_end.jpg
+============================================================
+
+📤 Uploading test frames...
+📤 Uploading seg01_valley_patrol_start.jpg...
+📤 Trying catbox.moe...
+❌ Upload failed: Failed to upload charizard/battle_assets/frame_pairs/seg01_valley_patrol_start.jpg
