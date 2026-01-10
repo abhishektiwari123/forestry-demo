@@ -403,8 +403,8 @@ def main():
     """Main regeneration loop with feedback."""
     api_key = load_api_key()
 
-    # Which segments to generate (TEST: Single fighting scene for validation)
-    segments_to_generate = [5]  # Seg05: Flamethrower - Critical attack scene with both Pokemon
+    # Which segments to generate (TEST: Next connected scene)
+    segments_to_generate = [6]  # Seg06: Thunder Punch - Counter-attack connected to Seg05
 
     print("="*70)
     print("REGENERATION WITH FEEDBACK LOOP + CAMERA MOVEMENTS + SOUND")
