@@ -323,8 +323,9 @@ def generate_video_with_sound(image_path: str, segment_num: int, api_key: str) -
     image_url = result['image']['url']
     print(f"✅ Uploaded: {image_url}")
 
-    # Build video prompt with camera movement and action
-    video_prompt = f"{segment['action']}, {segment['camera']}, {segment.get('attack', 'action')} in progress, smooth cinematic motion, realistic movement, dramatic cinematography"
+    # Build video prompt using FULL detailed prompt_base (same as image)
+    # This ensures the video shows what's happening to BOTH Pokemon, not just the attacker
+    video_prompt = f"{segment['prompt_base']}, {segment['camera']}, smooth cinematic motion with realistic physics, dynamic action"
 
     # Generate video WITH SOUND
     headers = {
@@ -402,8 +403,8 @@ def main():
     """Main regeneration loop with feedback."""
     api_key = load_api_key()
 
-    # Which segments to generate (ALL 18 for full regeneration)
-    segments_to_generate = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]  # Full documentary
+    # Which segments to generate (TEST: Single fighting scene for validation)
+    segments_to_generate = [5]  # Seg05: Flamethrower - Critical attack scene with both Pokemon
 
     print("="*70)
     print("REGENERATION WITH FEEDBACK LOOP + CAMERA MOVEMENTS + SOUND")
