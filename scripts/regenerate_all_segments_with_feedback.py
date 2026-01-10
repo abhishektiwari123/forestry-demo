@@ -53,21 +53,21 @@ SEGMENT_DEFINITIONS = {
     },
     5: {
         "name": "First Strike - Flamethrower",
-        "action": "Charizard blasting Flamethrower, Dragonite receiving hit",
+        "action": "Charizard blasting Flamethrower, Dragonite receiving hit with pain",
         "pokemon": ["charizard", "dragonite"],
         "attack": "Flamethrower",
         "camera": "side-angle wide shot capturing BOTH Pokemon and complete flame trajectory connecting them",
-        "sound_description": "roaring flames, intense fire whoosh, impact sizzle on scales, Dragonite grunt",
-        "prompt_base": "BOTH Pokemon in frame: Charizard (5'7\", lean orange dragon with realistic detailed reptilian scales, teal wings, cream belly, flaming tail) on LEFT side launching massive sustained orange-red Flamethrower stream from open jaws, flames traveling across frame toward significantly larger Dragonite (7'3\", 30% bigger, bulky ORANGE-TAN body with realistic scales, teal wings, two antennae, cream belly stripes, NO tail flame) on RIGHT side who is bracing against incoming attack, flame stream clearly connecting both Pokemon from Charizard's mouth to Dragonite's torso showing impact point, side-angle wide shot capturing complete attack scene with both attacker and target visible, realistic heat distortion around flames"
+        "sound_description": "roaring flames, intense fire whoosh, impact sizzle on scales, Dragonite grunt of pain",
+        "prompt_base": "BOTH Pokemon in frame: Charizard (5'7\", lean orange dragon with realistic detailed reptilian scales, teal wings, cream belly, flaming tail) on LEFT side launching massive sustained orange-red Flamethrower stream from open jaws with fierce determined expression, flames traveling across frame toward significantly larger Dragonite (7'3\", 30% bigger, bulky ORANGE-TAN body with realistic scales, teal wings, two antennae, cream belly stripes, NO tail flame) on RIGHT side with PAINED FACIAL EXPRESSION (eyes squinting in pain, mouth open wide showing teeth in grimace, eyebrows furrowed in distress, face contorted) being PUSHED BACKWARD by force of massive flames, body leaning back and recoiling from heat and impact, attempting to brace with arms raised defensively but failing against overwhelming fire stream, flame stream clearly connecting both Pokemon from Charizard's mouth to Dragonite's torso, visible bright orange-red impact glow where flames strike torso with intense heat distortion and fire sparks bursting from impact point, physical knockback evident as Dragonite's larger body is forced backward sliding, side-angle wide shot capturing complete attack scene with both attacker and target's pain reaction visible, realistic physics"
     },
     6: {
         "name": "Dragonite Counters - Thunder Punch",
-        "action": "Dragonite barrel-rolling, Thunder Punch striking Charizard",
+        "action": "Dragonite barrel-rolling, Thunder Punch striking Charizard with pain",
         "pokemon": ["dragonite", "charizard"],
         "attack": "Thunder Punch",
         "camera": "side-angle wide shot capturing both Pokemon and Thunder Punch impact",
-        "sound_description": "electric crackling, whooshing dodge, thunder punch impact, electricity zapping, Charizard grunt",
-        "prompt_base": "BOTH Pokemon in frame: Significantly larger Dragonite (7'3\", 30% bigger, bulky ORANGE-TAN body with realistic scales, teal wings, two antennae, cream belly stripes, NO tail flame) on RIGHT side executing Thunder Punch with fist crackling with bright yellow electricity striking toward smaller Charizard (5'7\", lean orange dragon with realistic scales, teal wings, cream belly, flaming tail) on LEFT side who is reacting to incoming electrified punch, yellow electric sparks connecting Dragonite's fist to Charizard's body showing impact point on torso/shoulder, side-angle wide shot capturing both attacker and target, dynamic action mid-strike"
+        "sound_description": "electric crackling, whooshing barrel-roll, thunder punch impact, electricity zapping, Charizard shout of pain",
+        "prompt_base": "BOTH Pokemon in frame: Significantly larger Dragonite (7'3\", 30% bigger, bulky ORANGE-TAN body with realistic scales, teal wings, two antennae, cream belly stripes, NO tail flame) on RIGHT side executing powerful Thunder Punch with fierce determined expression, fist crackling with bright yellow electricity striking toward smaller Charizard (5'7\", lean orange dragon with realistic scales, teal wings, cream belly, flaming tail) on LEFT side with PAINED EXPRESSION (eyes squinting shut from electric shock, mouth open shouting in pain showing teeth, face grimacing in distress) being STRUCK and KNOCKED BACKWARD by electrified fist impact, body jerking violently from electric shock running through entire body, recoiling with upper body and head thrown back, wings flailing, bright yellow electric impact burst at shoulder/torso contact point with electricity crackling and arcing wildly across Charizard's body and wings, physical knockback evident as Charizard is sent flying backward from punch force, side-angle wide shot capturing both attacker's power and target's pain reaction, realistic electric physics"
     },
     7: {
         "name": "Impact - Both Reeling",
@@ -96,12 +96,12 @@ SEGMENT_DEFINITIONS = {
     },
     10: {
         "name": "Fire Spin Trap",
-        "action": "Charizard creating tornado of fire around Dragonite",
+        "action": "Charizard creating tornado of fire around suffering Dragonite",
         "pokemon": ["charizard", "dragonite"],
         "attack": "Fire Spin",
         "camera": "wide shot showing both - Charizard creating vortex, Dragonite trapped inside",
-        "sound_description": "swirling flames roaring, tornado whoosh, Dragonite struggling, fire vortex crackling",
-        "prompt_base": "BOTH Pokemon in frame: Charizard (5'7\", orange dragon with realistic scales, teal wings spread, flaming tail) on LEFT OUTSIDE spinning rapidly creating massive swirling tornado of orange-red flames with circular motion, and significantly larger Dragonite (7'3\", bulky ORANGE-TAN body, teal wings, two antennae) TRAPPED INSIDE the fire vortex struggling against spiraling flames surrounding body, Fire Spin forming complete tornado with Dragonite at center, wide shot capturing both attacker controlling vortex and target trapped within, dramatic spiral composition"
+        "sound_description": "swirling flames roaring, tornado whoosh, Dragonite roaring in pain, fire vortex crackling, struggling grunts",
+        "prompt_base": "BOTH Pokemon in frame: Charizard (5'7\", orange dragon with realistic scales, teal wings spread wide, flaming tail burning bright, focused determined expression) on LEFT OUTSIDE spinning rapidly creating massive swirling tornado of orange-red flames with circular motion and control, and significantly larger Dragonite (7'3\", bulky ORANGE-TAN body, teal wings, two antennae) TRAPPED INSIDE the fire vortex with PAINED STRUGGLING EXPRESSION (eyes squinting shut from heat and smoke, mouth open wide gasping and roaring in pain, face showing severe distress and exhaustion, eyebrows furrowed), body being battered and spun violently by tornado forces, attempting desperately to shield face and body with arms and wings raised defensively, visible burn marks and scorch damage appearing on orange-tan scales, being thrown around helplessly inside vortex unable to escape, physically battered by spinning flames that surround entire body, Fire Spin forming complete tornado with suffering Dragonite at center taking continuous fire damage, wide shot capturing both attacker's control and target's painful struggle, dramatic spiral composition with impact evident"
     },
     11: {
         "name": "Speed Dive",
@@ -113,11 +113,11 @@ SEGMENT_DEFINITIONS = {
     },
     12: {
         "name": "Grab",
-        "action": "Charizard seizing Dragonite's wings mid-air",
+        "action": "Charizard seizing Dragonite's wings, both struggling",
         "pokemon": ["charizard", "dragonite"],
         "camera": "camera zooming in while rotating around grapple, close-up on claws gripping wings",
-        "sound_description": "impact grunt, claws gripping, wing membranes straining, spinning whoosh",
-        "prompt_base": "Epic mid-air grapple: Charizard (5'7\", lean orange dragon with realistic scales, teal wings, cream belly) seizing significantly larger Dragonite (7'3\", 30% bigger, bulky ORANGE-TAN body with realistic scales, teal wing membranes, two antennae, cream belly stripes, NO tail flame) mid-air, white claws firmly gripping Dragonite's teal wing membranes, both Pokemon locked in grapple spinning together, camera zooming in while rotating showing grip detail, size difference obvious with Dragonite larger, setup for finishing move"
+        "sound_description": "impact grunt, claws gripping tightly, wing membranes straining and tearing, Dragonite roaring in pain, spinning whoosh",
+        "prompt_base": "Epic mid-air grapple with BOTH expressions visible: Charizard (5'7\", lean orange dragon with realistic scales, teal wings, cream belly, flaming tail) with FIERCE DETERMINED EXPRESSION (eyes narrowed intensely, teeth clenched showing in effort grimace, eyebrows furrowed in concentration, face showing intense focus and aggression) seizing significantly larger Dragonite (7'3\", 30% bigger, bulky ORANGE-TAN body with realistic scales, teal wing membranes, two antennae, cream belly stripes, NO tail flame) with PAINED STRUGGLING EXPRESSION (eyes wide in alarm and pain, mouth open roaring in distress showing teeth, eyebrows raised in shock and fear, face showing panic as wings are caught) mid-air, Charizard's sharp white claws digging firmly into Dragonite's sensitive teal wing membranes causing visible pain, Dragonite's body jerking and writhing desperately trying to break free and escape grip, wings straining and pulling against claws creating tension, both Pokemon locked in intense grapple spinning together with visible struggle, camera zooming in while rotating showing grip detail and both faces, size difference obvious with Dragonite larger but restrained, Dragonite's distressed facial expression clear, setup for finishing move"
     },
     13: {
         "name": "Seismic Toss - Ascent",
