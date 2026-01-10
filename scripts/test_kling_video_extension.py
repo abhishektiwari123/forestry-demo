@@ -50,11 +50,13 @@ def extend_video(task_id: str, extension_prompt: str, api_key: str) -> str:
     }
 
     # API endpoint for video extension
+    # Based on research: model_name should be 'kling-v2-master' and use standard createTask endpoint
     payload = {
-        "model": "kling-2.6/video-extend",  # or "kling-v1/video-extend"
+        "model": "kling-v2-master",  # Correct model name for extension
+        "task_type": "video_extension",  # Specify extension task type
         "input": {
             "task_id": task_id,  # Original video's task ID
-            "prompt": extension_prompt,
+            "prompt": extension_prompt,  # Extension prompt (max 2500 chars)
             "duration": "5",  # Extension duration (5 seconds)
             "mode": "standard"  # or "professional"
         }

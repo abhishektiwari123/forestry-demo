@@ -347,7 +347,7 @@ def generate_video_with_sound(image_path: str, segment_num: int, api_key: str) -
         "input": {
             "image_urls": [image_url],
             "prompt": video_prompt,
-            "duration": "5",
+            "duration": "10",  # TEST: 10-second video generation
             "sound": True  # ✅ SOUND ENABLED!
         }
     }
@@ -400,7 +400,14 @@ def generate_video_with_sound(image_path: str, segment_num: int, api_key: str) -
                     duration = time.time() - start_time
                     print(f"✅ Saved: {size_mb:.2f} MB | Time: {duration:.1f}s")
                     print(f"🔊 Video includes AI-generated sound effects!")
-                    return output_path
+
+                    # Save task_id for video extension feature
+                    task_id_file = output_path.replace('.mp4', '_task_id.txt')
+                    with open(task_id_file, 'w') as f:
+                        f.write(task_id)
+                    print(f"💾 Task ID saved: {task_id}")
+
+                    return output_path, task_id
 
             elif data.get("state") == "fail":
                 raise Exception(f"Failed: {data.get('failMsg')}")
@@ -412,8 +419,8 @@ def main():
     """Main regeneration loop with feedback."""
     api_key = load_api_key()
 
-    # Which segments to generate (TEST: Transition segment)
-    segments_to_generate = [19]  # Seg19: Dragonite burnt belly → charging back (connects Seg05→Seg06)
+    # Which segments to generate (TEST: 10-second video generation)
+    segments_to_generate = [3]  # Seg03: Face-off (no pain expressions, simpler content)
 
     print("="*70)
     print("REGENERATION WITH FEEDBACK LOOP + CAMERA MOVEMENTS + SOUND")
@@ -439,12 +446,13 @@ def main():
             image_path, final_prompt = generate_image_with_feedback(segment_num, api_key)
 
             # Generate video with sound
-            video_path = generate_video_with_sound(image_path, segment_num, api_key)
+            video_path, task_id = generate_video_with_sound(image_path, segment_num, api_key)
 
             results.append({
                 "segment": segment_num,
                 "image": image_path,
                 "video": video_path,
+                "task_id": task_id,
                 "status": "✅ SUCCESS"
             })
 
