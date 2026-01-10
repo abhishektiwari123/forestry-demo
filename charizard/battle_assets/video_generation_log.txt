@@ -1,0 +1,18 @@
+🎬 BATCH VIDEO GENERATION: ALL SEGMENTS
+============================================================
+Total segments: 18
+Starting from: Segment 1
+Estimated time: 40-60 minutes
+============================================================
+
+🎬 Generating Video: Segment 1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 Prompt: Charizard with vibrant orange body and teal turquoise wing membranes powerfully soaring over volcani...
+📤 Uploading seg01_valley_patrol_start.jpg...
+✅ Uploaded to imgcdn.dev
+📤 Uploading seg01_valley_patrol_end.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting to Seedance 1.5 Pro API...
+⏳ Task ID: 0cc302ebe0cc10367a61d87669b76015
+⏳ Generating video...
+   Elapsed: 10s 20s 30s 40s 
