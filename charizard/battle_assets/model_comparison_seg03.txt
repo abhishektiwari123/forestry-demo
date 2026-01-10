@@ -1,0 +1,31 @@
+
+🎯 COMPREHENSIVE MODEL COMPARISON
+============================================================
+Segment: 3
+Start Frame: seg03_continuous_start.jpg
+Prompt: Both dragons facing each other mid-air, Charizard and Dragonite circling slowly, sizing up opponent, wings beating steadily, building tension before battle begins
+============================================================
+
+============================================================
+🎬 KLING AI 2.6 TEST
+============================================================
+📤 Uploading seg03_continuous_start.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting...
+⏳ Generating... 10s 20s 30s 40s 50s 60s 71s 81s 91s 
+✅ Generated!
+✅ Saved: 13.99 MB | Time: 94.4s
+
+============================================================
+🎬 VEO 3.1 VEO3_FAST TEST
+============================================================
+📤 Uploading seg03_continuous_start.jpg...
+📤 Trying catbox.moe...
+
+============================================================
+🎬 VEO 3.1 VEO3 TEST
+============================================================
+📤 Uploading seg03_continuous_start.jpg...
+✅ Uploaded to imgcdn.dev
+🚀 Submitting...
+⏳ Generating... 10s 20s 30s 40s 51s 61s 71s 81s 92s 102s 112s 123s 133s 143s 153s 164s 174s 184s 

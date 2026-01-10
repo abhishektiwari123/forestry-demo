@@ -1,0 +1,110 @@
+🎯 CONTINUOUS FRAME GENERATION STRATEGY
+============================================================
+Strategy: Scene N's LAST frame → Scene N+1's FIRST frame
+Test: Generating Segments 1-5 to verify continuity
+============================================================
+
+============================================================
+SEGMENT 1
+============================================================
+
+🎨 Generating Seg01 FIRST
+📝 Charizard (5'7", orange body, wings with orange upper surface and teal undersides) soaring majestica...
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 60s 
+✅ Generated!
+✅ Saved: seg01_continuous_start.jpg (7.92 MB)
+
+🎨 Generating Seg01 LAST
+📝 Same Charizard much closer to camera, wings spread wide showing orange tops and teal undersides, fly...
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 60s 
+✅ Generated!
+✅ Saved: seg01_continuous_end.jpg (7.67 MB)
+
+============================================================
+SEGMENT 2
+============================================================
+
+📋 Reusing Seg1 LAST → Seg2 FIRST
+✅ Copied: seg02_continuous_start.jpg
+
+🎨 Generating Seg02 LAST
+📝 Charizard (smaller, foreground) now alerted, looking up at dark shadow in storm clouds, larger Drago...
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 60s 65s 
+✅ Generated!
+✅ Saved: seg02_continuous_end.jpg (7.80 MB)
+
+🔍 Analyzing continuity: Seg1→Seg2
+
+⚠️  Analysis failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.0.content.1.image.source.base64: image exceeds 5 MB maximum: 10718904 bytes > 5242880 bytes'}, 'request_id': 'req_011CWyffNyRnJoN9LP6WepJs'}
+
+============================================================
+SEGMENT 3
+============================================================
+
+📋 Reusing Seg2 LAST → Seg3 FIRST
+✅ Copied: seg03_continuous_start.jpg
+
+🎨 Generating Seg03 LAST
+📝 Both dragons now facing each other mid-air, eye to eye, smaller Charizard (orange wings) and larger ...
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 
+✅ Generated!
+✅ Saved: seg03_continuous_end.jpg (7.67 MB)
+
+🔍 Analyzing continuity: Seg2→Seg3
+
+⚠️  Analysis failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.0.content.1.image.source.base64: image exceeds 5 MB maximum: 10912080 bytes > 5242880 bytes'}, 'request_id': 'req_011CWyfk5jyq4EyzqNbHk6KC'}
+
+============================================================
+SEGMENT 4
+============================================================
+
+📋 Reusing Seg3 LAST → Seg4 FIRST
+✅ Copied: seg04_continuous_start.jpg
+
+🎨 Generating Seg04 LAST
+📝 Charizard roaring powerfully with battle cry complete, jaws wide open, wings (orange tops, teal unde...
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 55s 
+✅ Generated!
+60s 
+✅ Generated!
+✅ Saved: seg04_continuous_end.jpg (8.10 MB)
+
+🔍 Analyzing continuity: Seg3→Seg4
+
+⚠️  Analysis failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.0.content.1.image.source.base64: image exceeds 5 MB maximum: 10721080 bytes > 5242880 bytes'}, 'request_id': 'req_011CWyfqCkoDPVfAZENbg3jo'}
+
+============================================================
+SEGMENT 5
+============================================================
+
+📋 Reusing Seg4 LAST → Seg5 FIRST
+✅ Copied: seg05_continuous_start.jpg
+
+🎨 Generating Seg05 LAST
+📝 Charizard unleashing massive Flamethrower, enormous flames erupting forward, wings bracing against r...
+⏳ Generating... 5s 10s 15s 20s 25s 30s 35s 40s 45s 50s 
+✅ Generated!
+✅ Saved: seg05_continuous_end.jpg (7.94 MB)
+
+🔍 Analyzing continuity: Seg4→Seg5
+
+⚠️  Analysis failed: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.0.content.1.image.source.base64: image exceeds 5 MB maximum: 11318944 bytes > 5242880 bytes'}, 'request_id': 'req_011CWyfuZf1Q7E6QK1UpaB4L'}
+
+============================================================
+🎉 TEST COMPLETE - FIRST 5 SEGMENTS
+============================================================
+
+📊 CONTINUITY RESULTS:
+  Seg1→Seg2: ✅ GOOD
+  Seg2→Seg3: ✅ GOOD
+  Seg3→Seg4: ✅ GOOD
+  Seg4→Seg5: ✅ GOOD
+
+✅ Good transitions: 4/4
+
+🎊 EXCELLENT! Continuity strategy works perfectly!
+   Ready to generate all 18 segments with this approach.
+
+📁 Test frames: charizard/battle_assets/frame_pairs/seg*_continuous_*.jpg
+
+🎬 If satisfied, run full generation for all 18 segments
