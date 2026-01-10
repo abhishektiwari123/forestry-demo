@@ -1,0 +1,61 @@
+============================================================
+🎯 VEO 3.1 COMPREHENSIVE TEST
+============================================================
+
+Testing Veo 3.1 with:
+1. Single frame (extracted from video)
+2. Frame pair (generated start + end)
+============================================================
+
+============================================================
+TEST 1: Veo 3.1 Fast - Single Extracted Frame
+============================================================
+
+============================================================
+🎬 VEO 3.1 VEO3_FAST - SINGLE FRAME TEST
+============================================================
+📝 Prompt: Charizard noticing dark shadow, looking up alertly, larger Dragonite descending from storm clouds, tension building, camera following gaze upward
+📤 Uploading seg01_last_frame_extracted.jpg...
+✅ Uploaded: https://s6.imgcdn.dev/YzRaOK.jpg
+🚀 Submitting to Veo 3.1 veo3_fast...
+❌ Failed: The model name you specified is not supported. Please verify your input and use one of the supported models provided by KIE.
+
+============================================================
+TEST 2: Veo 3.1 Fast - Frame Pair
+============================================================
+
+============================================================
+🎬 VEO 3.1 VEO3_FAST - FRAME PAIR TEST
+============================================================
+📝 Prompt: Charizard noticing dark shadow, looking up alertly, larger Dragonite descending from storm clouds, tension building, camera following gaze upward
+⚠️  Image too large (7.67 MB), compressing...
+✅ Compressed: 7.67 MB → 0.09 MB
+📤 Uploading seg02_continuous_start_veo_compressed.jpg...
+✅ Uploaded: https://s6.imgcdn.dev/YzR1go.jpg
+⚠️  Image too large (7.80 MB), compressing...
+✅ Compressed: 7.80 MB → 0.11 MB
+📤 Uploading seg02_continuous_end_veo_compressed.jpg...
+✅ Uploaded: https://s6.imgcdn.dev/YzR7QO.jpg
+🚀 Submitting to Veo 3.1 veo3_fast (frame pair)...
+❌ Failed: The model name you specified is not supported. Please verify your input and use one of the supported models provided by KIE.
+
+============================================================
+📊 VEO 3.1 TEST RESULTS
+============================================================
+Veo 3.1 Fast (Single Frame): ❌ FAILED
+Veo 3.1 Fast (Frame Pair):   ❌ FAILED
+
+============================================================
+💡 COMPARISON WITH KLING AI 2.6:
+============================================================
+Kling AI 2.6:
+  ✅ Single frame only (no frame pair)
+  ✅ 2K resolution (1924x1076)
+  ✅ Fast generation (~90s)
+  ✅ Proven success (Seg01: 14.18 MB, 5.04s)
+
+Veo 3.1:
+  ❌ Single frame support
+  ❌ Frame pair support
+  ⚠️  1080P resolution
+  ⚠️  Very slow generation (potentially 600s+)

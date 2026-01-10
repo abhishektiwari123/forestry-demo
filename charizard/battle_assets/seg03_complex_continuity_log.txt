@@ -1,0 +1,33 @@
+============================================================
+🎯 COMPLEX SCENE CONTINUITY TEST (SEG03)
+============================================================
+
+Video 1: Aerial clash + Flamethrower
+Video 2: Fire Spin tornado + Seismic Toss (VERY DIFFERENT!)
+
+Strategy: Video-to-video continuity
+============================================================
+
+============================================================
+STEP 1: Generate Video 1 (Aerial Clash)
+============================================================
+
+============================================================
+🎬 GENERATING: seg03_compare_kling.mp4
+============================================================
+📝 Prompt: Epic aerial clash, Charizard (5'7" fire dragon) launching massive orange Flameth...
+⚠️  Compressing 7.80 MB image...
+✅ Compressed: 7.80 MB → 0.11 MB
+📤 Uploading seg03_continuous_start_compressed.jpg...
+Traceback (most recent call last):
+  File "/home/user/forestry-demo/scripts/test_seg03_video_continuity.py", line 245, in <module>
+    main()
+  File "/home/user/forestry-demo/scripts/test_seg03_video_continuity.py", line 195, in main
+    if not generate_video(seg03_start, prompt1, video1):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/forestry-demo/scripts/test_seg03_video_continuity.py", line 96, in generate_video
+    image_url = upload_image(image_path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/forestry-demo/scripts/test_seg03_video_continuity.py", line 61, in upload_image
+    raise Exception(f"Upload failed: {response.status_code}")
+Exception: Upload failed: 503

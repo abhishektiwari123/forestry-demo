@@ -1,0 +1,22 @@
+============================================================
+🎯 COMPLEX SCENE CONTINUITY TEST
+============================================================
+
+Testing TWO VISUALLY DISTINCT complex scenes:
+  Scene 1: Aerial Clash + Flamethrower
+  Scene 2: Fire Spin Tornado + Seismic Toss Grab
+
+Strategy: Video-to-video continuity
+============================================================
+
+============================================================
+STEP 1: Generate Scene 1 Start Frame
+============================================================
+
+============================================================
+🎨 GENERATING START FRAME: Aerial Clash + Flamethrower
+============================================================
+📝 Prompt: Epic aerial clash, Charizard (5'7" fire dragon) launching massive orange Flamethrower stream, signif...
+🚀 Submitting to Nano Banana Pro...
+❌ API Error: 503
+❌ Failed to generate Scene 1 start frame
