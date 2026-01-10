@@ -88,20 +88,46 @@ def generate_video_from_scene(scene_path: str, scene_name: str, scene_prompt: st
         }
     }
 
-    response = requests.post(
-        "https://api.kie.ai/api/v1/jobs/createTask",
-        headers=headers,
-        json=payload
-    )
+    # Retry logic for API submission
+    max_retries = 4
+    retry_delays = [2, 4, 8, 16]
+    task_id = None
 
-    if response.status_code != 200:
-        raise Exception(f"API Error: {response.status_code}")
+    for attempt in range(max_retries):
+        try:
+            response = requests.post(
+                "https://api.kie.ai/api/v1/jobs/createTask",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
 
-    result = response.json()
-    if result.get("code") != 200:
-        raise Exception(f"Failed: {result.get('msg')}")
+            if response.status_code == 200:
+                result = response.json()
+                if result.get("code") == 200:
+                    task_id = result["data"]["taskId"]
+                    break
+                else:
+                    raise Exception(f"Failed: {result.get('msg')}")
 
-    task_id = result["data"]["taskId"]
+            # Retry on 503 or other errors
+            if attempt < max_retries - 1:
+                delay = retry_delays[attempt]
+                print(f"    ⚠️  API Error ({response.status_code}), retrying in {delay}s...")
+                time.sleep(delay)
+            else:
+                raise Exception(f"API Error after {max_retries} attempts: {response.status_code}")
+
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                delay = retry_delays[attempt]
+                print(f"    ⚠️  Network error ({str(e)}), retrying in {delay}s...")
+                time.sleep(delay)
+            else:
+                raise Exception(f"API Error after {max_retries} attempts: {str(e)}")
+
+    if not task_id:
+        raise Exception("Failed to get task_id")
     print(f"    Task ID: {task_id}")
     print(f"    ⏳ Generating... ", end="", flush=True)
 
@@ -221,14 +247,14 @@ def main():
 
     print(f"✅ Found all 6 scene images")
 
-    # Video prompts for each scene
+    # Video prompts for each scene (simplified, no camera/validation terms)
     scene_prompts = [
-        "Charizard launching massive Flamethrower attack from left side, flames beginning to stream from jaws, Dragonite on right bracing for impact, dramatic battle start, volcanic valley, cinematic camera movement",
-        "Massive orange-red Flamethrower stream traveling across frame with realistic fire physics and intense heat distortion, dramatic lighting, volcanic valley background, cinematic intensity",
-        "Flames striking Dragonite causing intense pain reaction and knockback, bright impact effects, Dragonite grimacing with arms raised defensively, body pushed backward by force, dramatic battle intensity",
-        "Flames dissipating as burn marks appear on Dragonite's body, blackened scorch marks visible on torso, smoke rising from burnt scales, Dragonite recovering from knockback stance, realistic damage effects",
-        "Dragonite's expression transitioning from pain to fierce anger, eyes narrowing with rage, teeth bared in aggressive snarl, body tensing for revenge counter-attack, dramatic character emotion",
-        "Dragonite charging forward aggressively toward Charizard with wings spread wide, fierce attack stance, burn marks visible on battle-worn body, Charizard bracing for incoming revenge attack, dynamic action movement"
+        "Charizard launching massive Flamethrower attack, flames streaming from jaws, Dragonite bracing for impact, dramatic battle start, volcanic valley",
+        "Massive orange-red Flamethrower stream traveling with realistic fire physics and intense heat distortion, dramatic lighting, volcanic valley background",
+        "Flames striking Dragonite causing intense pain reaction and knockback, bright impact effects, Dragonite grimacing with arms raised defensively, body pushed backward, dramatic battle intensity",
+        "Flames dissipating as burn marks appear on Dragonite body, blackened scorch marks visible on torso, smoke rising from burnt scales, Dragonite recovering from knockback, realistic damage effects",
+        "Dragonite expression transitioning from pain to fierce anger, eyes narrowing with rage, teeth bared in aggressive snarl, body tensing for revenge counter-attack, dramatic emotion",
+        "Dragonite charging forward aggressively toward Charizard with wings spread wide, fierce attack stance, burn marks visible on battle-worn body, Charizard bracing for incoming revenge attack"
     ]
 
     # Generate videos from each scene
