@@ -179,6 +179,14 @@ SEGMENT_DEFINITIONS = {
         "camera": "camera focuses close on Dragonite's burnt torso showing damage, then pulls back as Dragonite charges forward toward Charizard",
         "sound_description": "fire crackling fading on scales, deep angry dragon growl building, powerful wing beats accelerating, charging whoosh intensifying",
         "prompt_base": "BOTH Pokemon in frame transition scene: Significantly larger Dragonite (7'3\", bulky ORANGE-TAN body with realistic scales, teal wings, two antennae, cream belly stripes) in FOREGROUND with VISIBLE BURN DAMAGE (blackened burnt scorch marks and charred patterns on torso and cream belly from Flamethrower impact, smoke wisping from burnt scales, heat damage texture realistic), facial expression transitioning from PAIN to FIERCE ANGER (eyes narrowing with determination and rage, teeth bared in aggressive snarl, eyebrows furrowed in fury, face showing intense resolve for revenge), body recovering from knockback and then CHARGING FORWARD aggressively with teal wings spread wide and pulling back for powerful counter-attack, smaller Charizard (5'7\", orange dragon with realistic scales, teal wings, cream belly, flaming tail) visible in BACKGROUND watching as enraged Dragonite approaches rapidly, camera starts CLOSE on Dragonite's burnt belly showing burn damage detail and texture then PULLS BACK following aggressive charge motion toward Charizard, smooth transition from受伤/damaged to furious counter-attack, realistic burn texture with blackened scales and scorch patterns, dramatic lighting emphasizing damage and rage"
+    },
+    20: {
+        "name": "Complete Flamethrower Attack Sequence - 10s",
+        "action": "Charizard Flamethrower attack → Dragonite taking damage with pain → showing burn marks → getting angry → charging back for revenge",
+        "pokemon": ["charizard", "dragonite"],
+        "camera": "camera starts side-angle capturing both Pokemon, zooms into impact showing damage and pain, then pulls back wide as Dragonite charges forward for revenge",
+        "sound_description": "roaring flames crackling, intense fire whoosh, impact sizzle on scales, deep dragon hiss of pain, fire impact thud, flames fading with crackling embers, deep angry dragon growl building in intensity, powerful wing beats accelerating rapidly, charging whoosh intensifying to climax",
+        "prompt_base": "COMPLETE 10-SECOND ACTION SEQUENCE with BOTH Pokemon: OPENING (0-4s): Smaller Charizard (5'7\", lean orange dragon with realistic detailed reptilian scales, teal wings, cream belly, flaming tail) on LEFT side launching massive sustained orange-red Flamethrower stream from open jaws with fierce determined expression, flames traveling across frame toward significantly larger Dragonite (7'3\", 30% bigger, bulky ORANGE-TAN body with realistic scales, teal wings, two antennae, cream belly stripes, NO tail flame) on RIGHT side, Dragonite with PAINED FACIAL EXPRESSION (eyes squinting in pain, mouth open wide showing teeth in grimace, eyebrows furrowed in distress, face contorted) being PUSHED BACKWARD by force of massive flames, body leaning back and recoiling from heat and impact, attempting to brace with arms raised defensively but failing against overwhelming fire stream, flame stream clearly connecting both Pokemon with visible bright orange-red impact glow where flames strike Dragonite's torso, intense heat distortion and fire sparks bursting from impact point, physical knockback evident. TRANSITION (4-6s): Flames dissipating, close-up on Dragonite's torso and cream belly revealing BLACKENED BURNT SCORCH MARKS and charred patterns from Flamethrower impact, smoke wisping from burnt scales showing realistic heat damage texture, Dragonite's facial expression transitioning from PAIN to FIERCE ANGER (eyes narrowing with determination and rage, teeth bared in aggressive snarl, eyebrows furrowed in fury showing intense resolve for revenge). FINALE (6-10s): Dragonite recovering from knockback and CHARGING FORWARD aggressively toward Charizard with teal wings spread wide pulling back for powerful counter-attack, body accelerating rapidly with building momentum, Charizard visible in frame bracing for incoming revenge attack, dramatic battle tension rising, side-angle wide shot capturing complete revenge charge sequence, realistic physics with dynamic motion"
     }
 }
 
@@ -419,8 +427,8 @@ def main():
     """Main regeneration loop with feedback."""
     api_key = load_api_key()
 
-    # Which segments to generate (TEST: 10-second video generation)
-    segments_to_generate = [3]  # Seg03: Face-off (no pain expressions, simpler content)
+    # Which segments to generate (TEST: Complete 10-second attack sequence)
+    segments_to_generate = [20]  # Seg20: Complete Flamethrower → Damage → Anger → Charge sequence
 
     print("="*70)
     print("REGENERATION WITH FEEDBACK LOOP + CAMERA MOVEMENTS + SOUND")
