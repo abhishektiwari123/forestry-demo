@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Continue generating videos from Scene 2 onwards (Scene 1 already complete).
+Includes validation framework after each generation.
 """
 
 import os
@@ -9,17 +10,19 @@ sys.path.insert(0, 'scripts')
 from generate_videos_from_existing_scenes import (
     load_api_key, generate_video_from_scene, concatenate_videos
 )
+from validation_framework import ValidationFramework, SCENE_VIDEO_CRITERIA
 
 
 def main():
-    """Continue from Scene 2."""
+    """Continue from Scene 2 with validation."""
     print("""
 ╔════════════════════════════════════════════════════════════════════╗
-║           CONTINUE FROM SCENE 2 (Scene 1 already complete)        ║
+║     CONTINUE FROM SCENE 2 + VALIDATION FRAMEWORK (Scene 1 done)   ║
 ╚════════════════════════════════════════════════════════════════════╝
     """)
 
     api_key = load_api_key()
+    validator = ValidationFramework()
 
     # Scenes 2-6 (Scene 1 already done)
     scenes_dir = "charizard/battle_assets/storyboard/scenes"
@@ -54,6 +57,17 @@ def main():
         try:
             video_path = generate_video_from_scene(scene_path, scene_name, prompt, api_key)
             video_paths.append(video_path)
+
+            # VALIDATE VIDEO after generation
+            print(f"\n{'='*70}")
+            print(f"VALIDATION: {scene_name}")
+            print(f"{'='*70}")
+            validation_result = validator.validate_video(video_path, SCENE_VIDEO_CRITERIA)
+
+            if not validation_result["passed"]:
+                print(f"\n⚠️  Validation issues found for {scene_name}")
+                print("   Consider regenerating with improved prompt")
+
         except Exception as e:
             print(f"\n❌ Failed on {scene_name}: {e}")
             print(f"Continuing with remaining scenes...")
@@ -70,8 +84,33 @@ def main():
         print(f"\n🎉 SUCCESS!")
         print(f"✅ Generated {len(video_paths)} videos")
         print(f"📁 Final Video: {final_output}")
+
+        # Validate final video
+        print(f"\n{'='*70}")
+        print("FINAL VIDEO VALIDATION")
+        print(f"{'='*70}")
+        final_criteria = {
+            "min_duration": 25.0,  # ~30s for 6 scenes
+            "max_duration": 35.0,
+            "min_size_mb": 30.0,
+            "max_size_mb": 100.0,
+            "must_have_audio": True
+        }
+        validator.validate_video(final_output, final_criteria)
+
     else:
         print(f"\n⚠️  Only {len(video_paths)} video(s) available, need at least 2 for concatenation")
+
+    # Generate feedback report
+    print(f"\n{'='*70}")
+    print("GENERATING VALIDATION FEEDBACK REPORT")
+    print(f"{'='*70}")
+    report_path = "charizard/battle_assets/validation_report.txt"
+    validator.generate_feedback_report(report_path)
+
+    # Save validation log
+    log_path = "charizard/battle_assets/validation_log.json"
+    validator.save_validation_log(log_path)
 
     return 0
 
