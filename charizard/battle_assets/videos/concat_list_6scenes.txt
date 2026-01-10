@@ -1,0 +1,6 @@
+file 'storyboard_scene1_charizard_launch.mp4'
+file 'storyboard_scene2_flames_traveling.mp4'
+file 'storyboard_scene3_impact_pain.mp4'
+file 'storyboard_scene4_burn_marks.mp4'
+file 'storyboard_scene5_angry_expression.mp4'
+file 'storyboard_scene6_charge_forward.mp4'
