@@ -439,21 +439,21 @@ class PromptValidator:
         self,
         pokemon_names: list,
         environment: str = "volcanic",
-        use_cinematic: bool = True
+        use_cinematic: bool = False
     ) -> dict:
         """
         Generate an OPTIMIZED storyboard prompt using the PROVEN USER FORMAT.
 
         Key principles (from Nano Banana Pro best practices):
-        - Use CINEMATIC action sequence format with timestamps
-        - Very detailed Pokemon descriptions with specific colors
-        - Explicit facial expressions and reactions
-        - 16:9 widescreen aspect ratio for cinematic look
+        - Use 4-panel storyboard format with clear panel descriptions
+        - 1:1 square aspect ratio for grid layout
+        - 2K resolution for high quality
+        - Simple, clear Pokemon descriptions
 
         Args:
             pokemon_names: [attacker, defender] Pokemon names
             environment: Environment setting
-            use_cinematic: If True, use cinematic 16:9 format (recommended)
+            use_cinematic: If True, use cinematic 16:9 format instead
 
         Returns:
             Dict with prompt, negative_prompt, and recommended parameters
