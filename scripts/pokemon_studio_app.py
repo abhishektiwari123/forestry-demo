@@ -279,11 +279,11 @@ elif st.session_state.step == 2:
 
     # Generate prompt if not already done
     if not st.session_state.prompt:
-        prompt, negative_prompt = validator.generate_holistic_storyboard_prompt(
+        # Use cinematic format (proven to work better)
+        prompt, negative_prompt = validator.generate_cinematic_storyboard_prompt(
             pokemon_names=st.session_state.pokemon,
             scene_type="battle",
-            environment=st.session_state.environment,
-            panel_count=4
+            environment=st.session_state.environment
         )
         st.session_state.prompt = prompt
         st.session_state.negative_prompt = negative_prompt

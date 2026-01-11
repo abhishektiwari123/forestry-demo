@@ -435,6 +435,74 @@ class PromptValidator:
 
         return " ".join(parts)
 
+    def generate_cinematic_storyboard_prompt(
+        self,
+        pokemon_names: list,
+        scene_type: str = "battle",
+        environment: str = "volcanic"
+    ) -> tuple[str, str]:
+        """
+        Generate a CINEMATIC ACTION SEQUENCE prompt (proven format).
+        Uses timestamps and continuous action flow instead of panel descriptions.
+
+        This format has been tested and produces better results than panel-by-panel.
+
+        Args:
+            pokemon_names: List of Pokemon in the scene
+            scene_type: Type of scene
+            environment: Environment setting
+
+        Returns:
+            Tuple of (prompt, negative_prompt)
+        """
+        p1_name = pokemon_names[0]
+        p2_name = pokemon_names[1]
+        p1_info = self.pokemon_info.get(p1_name.lower(), {})
+        p2_info = self.pokemon_info.get(p2_name.lower(), {})
+
+        # Get heights for size comparison
+        p1_height = p1_info.get('height', "5'7\"").split()[0]
+        p2_height = p2_info.get('height', "7'3\"").split()[0]
+
+        # Get attack info
+        p1_attacks = list(p1_info.get("attacks", {}).items())
+        p2_attacks = list(p2_info.get("attacks", {}).items())
+        p1_attack_name = p1_attacks[0][0].replace("_", " ").title() if p1_attacks else "attack"
+        p1_attack_visual = p1_attacks[0][1] if p1_attacks else "energy beam"
+        p2_attack_name = p2_attacks[0][0].replace("_", " ").title() if p2_attacks else "attack"
+
+        # Get physical descriptions
+        p1_body = p1_info.get('body_color', 'orange body')
+        p1_features = p1_info.get('features', [])[:4]
+        p2_body = p2_info.get('body_color', 'orange body')
+        p2_features = p2_info.get('features', [])[:4]
+
+        # Get expressions
+        p1_expr_attack = p1_info.get('expressions', {}).get('attacking', 'fierce expression')
+        p2_expr_damaged = p2_info.get('expressions', {}).get('damaged', 'pained expression')
+        p2_expr_charging = p2_info.get('expressions', {}).get('charging', 'determined expression')
+
+        # Get damage appearance
+        damage_type = "fire" if "fire" in p1_info.get("type", "") else "impact"
+        damage_desc = p1_info.get('damage_appearance', {}).get('burn_marks', 'blackened burn marks')
+
+        # Environment descriptions
+        env_map = {
+            "volcanic": "volcanic valley background with lava pools and smoke",
+            "forest": "ancient forest background with towering trees",
+            "ocean": "coastal cliffs background with crashing waves",
+            "cave": "underground cavern background with glowing crystals",
+            "urban": "abandoned city background at sunset",
+            "mountain": "mountain peak background above clouds"
+        }
+        env_desc = env_map.get(environment, env_map["volcanic"])
+
+        # Build cinematic prompt using proven format
+        prompt = f"""PHOTOREALISTIC hyperrealistic CGI render: COMPLETE 10-SECOND ACTION SEQUENCE with BOTH Pokemon: OPENING (0-4s): Smaller {p1_name} ({p1_height}, {p1_body}, {', '.join(p1_features[:3])}) on LEFT side launching massive sustained {p1_attack_visual} from open jaws with {p1_expr_attack}, attack traveling across frame toward significantly larger {p2_name} ({p2_height}, 30% bigger, {p2_body}, {', '.join(p2_features[:3])}) on RIGHT side, {p2_name} with PAINED FACIAL EXPRESSION (eyes squinting in pain, mouth open wide showing teeth in grimace, eyebrows furrowed in distress, face contorted) being PUSHED BACKWARD by force of massive attack, body leaning back and recoiling from impact, attempting to brace with arms raised defensively but failing against overwhelming attack stream, attack clearly connecting both Pokemon with visible bright impact glow where attack strikes {p2_name}'s torso, intense energy and sparks bursting from impact point, physical knockback evident. TRANSITION (4-6s): Attack dissipating, close-up on {p2_name}'s torso revealing {damage_desc.upper()} from attack impact, smoke wisping from damaged areas showing realistic damage texture, {p2_name}'s facial expression transitioning from PAIN to FIERCE ANGER (eyes narrowing with determination and rage, teeth bared in aggressive snarl, eyebrows furrowed in fury showing intense resolve for revenge). FINALE (6-10s): {p2_name} recovering from knockback and CHARGING FORWARD aggressively toward {p1_name} with wings spread wide pulling back for powerful counter-attack, body accelerating rapidly with building momentum, {p1_name} visible in frame bracing for incoming revenge attack, dramatic battle tension rising, side-angle wide shot capturing complete revenge charge sequence, realistic physics with dynamic motion, camera starts side-angle capturing both Pokemon, zooms into impact showing damage and pain, then pulls back wide as {p2_name} charges forward for revenge, realistic detailed scales/skin with texture depth, natural lighting with physically accurate shadows, organic weathering appearance, dramatic cinematic composition, 8K quality, {env_desc}, battle-worn with scratches and scars visible, weathered appearance"""
+
+        negative_prompt = self.generate_negative_prompt(pokemon_names)
+        return prompt, negative_prompt
+
     def generate_holistic_storyboard_prompt(
         self,
         pokemon_names: list,
@@ -444,14 +512,7 @@ class PromptValidator:
     ) -> tuple[str, str]:
         """
         Generate a COMPREHENSIVE storyboard prompt with FULL Pokemon details.
-        Each panel is treated as a detailed standalone image prompt.
-
-        CRITICAL REQUIREMENTS:
-        - Both Pokemon FACING EACH OTHER in every panel
-        - Explicit LEFT/RIGHT positioning maintained
-        - Battle damage CONTINUITY (accumulated damage shown)
-        - VISIBLE attack effects with detailed descriptions
-        - Full physical descriptions of both Pokemon
+        NOTE: For better results, consider using generate_cinematic_storyboard_prompt() instead.
 
         Args:
             pokemon_names: List of Pokemon in the scene
