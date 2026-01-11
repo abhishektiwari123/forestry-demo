@@ -93,18 +93,47 @@ def get_anthropic_api_key():
     if os.environ.get("ANTHROPIC_API_KEY"):
         return os.environ.get("ANTHROPIC_API_KEY")
 
-    # Try .env file
+    # Try .env file in scripts directory
     env_path = os.path.join(os.path.dirname(__file__), ".env")
     if os.path.exists(env_path):
         with open(env_path) as f:
             for line in f:
                 if line.startswith("ANTHROPIC_API_KEY="):
-                    return line.strip().split("=", 1)[1]
+                    key = line.strip().split("=", 1)[1]
+                    # Remove quotes if present
+                    key = key.strip('"').strip("'")
+                    return key
+
+    # Try .env in current working directory
+    if os.path.exists(".env"):
+        with open(".env") as f:
+            for line in f:
+                if line.startswith("ANTHROPIC_API_KEY="):
+                    key = line.strip().split("=", 1)[1]
+                    key = key.strip('"').strip("'")
+                    return key
+
+    # Try parent directory
+    parent_env = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+    if os.path.exists(parent_env):
+        with open(parent_env) as f:
+            for line in f:
+                if line.startswith("ANTHROPIC_API_KEY="):
+                    key = line.strip().split("=", 1)[1]
+                    key = key.strip('"').strip("'")
+                    return key
+
     return ""
 
 
 KIE_API_KEY = get_api_key()
 ANTHROPIC_API_KEY = get_anthropic_api_key()
+
+# Debug: Show if API keys are loaded at startup
+print(f"[DEBUG] KIE_API_KEY loaded: {'Yes' if KIE_API_KEY else 'No'}")
+print(f"[DEBUG] ANTHROPIC_API_KEY loaded: {'Yes' if ANTHROPIC_API_KEY else 'No'}")
+if ANTHROPIC_API_KEY:
+    print(f"[DEBUG] ANTHROPIC key: {ANTHROPIC_API_KEY[:10]}...{ANTHROPIC_API_KEY[-4:]}")
 
 
 def load_best_practices() -> dict:
@@ -1357,6 +1386,21 @@ with st.sidebar:
     if hasattr(st.session_state, 'pokemon') and st.session_state.pokemon:
         st.write(f"**Pokemon:** {' vs '.join(st.session_state.pokemon)}")
         st.write(f"**Environment:** {st.session_state.get('environment', 'N/A')}")
+
+    st.divider()
+
+    # API Key Status
+    st.header("🔑 API Status")
+    if KIE_API_KEY:
+        st.success(f"KIE: ✅ {KIE_API_KEY[:8]}...")
+    else:
+        st.error("KIE: ❌ Not found")
+
+    if ANTHROPIC_API_KEY:
+        st.success(f"Claude: ✅ {ANTHROPIC_API_KEY[:10]}...")
+    else:
+        st.error("Claude: ❌ Not found")
+        st.caption("Add ANTHROPIC_API_KEY to .env file")
 
     st.divider()
 
