@@ -336,6 +336,12 @@ class PromptValidator:
         """
         Generate a holistic storyboard prompt with detailed Pokemon information.
 
+        CRITICAL REQUIREMENTS:
+        - Both Pokemon FACING EACH OTHER in every panel
+        - Explicit LEFT/RIGHT positioning maintained
+        - Battle damage CONTINUITY (accumulated damage shown)
+        - VISIBLE attack effects
+
         Args:
             pokemon_names: List of Pokemon in the scene
             scene_type: Type of scene (battle, encounter, documentary)
@@ -348,7 +354,6 @@ class PromptValidator:
         # Get detailed Pokemon info
         pokemon_descriptions = []
         pokemon_features = []
-        pokemon_attacks = []
 
         for name in pokemon_names:
             name_lower = name.lower()
@@ -357,60 +362,76 @@ class PromptValidator:
                 pokemon_descriptions.append(info["documentary_description"])
                 pokemon_features.extend(info["features"][:3])
 
-                # Get relevant attacks for battle scenes
-                if scene_type == "battle":
-                    attacks = list(info["attacks"].items())[:2]
-                    for attack_name, attack_desc in attacks:
-                        pokemon_attacks.append(f"{name} {attack_name}: {attack_desc}")
-
         # Build environment description
         env_descriptions = {
-            "volcanic": "volcanic mountain battlefield with molten lava rivers, smoke and ash in the air, dramatic orange-red lighting",
-            "forest": "dense ancient forest clearing, dappled sunlight through canopy, natural peaceful atmosphere",
-            "ocean": "coastal cliffside overlooking turbulent ocean, sea spray, dramatic stormy sky",
-            "cave": "deep underground cavern with crystal formations, bioluminescent glow, mysterious atmosphere",
-            "urban": "abandoned city streets at dusk, overgrown buildings, atmospheric lighting",
-            "mountain": "high mountain peak above clouds, thin air visible, majestic alpine landscape"
+            "volcanic": "volcanic battlefield with molten lava, smoke rising, dramatic orange glow",
+            "forest": "ancient forest clearing, dappled sunlight, natural atmosphere",
+            "ocean": "coastal cliffside, turbulent ocean, stormy sky",
+            "cave": "underground cavern with crystals, bioluminescent glow",
+            "urban": "abandoned city at dusk, overgrown ruins",
+            "mountain": "mountain peak above clouds, majestic alpine"
         }
         env_desc = env_descriptions.get(environment, env_descriptions["volcanic"])
 
-        # Build panel descriptions for battle storyboard with EXPLICIT attack effects
-        panel_descs = []
-        if scene_type == "battle" and len(pokemon_names) >= 2:
-            # Get attack info for explicit effect descriptions
-            p1_info = self.pokemon_info.get(pokemon_names[0].lower(), {})
-            p2_info = self.pokemon_info.get(pokemon_names[1].lower(), {})
+        # Get attack info
+        p1_info = self.pokemon_info.get(pokemon_names[0].lower(), {})
+        p2_info = self.pokemon_info.get(pokemon_names[1].lower(), {})
 
-            p1_attacks = list(p1_info.get("attacks", {}).items())
-            p2_attacks = list(p2_info.get("attacks", {}).items())
+        p1_attacks = list(p1_info.get("attacks", {}).items())
+        p2_attacks = list(p2_info.get("attacks", {}).items())
 
-            p1_attack = p1_attacks[0] if p1_attacks else ("attack", "energy beam")
-            p2_attack = p2_attacks[0] if p2_attacks else ("attack", "energy beam")
+        p1_attack = p1_attacks[0] if p1_attacks else ("attack", "energy beam")
+        p2_attack = p2_attacks[0] if p2_attacks else ("attack", "energy beam")
 
-            panel_descs = [
-                f"Panel 1: {pokemon_names[0]} launching {p1_attack[0]} - VISIBLE {p1_attack[1]} traveling toward {pokemon_names[1]}, aggressive stance, attack beam/effect clearly visible between them",
-                f"Panel 2: {pokemon_names[1]} being hit by the attack, VISIBLE impact explosion on body, pain expression, burn marks/damage appearing, {pokemon_names[0]} visible in attack follow-through pose",
-                f"Panel 3: {pokemon_names[1]} charging {p2_attack[0]} - VISIBLE {p2_attack[1]} forming at mouth/hands, energy gathering with visible glow, fierce determination, preparing to counterattack",
-                f"Panel 4: {pokemon_names[1]} releasing {p2_attack[0]} - VISIBLE {p2_attack[1]} beam/effect hitting {pokemon_names[0]}, impact explosion on {pokemon_names[0]}, both showing battle damage"
-            ]
+        # Get p1 damage effect description for continuity
+        p1_damage_desc = "burn marks" if "fire" in p1_info.get("type", "") else "impact wounds"
 
-        # Build the holistic prompt
+        # Build panel descriptions with EXPLICIT facing, positioning, and damage continuity
+        panel_descs = [
+            f"Panel 1 (top-left): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
+            f"{pokemon_names[0]} launching {p1_attack[0]} attack - VISIBLE {p1_attack[1]} beam shooting from mouth toward {pokemon_names[1]}. "
+            f"Both Pokemon facing each other in battle stance, attack effect visible between them.",
+
+            f"Panel 2 (top-right): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
+            f"{pokemon_names[1]} HIT by attack - VISIBLE impact explosion on {pokemon_names[1]}'s body, pain expression, {p1_damage_desc} appearing on {pokemon_names[1]}. "
+            f"{pokemon_names[0]} in follow-through pose. Both facing each other.",
+
+            f"Panel 3 (bottom-left): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
+            f"{pokemon_names[1]} NOW SHOWING {p1_damage_desc} FROM PREVIOUS ATTACK (damage continuity). "
+            f"{pokemon_names[1]} charging {p2_attack[0]} - VISIBLE {p2_attack[1]} forming at mouth, energy gathering. "
+            f"Fierce determination despite injuries. Both facing each other.",
+
+            f"Panel 4 (bottom-right): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
+            f"{pokemon_names[1]} STILL SHOWING {p1_damage_desc} (damage continuity). "
+            f"{pokemon_names[1]} releasing {p2_attack[0]} - VISIBLE {p2_attack[1]} beam hitting {pokemon_names[0]}. "
+            f"Both Pokemon showing battle damage, facing each other."
+        ]
+
+        # Build the holistic prompt - VERY EXPLICIT about requirements
         prompt_parts = [
-            f"Photorealistic {panel_count}-panel Pokemon battle storyboard",
-            f"wildlife photography style, BBC Earth documentary quality",
-            f"shot on RED camera, natural cinematic lighting, 8K detail",
+            f"Photorealistic 4-panel Pokemon battle storyboard, 2x2 grid layout",
             "",
-            f"Pokemon: {', '.join(pokemon_descriptions)}",
+            "=== CRITICAL COMPOSITION RULES ===",
+            f"- {pokemon_names[0]} ALWAYS on LEFT side of frame, facing RIGHT",
+            f"- {pokemon_names[1]} ALWAYS on RIGHT side of frame, facing LEFT",
+            "- BOTH Pokemon visible and FACING EACH OTHER in EVERY panel",
+            "- Consistent positioning maintained across all 4 panels",
+            f"- Battle damage accumulates: {pokemon_names[1]} shows {p1_damage_desc} in panels 3-4",
             "",
-            f"Environment: {env_desc}",
+            "=== STYLE ===",
+            "Photorealistic wildlife photography, BBC Earth documentary quality",
+            "Shot on RED camera, natural cinematic lighting, 8K detail",
+            "NOT anime, NOT cartoon, NOT 3D render - PHOTOREALISTIC ONLY",
             "",
-            "Panels:",
+            f"=== POKEMON ===",
+            f"{pokemon_names[0]}: {pokemon_descriptions[0] if pokemon_descriptions else 'fire dragon'}",
+            f"{pokemon_names[1]}: {pokemon_descriptions[1] if len(pokemon_descriptions) > 1 else 'dragon type'}",
+            "",
+            f"=== ENVIRONMENT ===",
+            env_desc,
+            "",
+            "=== PANEL DESCRIPTIONS ===",
             *panel_descs,
-            "",
-            f"Key features to maintain: {', '.join(pokemon_features[:6])}",
-            "",
-            "Style: Photorealistic, lifelike, detailed textures, natural lighting, documentary feel",
-            "Composition: Dynamic action poses, clear character separation, consistent character design across panels"
         ]
 
         prompt = "\n".join(prompt_parts)

@@ -438,11 +438,29 @@ class ValidatedPipeline:
 
         return {"error": "Max retries exceeded"}
 
-    def _download_file(self, url: str, output_path: str) -> bool:
-        """Download file using curl."""
-        curl_cmd = ["curl", "-k", "-L", "-s", "-o", output_path, url]
-        result = subprocess.run(curl_cmd, capture_output=True, timeout=120)
-        return result.returncode == 0 and os.path.exists(output_path)
+    def _download_file(self, url: str, output_path: str, min_size: int = 1000) -> bool:
+        """Download file using curl with retry logic and size validation."""
+        for attempt in range(3):
+            curl_cmd = ["curl", "-k", "--insecure", "-L", "-s", "-o", output_path, url]
+            result = subprocess.run(curl_cmd, capture_output=True, timeout=120)
+
+            if result.returncode == 0 and os.path.exists(output_path):
+                file_size = os.path.getsize(output_path)
+
+                # Check if file is large enough (not just an error message)
+                if file_size > min_size:
+                    # Verify it's not an error message
+                    with open(output_path, "rb") as f:
+                        header = f.read(100)
+                        if b"upstream connect error" not in header and b"SSL" not in header:
+                            return True
+
+                # File too small or contains error, retry
+                if attempt < 2:
+                    time.sleep(2 ** attempt)
+                    continue
+
+        return False
 
     def _wait_for_task(self, task_id: str, max_wait: int = 300) -> dict:
         """Wait for task completion."""
