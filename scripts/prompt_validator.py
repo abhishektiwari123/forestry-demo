@@ -374,14 +374,24 @@ class PromptValidator:
         }
         env_desc = env_descriptions.get(environment, env_descriptions["volcanic"])
 
-        # Build panel descriptions for battle storyboard
+        # Build panel descriptions for battle storyboard with EXPLICIT attack effects
         panel_descs = []
         if scene_type == "battle" and len(pokemon_names) >= 2:
+            # Get attack info for explicit effect descriptions
+            p1_info = self.pokemon_info.get(pokemon_names[0].lower(), {})
+            p2_info = self.pokemon_info.get(pokemon_names[1].lower(), {})
+
+            p1_attacks = list(p1_info.get("attacks", {}).items())
+            p2_attacks = list(p2_info.get("attacks", {}).items())
+
+            p1_attack = p1_attacks[0] if p1_attacks else ("attack", "energy beam")
+            p2_attack = p2_attacks[0] if p2_attacks else ("attack", "energy beam")
+
             panel_descs = [
-                f"Panel 1: {pokemon_names[0]} launching powerful attack toward {pokemon_names[1]}, aggressive stance, attack effects visible",
-                f"Panel 2: {pokemon_names[1]} taking damage from the attack, visible impact, pain expression, battle damage appearing",
-                f"Panel 3: {pokemon_names[1]} recovering and charging counterattack, energy gathering, fierce determination",
-                f"Panel 4: Counterattack hitting {pokemon_names[0]}, impact explosion, both Pokemon showing battle damage"
+                f"Panel 1: {pokemon_names[0]} launching {p1_attack[0]} - VISIBLE {p1_attack[1]} traveling toward {pokemon_names[1]}, aggressive stance, attack beam/effect clearly visible between them",
+                f"Panel 2: {pokemon_names[1]} being hit by the attack, VISIBLE impact explosion on body, pain expression, burn marks/damage appearing, {pokemon_names[0]} visible in attack follow-through pose",
+                f"Panel 3: {pokemon_names[1]} charging {p2_attack[0]} - VISIBLE {p2_attack[1]} forming at mouth/hands, energy gathering with visible glow, fierce determination, preparing to counterattack",
+                f"Panel 4: {pokemon_names[1]} releasing {p2_attack[0]} - VISIBLE {p2_attack[1]} beam/effect hitting {pokemon_names[0]}, impact explosion on {pokemon_names[0]}, both showing battle damage"
             ]
 
         # Build the holistic prompt
@@ -446,19 +456,27 @@ class PromptValidator:
         # 1. Core action
         motion_parts.append(f"{pokemon_name} {action}")
 
-        # 2. Specific details based on action
-        if "attack" in action.lower() or "launch" in action.lower():
+        # 2. Specific details based on action with VISIBLE effects
+        if "attack" in action.lower() or "launch" in action.lower() or "releasing" in action.lower():
             expr = expressions.get("attacking", "intense focus, body tensing")
             motion_parts.append(expr)
             motion_parts.append("subtle body movement forward")
-        elif "damage" in action.lower() or "hit" in action.lower():
+            # Add explicit effect visibility
+            if "beam" in action.lower() or "stream" in action.lower():
+                motion_parts.append("energy beam visible and intensifying")
+                motion_parts.append("attack effect growing brighter")
+        elif "damage" in action.lower() or "hit" in action.lower() or "reacting" in action.lower():
             expr = expressions.get("damaged", "pained expression, recoiling slightly")
             motion_parts.append(expr)
             motion_parts.append("body reacting to impact")
-        elif "recover" in action.lower() or "charge" in action.lower():
+            motion_parts.append("visible flinching motion")
+        elif "recover" in action.lower() or "charge" in action.lower() or "charging" in action.lower():
             expr = expressions.get("fierce", "determination visible, energy building")
             motion_parts.append(expr)
             motion_parts.append("stance stabilizing, power gathering")
+            # Add explicit charging effect
+            motion_parts.append("visible energy glow building at mouth/hands")
+            motion_parts.append("charging effect intensifying")
 
         # 3. Logical sequence with temporal markers
         motion_parts.append("motion begins slowly and builds")

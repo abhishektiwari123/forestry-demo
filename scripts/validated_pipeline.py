@@ -611,7 +611,7 @@ Respond with:
     def stage3_split_and_validate(self, storyboard_path: str, grid_size: tuple = (2, 2)) -> tuple[list, ValidationResult]:
         """
         Stage 3: Split storyboard into scenes and validate each split.
-        Retries split if validation fails.
+        Removes frame borders and crops to 16:9.
         """
         self.log("STAGE 3: Scene extraction with validation")
 
@@ -624,6 +624,10 @@ Respond with:
 
         self.log(f"  Storyboard: {w}x{h}, Grid: {cols}x{rows}")
 
+        # Detect and remove borders between panels
+        border_margin = self._detect_border_width(img, cols, rows)
+        self.log(f"  Detected border margin: {border_margin}px")
+
         scene_paths = []
         all_passed = True
 
@@ -631,16 +635,25 @@ Respond with:
             for col in range(cols):
                 scene_num = row * cols + col + 1
 
-                # Calculate panel bounds
+                # Calculate panel bounds with border removal
                 panel_w = w // cols
                 panel_h = h // rows
                 left = col * panel_w
                 top = row * panel_h
 
-                # Extract panel
-                panel = img.crop((left, top, left + panel_w, top + panel_h))
+                # Add margin to remove frame borders (10% of panel size or detected)
+                margin = max(border_margin, int(min(panel_w, panel_h) * 0.08))
 
-                # Crop to 16:9
+                # Crop with margin to remove borders
+                crop_left = left + margin
+                crop_top = top + margin
+                crop_right = left + panel_w - margin
+                crop_bottom = top + panel_h - margin
+
+                # Extract panel with border removed
+                panel = img.crop((crop_left, crop_top, crop_right, crop_bottom))
+
+                # Now crop to 16:9
                 p_w, p_h = panel.size
                 target_w = int(p_h * self.target_aspect)
 
@@ -685,8 +698,102 @@ Respond with:
 
         return scene_paths, summary
 
+    def _detect_border_width(self, img: Image.Image, cols: int, rows: int) -> int:
+        """
+        Detect the width of borders between panels in a storyboard.
+        Returns estimated border width in pixels.
+        """
+        import numpy as np
+
+        try:
+            arr = np.array(img.convert('L'))  # Convert to grayscale
+            h, w = arr.shape
+
+            # Check vertical borders (between columns)
+            panel_w = w // cols
+            vertical_borders = []
+
+            for col in range(1, cols):
+                x = col * panel_w
+                # Sample a vertical strip around the expected border
+                strip_start = max(0, x - 20)
+                strip_end = min(w, x + 20)
+                strip = arr[:, strip_start:strip_end]
+
+                # Check for low variance (solid color = border)
+                variance = np.var(strip)
+                if variance < 500:  # Low variance suggests border
+                    vertical_borders.append(20)
+
+            # Check horizontal borders (between rows)
+            panel_h = h // rows
+            horizontal_borders = []
+
+            for row in range(1, rows):
+                y = row * panel_h
+                strip_start = max(0, y - 20)
+                strip_end = min(h, y + 20)
+                strip = arr[strip_start:strip_end, :]
+
+                variance = np.var(strip)
+                if variance < 500:
+                    horizontal_borders.append(20)
+
+            # Return maximum detected border or default
+            all_borders = vertical_borders + horizontal_borders
+            if all_borders:
+                return max(all_borders)
+            return 15  # Default border margin
+
+        except Exception:
+            return 15  # Default if detection fails
+
+    def _detect_frame_border(self, img: Image.Image) -> bool:
+        """
+        Check if image has visible frame borders at edges.
+        Returns True if borders detected.
+        """
+        import numpy as np
+
+        try:
+            arr = np.array(img.convert('L'))
+            h, w = arr.shape
+
+            # Check edge pixels for uniform color (border)
+            edge_width = 5
+
+            # Top edge
+            top_strip = arr[:edge_width, :]
+            top_var = np.var(top_strip)
+
+            # Bottom edge
+            bottom_strip = arr[-edge_width:, :]
+            bottom_var = np.var(bottom_strip)
+
+            # Left edge
+            left_strip = arr[:, :edge_width]
+            left_var = np.var(left_strip)
+
+            # Right edge
+            right_strip = arr[:, -edge_width:]
+            right_var = np.var(right_strip)
+
+            # If any edge has very low variance, it's likely a border
+            threshold = 100
+            has_border = any([
+                top_var < threshold,
+                bottom_var < threshold,
+                left_var < threshold,
+                right_var < threshold
+            ])
+
+            return has_border
+
+        except Exception:
+            return False
+
     def _validate_split(self, img: Image.Image, scene_num: int) -> ValidationResult:
-        """Validate a split scene."""
+        """Validate a split scene for quality and border detection."""
         w, h = img.size
         aspect = w / h
 
@@ -712,6 +819,11 @@ Respond with:
                     result.issues.append("Low color variation (potential blank scene)")
                     result.passed = False
                     break
+
+        # Check for frame borders at edges
+        if self._detect_frame_border(img):
+            result.issues.append("Frame border detected at edges - needs more cropping")
+            result.passed = False
 
         result.score = 1.0 if result.passed else 0.5
         return result
@@ -1001,18 +1113,29 @@ Respond with:
             # Also generate holistic video prompts if not provided
             if scene_descriptions is None:
                 scene_descriptions = []
+                # Get Pokemon attack info for specific effects
+                p1_info = POKEMON_DETAILED_INFO.get(pokemon_names[0].lower(), {}) if POKEMON_DETAILED_INFO else {}
+                p2_info = POKEMON_DETAILED_INFO.get(pokemon_names[1].lower() if len(pokemon_names) > 1 else pokemon_names[0].lower(), {}) if POKEMON_DETAILED_INFO else {}
+
+                p1_attacks = list(p1_info.get("attacks", {}).items())
+                p2_attacks = list(p2_info.get("attacks", {}).items())
+
+                p1_attack = p1_attacks[0] if p1_attacks else ("attack", "energy beam")
+                p2_attack = p2_attacks[0] if p2_attacks else ("attack", "energy beam")
+
+                # More specific actions with visible effects
                 actions = [
-                    f"launching powerful attack",
-                    f"taking damage and reacting",
-                    f"recovering and charging counterattack",
-                    f"counterattack impact"
+                    (pokemon_names[0], f"releasing {p1_attack[0]} with visible {p1_attack[1]} streaming from mouth"),
+                    (pokemon_names[1] if len(pokemon_names) > 1 else pokemon_names[0], "reacting to impact damage, body recoiling slightly"),
+                    (pokemon_names[1] if len(pokemon_names) > 1 else pokemon_names[0], f"charging {p2_attack[0]} with visible {p2_attack[1]} forming at mouth"),
+                    (pokemon_names[1] if len(pokemon_names) > 1 else pokemon_names[0], f"releasing {p2_attack[0]} beam toward target")
                 ]
-                for i, action in enumerate(actions):
-                    pokemon = pokemon_names[i % len(pokemon_names)]
+
+                for pokemon, action in actions:
                     video_prompt = holistic_validator.generate_holistic_video_prompt(
                         pokemon_name=pokemon,
                         action=action,
-                        scene_context=f"in {environment} environment"
+                        scene_context=f"in {environment} environment, attack effects visible"
                     )
                     scene_descriptions.append(video_prompt)
 
