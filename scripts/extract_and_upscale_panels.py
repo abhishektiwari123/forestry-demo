@@ -133,16 +133,31 @@ def extract_panels(image_path: str, output_dir: str) -> list:
             x = border_estimate + col * (panel_width + border_estimate)
             y = border_estimate + row * (panel_height + border_estimate)
 
-            # Crop panel
+            # Crop panel (full panel including text labels)
             panel = img.crop((x, y, x + panel_width, y + panel_height))
 
-            # Save extracted panel
-            panel_path = os.path.join(output_dir, f"panel_{panel_num:02d}.jpg")
-            panel.save(panel_path, quality=95)
+            # Remove text labels from top and bottom
+            # Text labels typically occupy ~10-15% at top and ~8-10% at bottom
+            panel_w, panel_h = panel.size
 
-            print(f"   ✓ Panel {panel_num}: {panel.size[0]}x{panel.size[1]} → {panel_path}")
+            # Detect text regions by analyzing pixel darkness
+            # Top text: "PANEL N"
+            # Bottom text: "SCENE DESCRIPTION"
 
-            extracted.append((panel_num, panel_path, panel.size))
+            # Sample top region to find where actual image starts
+            top_crop = int(panel_h * 0.13)  # Remove top ~13% (panel number)
+            bottom_crop = int(panel_h * 0.12)  # Remove bottom ~12% (description)
+
+            # Crop to content only (remove text labels)
+            clean_panel = panel.crop((0, top_crop, panel_w, panel_h - bottom_crop))
+
+            # Save clean extracted panel
+            panel_path = os.path.join(output_dir, f"panel_{panel_num:02d}_clean.jpg")
+            clean_panel.save(panel_path, quality=95)
+
+            print(f"   ✓ Panel {panel_num}: {clean_panel.size[0]}x{clean_panel.size[1]} (cleaned) → {panel_path}")
+
+            extracted.append((panel_num, panel_path, clean_panel.size))
             panel_num += 1
 
     return extracted
