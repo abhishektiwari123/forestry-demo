@@ -448,6 +448,250 @@ def check_video_status(task_id: str) -> dict:
         return {"status": "error", "error": str(e)}
 
 
+def call_claude_vision_for_narration(
+    image: Image.Image,
+    panel_num: int,
+    pokemon_name: str,
+    action: str,
+    video_duration: int = 5,
+    narration_style: str = "documentary"
+) -> str | None:
+    """
+    Call Claude Vision API to analyze an image and generate narration script.
+    Returns narration text or None if failed.
+    """
+    api_key = ANTHROPIC_API_KEY or st.session_state.get("anthropic_api_key", "")
+
+    if not api_key:
+        st.warning("⚠️ No Anthropic API key found for narration generation.")
+        return None
+
+    # Convert image to base64
+    import io
+    img_buffer = io.BytesIO()
+    image.save(img_buffer, format='PNG')
+    img_buffer.seek(0)
+    image_base64 = base64.b64encode(img_buffer.read()).decode('utf-8')
+
+    # Calculate target word count based on duration
+    if video_duration <= 5:
+        target_words = "8-15"
+        style_note = "punchy and action-focused"
+    else:
+        target_words = "20-30"
+        style_note = "can build tension with brief pauses"
+
+    style_descriptions = {
+        "documentary": "calm, authoritative BBC nature documentary style",
+        "epic": "deep, resonant movie trailer energy",
+        "energetic": "fast-paced sports commentator style",
+        "asmr": "soft, intimate whispered quality"
+    }
+    voice_style = style_descriptions.get(narration_style, style_descriptions["documentary"])
+
+    system_prompt = f"""You are an expert video narrator specializing in Pokemon battle sequences.
+Your task is to write narration for a {video_duration}-second video clip.
+
+CRITICAL RULES:
+1. Target word count: {target_words} words (this is essential for timing!)
+2. Voice style: {voice_style}
+3. Don't describe what's visually obvious - add emotional context instead
+4. {style_note}
+5. Focus on the FEELING and IMPACT, not visual description
+6. Use present tense for immediacy
+
+Return ONLY the narration text. No quotes, no explanations, just the script."""
+
+    user_message = f"""Analyze this Pokemon battle image and write narration for Panel {panel_num}.
+
+Pokemon featured: {pokemon_name}
+Action: {action}
+Video duration: {video_duration} seconds
+
+Write the narration script now:"""
+
+    try:
+        with st.spinner(f"🎙️ Claude generating narration for Panel {panel_num}..."):
+            response = requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json"
+                },
+                json={
+                    "model": "claude-sonnet-4-20250514",  # Using Sonnet 4 for vision
+                    "max_tokens": 256,
+                    "messages": [{
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": "image/png",
+                                    "data": image_base64
+                                }
+                            },
+                            {
+                                "type": "text",
+                                "text": user_message
+                            }
+                        ]
+                    }],
+                    "system": system_prompt
+                },
+                timeout=60
+            )
+
+        if response.status_code == 200:
+            result = response.json()
+            narration = result.get("content", [{}])[0].get("text", "").strip()
+
+            # Remove any quotes if present
+            if narration.startswith('"') and narration.endswith('"'):
+                narration = narration[1:-1]
+            if narration.startswith("'") and narration.endswith("'"):
+                narration = narration[1:-1]
+
+            if narration:
+                word_count = len(narration.split())
+                st.success(f"✅ Narration generated ({word_count} words)")
+                return narration
+            return None
+        else:
+            st.error(f"❌ Claude API error: {response.status_code}")
+            return None
+
+    except Exception as e:
+        st.warning(f"Claude Vision API error: {e}")
+        return None
+
+
+def generate_narration_audio(
+    text: str,
+    voice_id: str = "21m00Tcm4TlvDq8ikWAM",  # Default: Rachel (narrative voice)
+    panel_num: int = 1
+) -> str | None:
+    """
+    Generate narration audio using ElevenLabs via KIE API.
+    Returns task_id for polling, or None if failed.
+
+    Voice IDs (ElevenLabs):
+    - 21m00Tcm4TlvDq8ikWAM: Rachel (calm, documentary)
+    - EXAVITQu4vr4xnSDxMaL: Bella (warm, narrative)
+    - ErXwobaYiN019PkySvjV: Antoni (deep, authoritative)
+    - VR6AewLTigWG4xSOukaG: Arnold (deep, dramatic)
+    - pNInz6obpgDQGcFmaJgB: Adam (natural, versatile)
+    """
+    api_key = KIE_API_KEY
+    if not api_key:
+        st.error("KIE API key not found!")
+        return None
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "elevenlabs/text-to-speech-multilingual-v2",
+        "input": {
+            "text": text,
+            "voice_id": voice_id,
+            "model_id": "eleven_multilingual_v2",
+            "voice_settings": {
+                "stability": 0.5,
+                "similarity_boost": 0.75,
+                "style": 0.5,
+                "use_speaker_boost": True
+            }
+        }
+    }
+
+    try:
+        with st.spinner(f"🔊 Generating narration audio for Panel {panel_num}..."):
+            response = requests.post(
+                "https://api.kie.ai/api/v1/jobs/createTask",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("code") == 200:
+                task_id = result.get("data", {}).get("taskId")
+                if task_id:
+                    st.success(f"✅ Audio generation started (Task: {task_id[:16]}...)")
+                    return task_id
+
+        st.error(f"❌ Audio generation API error: {response.status_code} - {response.text[:200]}")
+        return None
+
+    except Exception as e:
+        st.error(f"Audio generation error: {e}")
+        return None
+
+
+def check_audio_status(task_id: str) -> dict:
+    """
+    Check audio generation status.
+    Returns dict with status and audio_url if completed.
+    """
+    api_key = KIE_API_KEY
+    headers = {"Authorization": f"Bearer {api_key}"}
+
+    try:
+        response = requests.get(
+            f"https://api.kie.ai/api/v1/jobs/recordInfo?taskId={task_id}",
+            headers=headers,
+            timeout=30
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            data = result.get("data", {})
+            status = data.get("status", "").lower()
+
+            if status in ["success", "completed"]:
+                result_json = data.get("resultJson")
+                if result_json:
+                    if isinstance(result_json, str):
+                        result_json = json.loads(result_json)
+
+                    audio_url = None
+                    if isinstance(result_json, list) and len(result_json) > 0:
+                        audio_url = result_json[0].get("url") or result_json[0].get("audio_url")
+                    elif isinstance(result_json, dict):
+                        audio_url = result_json.get("url") or result_json.get("audio_url")
+
+                    return {"status": "completed", "audio_url": audio_url}
+
+            elif status in ["failed", "error"]:
+                return {"status": "failed", "error": data.get("error", "Unknown error")}
+
+            return {"status": "processing"}
+
+        return {"status": "error", "error": f"API returned {response.status_code}"}
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+# ElevenLabs Voice Options
+ELEVENLABS_VOICES = {
+    "Rachel (Documentary)": "21m00Tcm4TlvDq8ikWAM",
+    "Bella (Warm Narrative)": "EXAVITQu4vr4xnSDxMaL",
+    "Antoni (Deep Authoritative)": "ErXwobaYiN019PkySvjV",
+    "Arnold (Dramatic)": "VR6AewLTigWG4xSOukaG",
+    "Adam (Natural)": "pNInz6obpgDQGcFmaJgB",
+    "Josh (Deep Male)": "TxGEqnHWrfWFTfGW9XjX",
+    "Elli (Young Female)": "MF3mGyEYCl7XYWbV9V6O",
+    "Sam (Raspy Male)": "yoZ06aMxZJJ28mfd3POQ"
+}
+
+
 # Kling 2.6 Video Generation Best Practices
 KLING_VIDEO_BEST_PRACTICES = """
 ## 🎬 Kling 2.6 Video Generation Best Practices
@@ -536,6 +780,71 @@ Avoid: background music, static noise, distorted audio
 
 # Combined best practices constant
 FULL_VIDEO_BEST_PRACTICES = KLING_VIDEO_BEST_PRACTICES + "\n\n---\n\n" + VIDEO_ASMR_BEST_PRACTICES
+
+# Video Narration Best Practices
+VIDEO_NARRATION_BEST_PRACTICES = """
+## 🎙️ Video Narration Best Practices
+
+### Word Count & Pacing Guidelines
+- **Documentary style**: 150-170 words per minute (allows time to absorb)
+- **Conversational tone**: 150-180 words per minute
+- **Dramatic/emotional moments**: 120 words per minute (for impact)
+- **Reference pace**: 150 WPM is the professional narrator standard
+- **Minimum pace**: Never go below 120 WPM (sounds odd)
+
+### For Short Videos (5-10 seconds)
+| Duration | Word Count | Style |
+|----------|------------|-------|
+| 5 sec | 12-15 words | Punchy, action-focused |
+| 10 sec | 25-30 words | Brief description + impact |
+
+### Narration Writing Rules
+
+**✅ DO's:**
+- **Complement visuals** - Don't describe what viewers can already see
+- **Provide context** - Add insights that deepen the viewing experience
+- **Use conversational tone** - Like sharing insights with a friend
+- **Match video pace** - Quick cuts = faster narration, slow dissolves = slower pace
+- **Build in pauses** - Let dramatic moments breathe
+- **Focus on emotion** - "Feel the heat" vs "There is fire"
+
+**❌ DON'Ts:**
+- Describe obvious visual elements ("The dragon is flying")
+- Use lecture/textbook tone
+- Rush through content
+- Speak over impactful moments
+- Use complex vocabulary
+
+### Pokemon Battle Narration Templates
+
+**Attack Sequence (5 sec):**
+"[Pokemon] unleashes [attack] with devastating force!"
+(~8 words, punchy, action-focused)
+
+**Reaction/Impact (5 sec):**
+"The impact echoes across the battlefield. [Effect description]."
+(~10 words, dramatic pause built in)
+
+**Battle Escalation (10 sec):**
+"As [Pokemon1] charges its attack, [Pokemon2] braces for impact. The clash of power shakes the very air."
+(~20 words, builds tension)
+
+**Dramatic Finish (10 sec):**
+"In this moment, the battle reaches its peak. One final strike will decide everything."
+(~16 words, dramatic weight)
+
+### Voice Style Recommendations
+- **Documentary**: Calm, authoritative, BBC nature documentary style
+- **Epic**: Deep, resonant, movie trailer energy
+- **Energetic**: Fast-paced, sports commentator style
+- **ASMR**: Soft, intimate, whispered quality
+
+### Audio Integration Tips
+- Narration should sit ~6dB below peak video audio
+- Leave 0.5-1 second gap before/after key sound effects
+- Match narration emotion to video intensity
+- Consider pausing narration during loud battle impacts
+"""
 
 
 # Create validator
@@ -1864,6 +2173,174 @@ elif st.session_state.step == 7:
                         mime="video/mp4",
                         key=f"download_video_{panel_idx}"
                     )
+
+    # ========================================================================
+    # NARRATION SECTION
+    # ========================================================================
+    if st.session_state.generated_videos:
+        st.divider()
+        st.subheader("🎙️ Add Narration to Videos")
+
+        # Initialize narration states
+        if "narration_scripts" not in st.session_state:
+            st.session_state.narration_scripts = {}
+        if "narration_audio_tasks" not in st.session_state:
+            st.session_state.narration_audio_tasks = {}
+        if "generated_narrations" not in st.session_state:
+            st.session_state.generated_narrations = {}
+
+        # Narration settings
+        with st.expander("⚙️ Narration Settings", expanded=True):
+            col_style, col_voice = st.columns(2)
+
+            with col_style:
+                narration_style = st.selectbox(
+                    "Narration Style",
+                    ["documentary", "epic", "energetic", "asmr"],
+                    format_func=lambda x: {
+                        "documentary": "🎬 Documentary (BBC style)",
+                        "epic": "🎭 Epic (Movie trailer)",
+                        "energetic": "⚡ Energetic (Sports)",
+                        "asmr": "🌙 ASMR (Soft & intimate)"
+                    }.get(x, x),
+                    key="narration_style"
+                )
+
+            with col_voice:
+                voice_name = st.selectbox(
+                    "Voice",
+                    list(ELEVENLABS_VOICES.keys()),
+                    key="narration_voice"
+                )
+                voice_id = ELEVENLABS_VOICES[voice_name]
+
+            # Show best practices
+            with st.expander("📝 Narration Best Practices", expanded=False):
+                st.markdown(VIDEO_NARRATION_BEST_PRACTICES)
+
+        # Generate narration for each video
+        st.markdown("### Generate Narration Scripts")
+
+        for panel_idx, video_url in st.session_state.generated_videos.items():
+            task_info = st.session_state.video_generation_tasks.get(panel_idx, {})
+            panel_num = task_info.get("panel_num", panel_idx + 1)
+            pokemon_name = st.session_state.pokemon[0] if panel_idx < 2 else st.session_state.pokemon[1]
+            action = task_info.get("prompt", "battle action")[:100]
+
+            with st.expander(f"🎙️ Panel {panel_num} Narration", expanded=True):
+                # Get existing narration or empty
+                existing_narration = st.session_state.narration_scripts.get(panel_idx, "")
+
+                # Generate script button
+                col_gen, col_edit = st.columns([1, 2])
+
+                with col_gen:
+                    if st.button(f"🤖 Generate Script", key=f"gen_narration_{panel_idx}"):
+                        # Get the panel image for Claude Vision
+                        if st.session_state.upscaled_images and panel_idx < len(st.session_state.upscaled_images):
+                            panel_image = st.session_state.upscaled_images[panel_idx]
+                        elif st.session_state.panels and panel_idx < len(st.session_state.panels):
+                            panel_image = st.session_state.panels[panel_idx]
+                        else:
+                            panel_image = None
+
+                        if panel_image:
+                            video_duration = st.session_state.get("video_duration", 5)
+                            narration = call_claude_vision_for_narration(
+                                image=panel_image,
+                                panel_num=panel_num,
+                                pokemon_name=pokemon_name,
+                                action=action,
+                                video_duration=video_duration,
+                                narration_style=narration_style
+                            )
+                            if narration:
+                                st.session_state.narration_scripts[panel_idx] = narration
+                                st.rerun()
+                        else:
+                            st.error("Panel image not found!")
+
+                # Editable narration script
+                narration_text = st.text_area(
+                    f"Narration Script (Panel {panel_num})",
+                    value=existing_narration,
+                    key=f"narration_text_{panel_idx}",
+                    height=100,
+                    placeholder="Click 'Generate Script' or write your own narration here..."
+                )
+
+                # Update session state if edited
+                if narration_text != existing_narration:
+                    st.session_state.narration_scripts[panel_idx] = narration_text
+
+                # Word count
+                if narration_text:
+                    word_count = len(narration_text.split())
+                    video_duration = st.session_state.get("video_duration", 5)
+                    target_wpm = 150
+                    ideal_words = int(video_duration * target_wpm / 60)
+
+                    if word_count <= ideal_words + 5:
+                        st.caption(f"✅ {word_count} words (target: ~{ideal_words} for {video_duration}s)")
+                    else:
+                        st.caption(f"⚠️ {word_count} words (target: ~{ideal_words} for {video_duration}s) - may be too long")
+
+                # Audio generation
+                col_audio1, col_audio2 = st.columns(2)
+
+                with col_audio1:
+                    if narration_text.strip():
+                        if st.button(f"🔊 Generate Audio", key=f"gen_audio_{panel_idx}"):
+                            task_id = generate_narration_audio(
+                                text=narration_text,
+                                voice_id=voice_id,
+                                panel_num=panel_num
+                            )
+                            if task_id:
+                                st.session_state.narration_audio_tasks[panel_idx] = {
+                                    "task_id": task_id,
+                                    "panel_num": panel_num,
+                                    "status": "processing"
+                                }
+                                st.rerun()
+
+                # Check audio status
+                if panel_idx in st.session_state.narration_audio_tasks:
+                    audio_task = st.session_state.narration_audio_tasks[panel_idx]
+                    audio_status = check_audio_status(audio_task["task_id"])
+
+                    with col_audio2:
+                        if audio_status["status"] == "completed":
+                            audio_url = audio_status.get("audio_url")
+                            if audio_url:
+                                st.session_state.generated_narrations[panel_idx] = audio_url
+                                st.success("✅ Audio ready!")
+                        elif audio_status["status"] == "processing":
+                            st.warning("⏳ Generating audio...")
+                        else:
+                            st.error(f"❌ {audio_status.get('error', 'Failed')}")
+
+                # Play generated audio
+                if panel_idx in st.session_state.generated_narrations:
+                    audio_url = st.session_state.generated_narrations[panel_idx]
+                    st.audio(audio_url)
+                    st.download_button(
+                        f"📥 Download Narration",
+                        audio_url,
+                        file_name=f"panel_{panel_num}_narration.mp3",
+                        mime="audio/mpeg",
+                        key=f"download_narration_{panel_idx}"
+                    )
+
+        # Refresh audio status button
+        if st.session_state.narration_audio_tasks:
+            any_audio_processing = any(
+                check_audio_status(t["task_id"])["status"] == "processing"
+                for t in st.session_state.narration_audio_tasks.values()
+            )
+            if any_audio_processing:
+                if st.button("🔄 Refresh Audio Status"):
+                    st.rerun()
 
     st.divider()
 
