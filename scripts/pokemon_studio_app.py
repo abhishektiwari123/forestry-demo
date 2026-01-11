@@ -448,34 +448,94 @@ def check_video_status(task_id: str) -> dict:
         return {"status": "error", "error": str(e)}
 
 
+# Kling 2.6 Video Generation Best Practices
+KLING_VIDEO_BEST_PRACTICES = """
+## 🎬 Kling 2.6 Video Generation Best Practices
+
+### Prompt Structure (4 Parts)
+**Subject** (specific details) + **Action** (precise movement) + **Context** (3-5 elements max) + **Style** (camera, lighting, mood)
+
+### ✅ DO's:
+- **Specify camera movement**: "tracking shot following from side", "smooth dolly in", "steady pan right"
+- **Add motion endpoints**: "then settles back into place" to prevent AI hangs
+- **Include continuity notes**: "preserve shape", "keep colors consistent", "maintain scale"
+- **Use rigidity language**: "The creature remains solid throughout the movement"
+- **Add weight descriptors**: "heavy footsteps", "trudges forward with power"
+- **Specify lighting**: "Soft key light from side, warm volcanic glow"
+
+### ❌ DON'Ts:
+- Too many elements (causes overload)
+- Missing camera instructions (creates static shots)
+- Open-ended motion (causes 99% hangs)
+- Vague spatial language (creates distortions)
+- Complex simultaneous movements (e.g., "rotate while zooming")
+- Specific numbers (AI struggles with "5 trees", "6 flames")
+
+### Camera Movement Tips:
+- "Locked shot with tiny drift for realism"
+- "Smooth tracking shot following the subject"
+- "Slow push-in on the action"
+- "Stable camera movement, no distortion"
+
+### Motion Quality:
+- If motion feels weightless → add "with heavy impact" or "powerful movement"
+- If objects morph → add "remains solid and rigid throughout"
+- If jerky camera → add "smooth" and "steady, no shake"
+"""
+
 # ASMR Sound Best Practices for Video Generation
 VIDEO_ASMR_BEST_PRACTICES = """
-### 🎵 ASMR Sound Best Practices for Pokemon Battle Videos:
+## 🎵 Kling 2.6 Native Audio & ASMR Best Practices
 
-1. **Environment Sounds**:
-   - Volcanic: crackling lava, distant rumbles, heat shimmer sounds
-   - Forest: rustling leaves, bird calls, gentle wind
-   - Ocean: waves, water splashes, seagull calls
-   - Cave: echoing drips, ancient creaking, subtle reverb
+Kling 2.6 generates **video and audio simultaneously** in a single pass for perfect synchronization!
 
-2. **Pokemon Movement Sounds**:
-   - Wing flaps for flying types
-   - Heavy footsteps for large Pokemon
-   - Electrical crackle for electric types
-   - Fire whoosh for fire types
+### Sound Hierarchy in Prompts:
+Use explicit sound descriptors: "Audio: Clear creature sounds in foreground, soft ambient rumble in background"
+- **"soft", "low volume", "distant"** → pushes sounds to background
+- **"crisp", "close-mic'd", "detailed"** → brings sounds forward
 
-3. **Attack Sounds**:
-   - Energy charging buildup
-   - Impact sounds (not too loud)
-   - Elemental effects (fire roar, water splash, lightning crack)
+### 🎧 ASMR-Style Audio Prompts:
+For documentary-quality immersive sound, add:
+- "ASMR style, very close-mic'd ambient sounds"
+- "Hyper-detailed sound textures"
+- "Soft, intimate audio with room tone"
 
-4. **Atmosphere**:
-   - Keep sounds subtle and background-level
-   - Natural ambiance over dramatic music
-   - BBC documentary style - immersive but not overwhelming
+### Pokemon Battle Sound Layers:
 
-**Prompt Enhancement for ASMR**: Add "Natural ambient sounds, subtle creature sounds, atmospheric audio, ASMR quality" to video prompts.
+**1. Environment Ambience:**
+- Volcanic: "crackling lava, distant rumbles, heat shimmer whoosh, ash falling softly"
+- Forest: "rustling leaves, distant bird calls, gentle wind through trees"
+- Ocean: "waves crashing softly, water splashes, seagull calls"
+- Cave: "echoing drips, ancient creaking, subtle reverb, stone scraping"
+
+**2. Creature Movement Sounds:**
+- Flying types: "powerful wing flaps, air displacement whoosh"
+- Fire types: "crackling flames, heat shimmer, fire whoosh"
+- Electric types: "electrical crackle, static buzzing, spark sounds"
+- Large Pokemon: "heavy footsteps with ground impact, earth trembling"
+- Dragon types: "deep resonant breathing, scales shifting"
+
+**3. Attack Sound Effects:**
+- "Energy charging buildup with rising intensity"
+- "Impact sounds - not too loud, felt more than heard"
+- "Fire attack: roaring flames, heat wave whoosh"
+- "Electric attack: crackling lightning, thunder rumble"
+- "Dragon attack: powerful beam with deep resonance"
+
+### Audio Prompt Template:
+```
+Audio - ambience: [environment sounds], soft and immersive
+Audio - SFX: [creature/action sounds], detailed and clear
+Audio - style: BBC documentary, ASMR quality, no music
+Avoid: background music, static noise, distorted audio
+```
+
+### Example Pokemon Battle Audio Prompt:
+"Audio: Volcanic ambience with distant lava crackling, soft ash falling. Creature sounds: powerful wing beats, deep dragon breathing, fire crackling from mouth. Attack SFX: energy charging with rising intensity, flame burst whoosh. ASMR style, hyper-detailed, no background music, documentary quality."
 """
+
+# Combined best practices constant
+FULL_VIDEO_BEST_PRACTICES = KLING_VIDEO_BEST_PRACTICES + "\n\n---\n\n" + VIDEO_ASMR_BEST_PRACTICES
 
 
 # Create validator
@@ -1592,9 +1652,9 @@ elif st.session_state.step == 6:
     else:
         st.error("❌ Some video prompts have issues. Fix them before generating videos.")
 
-    # ASMR Sound Best Practices
-    with st.expander("🎵 ASMR Sound Best Practices", expanded=False):
-        st.markdown(VIDEO_ASMR_BEST_PRACTICES)
+    # Kling 2.6 Video & Sound Best Practices
+    with st.expander("🎬 Kling 2.6 Video Generation Best Practices", expanded=False):
+        st.markdown(FULL_VIDEO_BEST_PRACTICES)
 
     feedback = st.text_area("Final feedback before video generation:", key="video_feedback")
 
