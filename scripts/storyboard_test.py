@@ -61,9 +61,9 @@ class StoryboardTester:
         print("="*60)
         print(prompt)
         print("="*60)
-        print(f"Resolution: {prompt_config['width']}x{prompt_config['height']}")
-        print(f"Guidance Scale: {prompt_config['guidance_scale']}")
-        print(f"Inference Steps: {prompt_config['num_inference_steps']}")
+        print(f"Model: {prompt_config.get('model', 'nano-banana-pro')}")
+        print(f"Resolution: {prompt_config.get('resolution', '2K')}")
+        print(f"Aspect Ratio: {prompt_config.get('aspect_ratio', '1:1')}")
         print("="*60 + "\n")
 
         # Save prompt for reference
@@ -73,26 +73,22 @@ class StoryboardTester:
             f.write("\n\n--- NEGATIVE PROMPT ---\n")
             f.write(negative_prompt)
             f.write("\n\n--- GENERATION PARAMETERS ---\n")
-            f.write(f"width: {prompt_config['width']}\n")
-            f.write(f"height: {prompt_config['height']}\n")
-            f.write(f"guidance_scale: {prompt_config['guidance_scale']}\n")
-            f.write(f"num_inference_steps: {prompt_config['num_inference_steps']}\n")
+            f.write(f"model: {prompt_config.get('model', 'nano-banana-pro')}\n")
+            f.write(f"resolution: {prompt_config.get('resolution', '2K')}\n")
+            f.write(f"aspect_ratio: {prompt_config.get('aspect_ratio', '1:1')}\n")
 
-        # Generate with Nano Banana API using OPTIMIZED parameters
+        # Generate with Nano Banana Pro API
         # API: POST https://api.kie.ai/api/v1/jobs/createTask
-        # Model: google/nano-banana
-        # Key: 2048x2048 square resolution for better quality
+        # Model: nano-banana-pro (NOT google/nano-banana)
+        # Uses: resolution (1K, 2K, 4K) and aspect_ratio
         payload = {
-            "model": "google/nano-banana",
+            "model": "nano-banana-pro",
             "input": {
                 "prompt": prompt,
-                "negative_prompt": negative_prompt,
-                "output_format": "png",
-                "width": prompt_config["width"],
-                "height": prompt_config["height"],
-                "guidance_scale": prompt_config["guidance_scale"],
-                "num_inference_steps": prompt_config["num_inference_steps"],
-                "num_images": 1
+                "image_input": [],
+                "aspect_ratio": prompt_config.get("aspect_ratio", "1:1"),
+                "resolution": prompt_config.get("resolution", "2K"),
+                "output_format": "png"
             }
         }
 

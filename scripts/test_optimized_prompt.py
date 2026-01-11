@@ -72,21 +72,22 @@ def test_optimized_prompt():
     print(prompt_config["prompt"])
     print("\n" + "-" * 60)
     print(f"Prompt length: {len(prompt_config['prompt'])} characters")
-    print(f"Width: {prompt_config['width']}")
-    print(f"Height: {prompt_config['height']}")
-    print(f"Guidance Scale: {prompt_config['guidance_scale']}")
-    print(f"Inference Steps: {prompt_config['num_inference_steps']}")
+    print(f"Model: {prompt_config.get('model', 'nano-banana-pro')}")
+    print(f"Resolution: {prompt_config.get('resolution', '2K')}")
+    print(f"Aspect Ratio: {prompt_config.get('aspect_ratio', '1:1')}")
     print("=" * 60)
 
-    # Build API payload - Jobs API requires input wrapper
-    # Try with aspect_ratio instead of width/height (which may not be supported)
+    # Build API payload - Nano Banana Pro API format
+    # Model: nano-banana-pro (NOT google/nano-banana)
+    # Uses: resolution (1K, 2K, 4K) and aspect_ratio
     payload = {
-        "model": "google/nano-banana",
+        "model": "nano-banana-pro",
         "input": {
             "prompt": prompt_config["prompt"],
-            "negative_prompt": prompt_config["negative_prompt"],
-            "output_format": "png",
-            "aspect_ratio": "1:1"  # Square for 4-panel grid
+            "image_input": [],
+            "aspect_ratio": "1:1",  # Square for 4-panel grid
+            "resolution": "2K",  # Higher quality: 2K resolution
+            "output_format": "png"
         }
     }
 

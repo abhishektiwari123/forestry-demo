@@ -518,14 +518,15 @@ Composition: Dynamic action poses, clear character separation, consistent charac
 
         negative_prompt = "anime, cartoon, manga, chibi, 2d, 3d render, cgi, digital art, illustration, drawing, sketch, painted, stylized, pixel art, vector, flat colors, shields, defensive barriers, protective auras, trainers, humans, people, pokeballs in hand, text, labels, watermarks, logos, multiple scenes, split screen, grid layout, panel layout, low quality, blurry, distorted, deformed, bad anatomy, extra limbs, missing limbs, wrong proportions, ugly, duplicate, nsfw, gore, blood, violence"
 
+        # KIE API uses resolution and aspect_ratio, NOT width/height
+        # Model should be "nano-banana-pro" for better quality
         return {
             "prompt": prompt,
             "negative_prompt": negative_prompt,
-            "width": 2048,
-            "height": 2048,
-            "guidance_scale": 7.5,
-            "num_inference_steps": 30,
-            "num_images": 1
+            "resolution": "2K",  # Options: 1K, 2K, 4K
+            "aspect_ratio": "1:1",  # Square for 4-panel grid
+            "output_format": "png",
+            "model": "nano-banana-pro"  # Use Pro model for better quality
         }
 
     def _get_simple_features(self, pokemon_name: str) -> str:

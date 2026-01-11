@@ -287,11 +287,12 @@ elif st.session_state.step == 2:
         )
         st.session_state.prompt = prompt_config["prompt"]
         st.session_state.negative_prompt = prompt_config["negative_prompt"]
+        # KIE API uses resolution and aspect_ratio, NOT width/height
         st.session_state.gen_params = {
-            "width": prompt_config["width"],
-            "height": prompt_config["height"],
-            "guidance_scale": prompt_config["guidance_scale"],
-            "num_inference_steps": prompt_config["num_inference_steps"]
+            "model": prompt_config.get("model", "nano-banana-pro"),
+            "resolution": prompt_config.get("resolution", "2K"),
+            "aspect_ratio": prompt_config.get("aspect_ratio", "1:1"),
+            "output_format": prompt_config.get("output_format", "png")
         }
 
     st.subheader("Generated Prompt")
@@ -315,16 +316,14 @@ elif st.session_state.step == 2:
     # Show generation parameters
     with st.expander("View Generation Parameters"):
         gen_params = st.session_state.get("gen_params", {})
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Width", f"{gen_params.get('width', 2048)}px")
+            st.metric("Model", gen_params.get('model', 'nano-banana-pro'))
         with col2:
-            st.metric("Height", f"{gen_params.get('height', 2048)}px")
+            st.metric("Resolution", gen_params.get('resolution', '2K'))
         with col3:
-            st.metric("Guidance", gen_params.get('guidance_scale', 7.5))
-        with col4:
-            st.metric("Steps", gen_params.get('num_inference_steps', 30))
-        st.info("Using 2048x2048 square resolution for better 4-panel quality")
+            st.metric("Aspect Ratio", gen_params.get('aspect_ratio', '1:1'))
+        st.info("Using Nano Banana Pro with 2K resolution for better 4-panel quality")
 
     # Validation
     st.subheader("🔍 Prompt Validation")
@@ -506,30 +505,27 @@ elif st.session_state.step == 3:
 
         if generate_clicked:
             with st.spinner("Generating storyboard... This may take 30-60 seconds"):
-                # Submit generation request using the OPTIMIZED API format
+                # Submit generation request using Nano Banana Pro API format
                 # API: POST /api/v1/jobs/createTask
-                # Model: google/nano-banana
-                # Key: Use 2048x2048 square resolution for better quality
+                # Model: nano-banana-pro (NOT google/nano-banana)
+                # Uses: resolution (1K, 2K, 4K) and aspect_ratio
 
                 # Get generation parameters (or use defaults)
                 gen_params = st.session_state.get("gen_params", {
-                    "width": 2048,
-                    "height": 2048,
-                    "guidance_scale": 7.5,
-                    "num_inference_steps": 30
+                    "model": "nano-banana-pro",
+                    "resolution": "2K",
+                    "aspect_ratio": "1:1",
+                    "output_format": "png"
                 })
 
                 payload = {
-                    "model": "google/nano-banana",
+                    "model": gen_params.get("model", "nano-banana-pro"),
                     "input": {
                         "prompt": st.session_state.prompt,
-                        "negative_prompt": st.session_state.negative_prompt,
-                        "output_format": "png",
-                        "width": gen_params["width"],
-                        "height": gen_params["height"],
-                        "guidance_scale": gen_params["guidance_scale"],
-                        "num_inference_steps": gen_params["num_inference_steps"],
-                        "num_images": 1
+                        "image_input": [],
+                        "aspect_ratio": gen_params.get("aspect_ratio", "1:1"),
+                        "resolution": gen_params.get("resolution", "2K"),
+                        "output_format": gen_params.get("output_format", "png")
                     }
                 }
 
