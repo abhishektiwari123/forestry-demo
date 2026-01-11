@@ -9,7 +9,7 @@ Run with: streamlit run scripts/pokemon_studio_app.py
 """
 
 import streamlit as st
-import subprocess
+import requests
 import json
 import os
 import time
@@ -39,24 +39,41 @@ if "negative_prompt" not in st.session_state:
     st.session_state.negative_prompt = ""
 if "storyboard_path" not in st.session_state:
     st.session_state.storyboard_path = None
+if "storyboard_image" not in st.session_state:
+    st.session_state.storyboard_image = None
 if "panels" not in st.session_state:
     st.session_state.panels = []
+if "panel_images" not in st.session_state:
+    st.session_state.panel_images = []
 if "video_prompts" not in st.session_state:
     st.session_state.video_prompts = []
 if "feedback_log" not in st.session_state:
     st.session_state.feedback_log = []
-if "output_dir" not in st.session_state:
-    st.session_state.output_dir = f"studio_output_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+if "validation_errors" not in st.session_state:
+    st.session_state.validation_errors = []
+if "user_feedback" not in st.session_state:
+    st.session_state.user_feedback = ""
 
-# Load API key
+# Load API key from secrets or environment
 def get_api_key():
+    # Try Streamlit secrets first
+    try:
+        return st.secrets["KIE_API_KEY"]
+    except:
+        pass
+
+    # Try environment variable
+    if os.environ.get("KIE_API_KEY"):
+        return os.environ.get("KIE_API_KEY")
+
+    # Try .env file
     env_path = os.path.join(os.path.dirname(__file__), ".env")
     if os.path.exists(env_path):
         with open(env_path) as f:
             for line in f:
                 if line.startswith("KIE_API_KEY="):
                     return line.strip().split("=", 1)[1]
-    return os.environ.get("KIE_API_KEY", "")
+    return ""
 
 KIE_API_KEY = get_api_key()
 
@@ -75,33 +92,63 @@ def log_feedback(step: str, feedback: str, action: str):
 
 
 def call_kie_api(endpoint: str, payload: dict = None, method: str = "GET"):
-    """Call KIE API with error handling."""
+    """Call KIE API using requests library."""
     base_url = "https://api.kieai.erweima.ai/api/v1"
+    headers = {
+        "Authorization": f"Bearer {KIE_API_KEY}",
+        "Content-Type": "application/json"
+    }
 
-    if method == "POST":
-        curl_cmd = [
-            "curl", "-k", "-s", "-X", "POST",
-            f"{base_url}/{endpoint}",
-            "-H", f"Authorization: Bearer {KIE_API_KEY}",
-            "-H", "Content-Type: application/json",
-            "-d", json.dumps(payload)
-        ]
-    else:
-        curl_cmd = [
-            "curl", "-k", "-s",
-            f"{base_url}/{endpoint}",
-            "-H", f"Authorization: Bearer {KIE_API_KEY}"
-        ]
+    try:
+        if method == "POST":
+            response = requests.post(
+                f"{base_url}/{endpoint}",
+                headers=headers,
+                json=payload,
+                timeout=60,
+                verify=False  # Skip SSL verification
+            )
+        else:
+            response = requests.get(
+                f"{base_url}/{endpoint}",
+                headers=headers,
+                timeout=60,
+                verify=False
+            )
 
-    result = subprocess.run(curl_cmd, capture_output=True, text=True, timeout=60)
-    return json.loads(result.stdout) if result.stdout else {}
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}
+    except json.JSONDecodeError:
+        return {"error": "Invalid JSON response"}
 
 
-def download_file(url: str, output_path: str) -> bool:
-    """Download file from URL."""
-    curl_cmd = ["curl", "-k", "-L", "-s", "-o", output_path, url]
-    result = subprocess.run(curl_cmd, capture_output=True, timeout=120)
-    return result.returncode == 0 and os.path.exists(output_path) and os.path.getsize(output_path) > 1000
+def download_image(url: str) -> Image.Image:
+    """Download image from URL and return as PIL Image."""
+    try:
+        response = requests.get(url, timeout=120, verify=False)
+        if response.status_code == 200:
+            return Image.open(BytesIO(response.content))
+    except Exception as e:
+        st.error(f"Download error: {e}")
+    return None
+
+
+def incorporate_feedback_into_prompt(prompt: str, feedback: str) -> str:
+    """Use feedback to improve the prompt."""
+    if not feedback.strip():
+        return prompt
+
+    # Add feedback as additional instructions
+    feedback_section = f"""
+
+=== USER FEEDBACK TO INCORPORATE ===
+{feedback}
+
+=== ADJUSTED REQUIREMENTS ===
+Please ensure the above feedback is addressed in the generated image.
+"""
+    return prompt + feedback_section
 
 
 # ============================================================================
@@ -109,6 +156,15 @@ def download_file(url: str, output_path: str) -> bool:
 # ============================================================================
 st.title("🐉 Pokemon AI Video Studio")
 st.markdown("**Interactive step-by-step workflow for Pokemon battle video generation**")
+
+# API Key check
+if not KIE_API_KEY:
+    st.error("⚠️ KIE_API_KEY not found! Add it to Streamlit secrets or .env file")
+    st.code("""
+# In Streamlit Cloud, go to Settings > Secrets and add:
+KIE_API_KEY = "your-api-key-here"
+    """)
+    st.stop()
 
 # Progress indicator
 steps = ["1. Setup", "2. Prompt", "3. Generate", "4. Split", "5. Upscale", "6. Video"]
@@ -154,9 +210,6 @@ if st.session_state.step == 1:
         )
         st.session_state.environment = environment
 
-        st.subheader("Output Directory")
-        st.text_input("Output folder", value=st.session_state.output_dir, key="output_dir_input")
-
     # Show Pokemon info
     st.subheader("Selected Pokemon Details")
     info_col1, info_col2 = st.columns(2)
@@ -180,7 +233,6 @@ if st.session_state.step == 1:
     st.divider()
 
     if st.button("✅ Proceed to Prompt Generation", type="primary"):
-        os.makedirs(st.session_state.output_dir, exist_ok=True)
         st.session_state.step = 2
         st.rerun()
 
@@ -221,36 +273,68 @@ elif st.session_state.step == 2:
         st.session_state.negative_prompt = edited_negative
 
     # Validation
-    st.subheader("Prompt Validation")
+    st.subheader("🔍 Prompt Validation")
     validation = validator.validate_storyboard_prompt(
         edited_prompt,
         panel_count=4,
         pokemon_names=st.session_state.pokemon
     )
 
-    if validation.passed:
-        st.success(f"✅ Validation PASSED (Score: {validation.score:.2f})")
-    else:
-        st.warning(f"⚠️ Validation Score: {validation.score:.2f}")
+    # Show validation results in colored boxes
+    col1, col2 = st.columns(2)
+    with col1:
+        if validation.passed:
+            st.success(f"✅ Validation PASSED (Score: {validation.score:.2f})")
+        else:
+            st.error(f"❌ Validation FAILED (Score: {validation.score:.2f})")
 
+    with col2:
+        st.metric("Validation Score", f"{validation.score:.0%}")
+
+    # Show issues, warnings, suggestions in expandable sections
     if validation.issues:
-        st.error("Issues: " + ", ".join(validation.issues))
+        st.error("**Issues (Must Fix):**")
+        for issue in validation.issues:
+            st.markdown(f"- ❌ {issue}")
+        st.session_state.validation_errors = validation.issues
+
     if validation.warnings:
-        st.warning("Warnings: " + ", ".join(validation.warnings))
+        st.warning("**Warnings:**")
+        for warning in validation.warnings:
+            st.markdown(f"- ⚠️ {warning}")
+
     if validation.suggestions:
-        st.info("Suggestions: " + ", ".join(validation.suggestions))
+        st.info("**Suggestions:**")
+        for suggestion in validation.suggestions:
+            st.markdown(f"- 💡 {suggestion}")
 
-    # Checklist
-    st.subheader("Manual Checklist")
-    check1 = st.checkbox(f"{st.session_state.pokemon[0]} positioned on LEFT, facing RIGHT")
-    check2 = st.checkbox(f"{st.session_state.pokemon[1]} positioned on RIGHT, facing LEFT")
-    check3 = st.checkbox("Attack effects explicitly described (VISIBLE beams)")
-    check4 = st.checkbox("Battle damage continuity mentioned for panels 3-4")
-    check5 = st.checkbox("Photorealistic style enforced (no anime/cartoon)")
+    # Manual Checklist
+    st.subheader("📋 Manual Checklist")
+    check1 = st.checkbox(f"{st.session_state.pokemon[0]} positioned on LEFT, facing RIGHT", key="check1")
+    check2 = st.checkbox(f"{st.session_state.pokemon[1]} positioned on RIGHT, facing LEFT", key="check2")
+    check3 = st.checkbox("Attack effects explicitly described (VISIBLE beams)", key="check3")
+    check4 = st.checkbox("Battle damage continuity mentioned for panels 3-4", key="check4")
+    check5 = st.checkbox("Photorealistic style enforced (no anime/cartoon)", key="check5")
 
-    # Feedback
-    st.subheader("Your Feedback")
-    feedback = st.text_area("Add notes/feedback about this prompt:", key="prompt_feedback")
+    all_checked = all([check1, check2, check3, check4, check5])
+
+    # Feedback Section
+    st.subheader("📝 Your Feedback")
+    feedback = st.text_area(
+        "Add notes/feedback to improve the prompt:",
+        value=st.session_state.user_feedback,
+        key="prompt_feedback",
+        placeholder="e.g., 'Make the fire attack more prominent', 'Dragonite should look more aggressive'"
+    )
+    st.session_state.user_feedback = feedback
+
+    # Incorporate Feedback Button
+    if feedback.strip():
+        if st.button("🔄 Incorporate Feedback into Prompt", type="secondary"):
+            st.session_state.prompt = incorporate_feedback_into_prompt(edited_prompt, feedback)
+            st.session_state.user_feedback = ""  # Clear feedback after incorporating
+            st.success("Feedback incorporated! Review the updated prompt above.")
+            st.rerun()
 
     st.divider()
 
@@ -262,9 +346,12 @@ elif st.session_state.step == 2:
     with col2:
         if st.button("🔄 Regenerate Prompt"):
             st.session_state.prompt = ""
+            st.session_state.user_feedback = ""
             st.rerun()
     with col3:
-        if st.button("✅ Approve & Generate Image", type="primary"):
+        if not all_checked:
+            st.warning("Complete all checklist items to proceed")
+        if st.button("✅ Approve & Generate Image", type="primary", disabled=not all_checked):
             st.session_state.prompt = edited_prompt
             log_feedback("prompt", feedback, "approved")
             st.session_state.step = 3
@@ -277,30 +364,45 @@ elif st.session_state.step == 2:
 elif st.session_state.step == 3:
     st.header("Step 3: Storyboard Image Generation")
 
-    if st.session_state.storyboard_path and os.path.exists(st.session_state.storyboard_path):
+    if st.session_state.storyboard_image is not None:
         # Already generated - show result
         st.success("✅ Storyboard generated!")
-        st.image(st.session_state.storyboard_path, caption="Generated Storyboard")
+        st.image(st.session_state.storyboard_image, caption="Generated Storyboard", use_container_width=True)
 
         # Analysis
-        img = Image.open(st.session_state.storyboard_path)
+        img = st.session_state.storyboard_image
         st.write(f"Image size: {img.size[0]}x{img.size[1]}")
         st.write(f"Aspect ratio: {img.size[0]/img.size[1]:.2f}")
 
-        # Manual review
-        st.subheader("Manual Review Checklist")
-        st.markdown(f"""
-        Review the generated storyboard:
-        - [ ] **Panel 1 (top-left)**: {st.session_state.pokemon[0]} attacking, visible beam?
-        - [ ] **Panel 2 (top-right)**: Impact on {st.session_state.pokemon[1]}?
-        - [ ] **Panel 3 (bottom-left)**: {st.session_state.pokemon[1]} shows damage, charging attack?
-        - [ ] **Panel 4 (bottom-right)**: Counter-attack with damage continuity?
-        - [ ] Both Pokemon facing each other in all panels?
-        - [ ] Photorealistic style (not anime/cartoon)?
-        """)
+        # Manual review with validation
+        st.subheader("🔍 Image Validation Checklist")
 
-        # Feedback
-        feedback = st.text_area("Feedback on generated image:", key="image_feedback")
+        img_checks = {
+            "panel1_pokemon1": st.checkbox(f"Panel 1: {st.session_state.pokemon[0]} visible on LEFT?", key="img_c1"),
+            "panel1_pokemon2": st.checkbox(f"Panel 1: {st.session_state.pokemon[1]} visible on RIGHT?", key="img_c2"),
+            "panel1_attack": st.checkbox("Panel 1: Attack beam/effect visible?", key="img_c3"),
+            "facing": st.checkbox("All panels: Both Pokemon FACING each other?", key="img_c4"),
+            "damage": st.checkbox("Panels 3-4: Battle damage visible on Dragonite?", key="img_c5"),
+            "style": st.checkbox("Style: Photorealistic (NOT anime/cartoon)?", key="img_c6"),
+            "no_borders": st.checkbox("No thick borders between panels?", key="img_c7"),
+        }
+
+        failed_checks = [k for k, v in img_checks.items() if not v]
+        passed_checks = [k for k, v in img_checks.items() if v]
+
+        if failed_checks:
+            st.error(f"❌ {len(failed_checks)} validation checks failed")
+            st.session_state.validation_errors = failed_checks
+        else:
+            st.success("✅ All validation checks passed!")
+
+        # Feedback for regeneration
+        st.subheader("📝 Feedback for Regeneration")
+        feedback = st.text_area(
+            "What needs to be fixed?",
+            key="image_feedback",
+            placeholder="e.g., 'Dragonite is facing away', 'No attack beam visible in panel 1', 'Style looks like anime'"
+        )
 
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -308,21 +410,30 @@ elif st.session_state.step == 3:
                 st.session_state.step = 2
                 st.rerun()
         with col2:
-            if st.button("🔄 Regenerate Image"):
-                st.session_state.storyboard_path = None
+            if st.button("🔄 Regenerate with Feedback"):
+                if feedback.strip():
+                    st.session_state.prompt = incorporate_feedback_into_prompt(
+                        st.session_state.prompt,
+                        f"PREVIOUS IMAGE ISSUES: {feedback}"
+                    )
+                st.session_state.storyboard_image = None
+                log_feedback("image", feedback, "regenerate")
                 st.rerun()
         with col3:
-            if st.button("✅ Approve & Split Panels", type="primary"):
+            can_proceed = len(failed_checks) == 0
+            if st.button("✅ Approve & Split Panels", type="primary", disabled=not can_proceed):
                 log_feedback("image", feedback, "approved")
                 st.session_state.step = 4
                 st.rerun()
+            if not can_proceed:
+                st.caption("Complete all checks to proceed")
 
     else:
         # Need to generate
         st.info("Click below to generate the storyboard image from your approved prompt.")
 
-        with st.expander("View Prompt"):
-            st.text(st.session_state.prompt[:500] + "...")
+        with st.expander("View Prompt", expanded=False):
+            st.text(st.session_state.prompt)
 
         if st.button("🎨 Generate Storyboard", type="primary"):
             with st.spinner("Generating storyboard... This may take 30-60 seconds"):
@@ -336,44 +447,54 @@ elif st.session_state.step == 3:
                 }
 
                 response = call_kie_api("generate", payload, method="POST")
-                task_id = response.get("data", {}).get("taskId")
 
-                if not task_id:
-                    st.error(f"Failed to submit generation task: {response}")
+                if "error" in response:
+                    st.error(f"API Error: {response['error']}")
                 else:
-                    st.write(f"Task ID: {task_id}")
-                    progress = st.progress(0)
+                    task_id = response.get("data", {}).get("taskId")
 
-                    # Poll for completion
-                    for i in range(60):
-                        time.sleep(5)
-                        progress.progress((i + 1) / 60)
-
-                        status = call_kie_api(f"recordInfo?taskId={task_id}")
-                        state = status.get("data", {}).get("state", "").lower()
-
-                        if state == "success":
-                            result_json = status.get("data", {}).get("resultJson", "{}")
-                            if isinstance(result_json, str):
-                                result_json = json.loads(result_json)
-
-                            urls = result_json.get("resultUrls", [])
-                            if urls:
-                                output_path = os.path.join(st.session_state.output_dir, "storyboard.jpg")
-                                if download_file(urls[0], output_path):
-                                    st.session_state.storyboard_path = output_path
-                                    st.success("✅ Generated successfully!")
-                                    st.rerun()
-                                else:
-                                    st.error("Failed to download image")
-                            break
-
-                        elif state in ["failed", "error"]:
-                            st.error(f"Generation failed: {status.get('data', {}).get('failMsg')}")
-                            break
-
+                    if not task_id:
+                        st.error(f"Failed to submit generation task. Response: {response}")
                     else:
-                        st.error("Timeout - generation took too long")
+                        st.write(f"Task ID: {task_id}")
+                        progress = st.progress(0)
+                        status_text = st.empty()
+
+                        # Poll for completion
+                        for i in range(60):
+                            time.sleep(5)
+                            progress.progress((i + 1) / 60)
+                            status_text.text(f"Waiting for generation... ({(i+1)*5}s)")
+
+                            status = call_kie_api(f"recordInfo?taskId={task_id}")
+
+                            if "error" in status:
+                                continue
+
+                            state = status.get("data", {}).get("state", "").lower()
+
+                            if state == "success":
+                                result_json = status.get("data", {}).get("resultJson", "{}")
+                                if isinstance(result_json, str):
+                                    result_json = json.loads(result_json)
+
+                                urls = result_json.get("resultUrls", [])
+                                if urls:
+                                    img = download_image(urls[0])
+                                    if img:
+                                        st.session_state.storyboard_image = img
+                                        st.success("✅ Generated successfully!")
+                                        st.rerun()
+                                    else:
+                                        st.error("Failed to download image")
+                                break
+
+                            elif state in ["failed", "error"]:
+                                st.error(f"Generation failed: {status.get('data', {}).get('failMsg')}")
+                                break
+
+                        else:
+                            st.error("Timeout - generation took too long")
 
 
 # ============================================================================
@@ -382,31 +503,38 @@ elif st.session_state.step == 3:
 elif st.session_state.step == 4:
     st.header("Step 4: Panel Splitting & Validation")
 
-    if st.session_state.panels:
+    if st.session_state.panel_images:
         # Already split - show panels
         st.success("✅ Panels extracted!")
 
         cols = st.columns(2)
-        for i, panel_path in enumerate(st.session_state.panels):
+        for i, panel_img in enumerate(st.session_state.panel_images):
             with cols[i % 2]:
-                st.image(panel_path, caption=f"Panel {i+1}")
-                img = Image.open(panel_path)
-                st.caption(f"Size: {img.size[0]}x{img.size[1]}")
+                st.image(panel_img, caption=f"Panel {i+1}", use_container_width=True)
+                st.caption(f"Size: {panel_img.size[0]}x{panel_img.size[1]}")
 
-        # Manual review
-        st.subheader("Panel-by-Panel Review")
-        reviews = []
+        # Panel-by-panel validation
+        st.subheader("🔍 Panel Validation")
+
+        panel_issues = []
         for i in range(4):
-            with st.expander(f"Panel {i+1} Review"):
-                ok = st.checkbox(f"Panel {i+1} looks correct", key=f"panel_{i}_ok")
-                notes = st.text_input(f"Notes for Panel {i+1}", key=f"panel_{i}_notes")
-                reviews.append({"ok": ok, "notes": notes})
+            with st.expander(f"Panel {i+1} Review", expanded=True):
+                col1, col2 = st.columns(2)
+                with col1:
+                    ok = st.checkbox(f"Panel {i+1} content correct", key=f"panel_{i}_ok")
+                with col2:
+                    border_ok = st.checkbox(f"No visible borders/edges", key=f"panel_{i}_border")
 
-        # Check for frame borders
+                notes = st.text_input(f"Issues with Panel {i+1}", key=f"panel_{i}_notes")
+                if notes:
+                    panel_issues.append(f"Panel {i+1}: {notes}")
+
+        # Border check
         st.subheader("Border Check")
         has_borders = st.radio(
             "Are there visible frame borders in any panel?",
-            ["No borders visible", "Some borders visible", "Heavy borders visible"]
+            ["No borders visible ✅", "Some borders visible ⚠️", "Heavy borders visible ❌"],
+            key="border_check"
         )
 
         feedback = st.text_area("Overall feedback on panel splitting:", key="split_feedback")
@@ -418,10 +546,11 @@ elif st.session_state.step == 4:
                 st.rerun()
         with col2:
             if st.button("🔄 Re-split with Different Margins"):
-                st.session_state.panels = []
+                st.session_state.panel_images = []
                 st.rerun()
         with col3:
-            if st.button("✅ Approve & Upscale", type="primary"):
+            can_proceed = "No borders" in has_borders
+            if st.button("✅ Approve & Upscale", type="primary", disabled=not can_proceed):
                 log_feedback("split", feedback, "approved")
                 st.session_state.step = 5
                 st.rerun()
@@ -430,22 +559,21 @@ elif st.session_state.step == 4:
         # Need to split
         st.info("Split the storyboard into 4 individual panels.")
 
-        if st.session_state.storyboard_path:
-            st.image(st.session_state.storyboard_path, caption="Storyboard to split")
+        if st.session_state.storyboard_image:
+            st.image(st.session_state.storyboard_image, caption="Storyboard to split", use_container_width=True)
 
-        margin_pct = st.slider("Border margin to remove (%)", 0, 15, 4)
+        margin_pct = st.slider("Border margin to remove (%)", 0, 15, 4, key="margin_slider")
+
+        st.info(f"Will remove {margin_pct}% from each panel edge to eliminate borders")
 
         if st.button("✂️ Split into Panels", type="primary"):
             with st.spinner("Splitting panels..."):
-                img = Image.open(st.session_state.storyboard_path)
+                img = st.session_state.storyboard_image
                 width, height = img.size
 
                 panel_w = width // 2
                 panel_h = height // 2
                 margin = int(min(panel_w, panel_h) * margin_pct / 100)
-
-                panels_dir = os.path.join(st.session_state.output_dir, "panels")
-                os.makedirs(panels_dir, exist_ok=True)
 
                 panels = []
                 for i, (row, col) in enumerate([(0, 0), (0, 1), (1, 0), (1, 1)]):
@@ -455,11 +583,9 @@ elif st.session_state.step == 4:
                     y2 = (row + 1) * panel_h - margin
 
                     panel = img.crop((x1, y1, x2, y2))
-                    panel_path = os.path.join(panels_dir, f"panel_{i+1}.jpg")
-                    panel.save(panel_path, "JPEG", quality=95)
-                    panels.append(panel_path)
+                    panels.append(panel)
 
-                st.session_state.panels = panels
+                st.session_state.panel_images = panels
                 st.success("✅ Panels extracted!")
                 st.rerun()
 
@@ -470,22 +596,14 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     st.header("Step 5: Upscaling Panels")
 
-    upscaled_dir = os.path.join(st.session_state.output_dir, "upscaled")
-
-    # Check if already upscaled
-    upscaled_files = []
-    if os.path.exists(upscaled_dir):
-        upscaled_files = [os.path.join(upscaled_dir, f) for f in sorted(os.listdir(upscaled_dir)) if f.endswith('.jpg')]
-
-    if len(upscaled_files) == 4:
+    if "upscaled_images" in st.session_state and st.session_state.upscaled_images:
         st.success("✅ Panels upscaled!")
 
         cols = st.columns(2)
-        for i, up_path in enumerate(upscaled_files):
+        for i, up_img in enumerate(st.session_state.upscaled_images):
             with cols[i % 2]:
-                st.image(up_path, caption=f"Upscaled Panel {i+1}")
-                img = Image.open(up_path)
-                st.caption(f"Size: {img.size[0]}x{img.size[1]}")
+                st.image(up_img, caption=f"Upscaled Panel {i+1}", use_container_width=True)
+                st.caption(f"Size: {up_img.size[0]}x{up_img.size[1]}")
 
         feedback = st.text_area("Feedback on upscaled panels:", key="upscale_feedback")
 
@@ -496,8 +614,7 @@ elif st.session_state.step == 5:
                 st.rerun()
         with col2:
             if st.button("🔄 Re-upscale"):
-                import shutil
-                shutil.rmtree(upscaled_dir, ignore_errors=True)
+                st.session_state.upscaled_images = []
                 st.rerun()
         with col3:
             if st.button("✅ Approve & Create Video Prompts", type="primary"):
@@ -506,22 +623,31 @@ elif st.session_state.step == 5:
                 st.rerun()
 
     else:
-        st.info("Upscale panels using LANCZOS resampling (content-preserving).")
+        st.info("Upscale panels using LANCZOS resampling (content-preserving, no AI regeneration).")
 
-        scale = st.selectbox("Upscale factor", [2, 3, 4], index=0)
+        # Show current panels
+        if st.session_state.panel_images:
+            cols = st.columns(4)
+            for i, panel in enumerate(st.session_state.panel_images):
+                with cols[i]:
+                    st.image(panel, caption=f"Panel {i+1}\n{panel.size[0]}x{panel.size[1]}", use_container_width=True)
+
+        scale = st.selectbox("Upscale factor", [2, 3, 4], index=0, key="scale_select")
+
+        if st.session_state.panel_images:
+            original_size = st.session_state.panel_images[0].size
+            new_size = (original_size[0] * scale, original_size[1] * scale)
+            st.info(f"Will upscale from {original_size[0]}x{original_size[1]} to {new_size[0]}x{new_size[1]}")
 
         if st.button("⬆️ Upscale Panels", type="primary"):
             with st.spinner("Upscaling panels..."):
-                os.makedirs(upscaled_dir, exist_ok=True)
+                upscaled = []
+                for panel in st.session_state.panel_images:
+                    new_size = (panel.size[0] * scale, panel.size[1] * scale)
+                    up_img = panel.resize(new_size, Image.LANCZOS)
+                    upscaled.append(up_img)
 
-                for i, panel_path in enumerate(st.session_state.panels):
-                    img = Image.open(panel_path)
-                    new_size = (img.size[0] * scale, img.size[1] * scale)
-                    upscaled = img.resize(new_size, Image.LANCZOS)
-
-                    up_path = os.path.join(upscaled_dir, f"scene_{i+1:02d}.jpg")
-                    upscaled.save(up_path, "JPEG", quality=95)
-
+                st.session_state.upscaled_images = upscaled
                 st.success("✅ Upscaling complete!")
                 st.rerun()
 
@@ -532,7 +658,7 @@ elif st.session_state.step == 5:
 elif st.session_state.step == 6:
     st.header("Step 6: Video Motion Prompts")
 
-    st.info("Generate motion prompts for each panel to create videos.")
+    st.info("Generate and review motion prompts for each panel before creating videos.")
 
     # Define scene actions
     scene_actions = [
@@ -542,15 +668,27 @@ elif st.session_state.step == 6:
         f"{st.session_state.pokemon[1]} releasing attack beam toward {st.session_state.pokemon[0]}"
     ]
 
+    # Show upscaled panels for reference
+    st.subheader("📸 Reference Panels")
+    if "upscaled_images" in st.session_state:
+        cols = st.columns(4)
+        for i, img in enumerate(st.session_state.upscaled_images):
+            with cols[i]:
+                st.image(img, caption=f"Scene {i+1}", use_container_width=True)
+
     # Generate or edit video prompts
-    st.subheader("Motion Prompts for Each Scene")
+    st.subheader("🎬 Motion Prompts for Each Scene")
 
     video_prompts = []
+    prompt_validations = []
+
     for i in range(4):
         with st.expander(f"Scene {i+1} Motion Prompt", expanded=True):
             # Generate if not exists
             if len(st.session_state.video_prompts) <= i:
-                pokemon_name = st.session_state.pokemon[0] if i in [0, 3] else st.session_state.pokemon[1]
+                pokemon_name = st.session_state.pokemon[0] if i in [0] else st.session_state.pokemon[1]
+                if i == 3:
+                    pokemon_name = st.session_state.pokemon[1]  # Dragonite attacks in scene 4
                 default_prompt = validator.generate_holistic_video_prompt(
                     pokemon_name=pokemon_name,
                     action=scene_actions[i],
@@ -569,14 +707,27 @@ elif st.session_state.step == 6:
 
             # Validate
             validation = validator.validate_video_prompt(edited)
-            if validation.passed:
-                st.success(f"✅ Valid (Score: {validation.score:.2f})")
-            else:
-                st.warning(f"⚠️ Score: {validation.score:.2f}")
+            prompt_validations.append(validation)
+
+            col1, col2 = st.columns(2)
+            with col1:
+                if validation.passed:
+                    st.success(f"✅ Valid (Score: {validation.score:.2f})")
+                else:
+                    st.error(f"❌ Invalid (Score: {validation.score:.2f})")
+            with col2:
                 if validation.issues:
-                    st.error(", ".join(validation.issues))
+                    st.warning(", ".join(validation.issues))
 
     st.session_state.video_prompts = video_prompts
+
+    # Overall validation
+    all_valid = all(v.passed for v in prompt_validations)
+
+    if all_valid:
+        st.success("✅ All video prompts are valid!")
+    else:
+        st.error("❌ Some video prompts have issues. Fix them before generating videos.")
 
     feedback = st.text_area("Final feedback before video generation:", key="video_feedback")
 
@@ -589,7 +740,7 @@ elif st.session_state.step == 6:
             st.rerun()
     with col2:
         if st.button("💾 Save Configuration"):
-            # Save all config
+            # Create downloadable config
             config = {
                 "pokemon": st.session_state.pokemon,
                 "environment": st.session_state.environment,
@@ -598,17 +749,21 @@ elif st.session_state.step == 6:
                 "video_prompts": st.session_state.video_prompts,
                 "feedback_log": st.session_state.feedback_log
             }
-            config_path = os.path.join(st.session_state.output_dir, "config.json")
-            with open(config_path, "w") as f:
-                json.dump(config, f, indent=2)
-            st.success(f"Saved to {config_path}")
+            config_json = json.dumps(config, indent=2)
+            st.download_button(
+                "📥 Download Config JSON",
+                config_json,
+                file_name="pokemon_studio_config.json",
+                mime="application/json"
+            )
 
     with col3:
-        st.warning("⚠️ Video generation uses credits!")
-        if st.button("🎬 Generate Videos", type="primary"):
+        st.warning("⚠️ Video generation uses API credits!")
+        if st.button("🎬 Generate Videos", type="primary", disabled=not all_valid):
             log_feedback("video_prompts", feedback, "approved_for_generation")
-            st.success("Ready for video generation!")
-            st.info("Video generation would proceed here (disabled to save credits)")
+            st.success("✅ Ready for video generation!")
+            st.balloons()
+            st.info("Video generation would proceed here. Implementation coming soon!")
 
 
 # ============================================================================
@@ -617,10 +772,21 @@ elif st.session_state.step == 6:
 with st.sidebar:
     st.header("📋 Session Info")
     st.write(f"**Current Step:** {st.session_state.step}/6")
-    st.write(f"**Output Dir:** {st.session_state.output_dir}")
 
-    if hasattr(st.session_state, 'pokemon'):
+    if hasattr(st.session_state, 'pokemon') and st.session_state.pokemon:
         st.write(f"**Pokemon:** {' vs '.join(st.session_state.pokemon)}")
+        st.write(f"**Environment:** {st.session_state.get('environment', 'N/A')}")
+
+    st.divider()
+
+    # Validation Status
+    st.header("🔍 Validation Status")
+    if st.session_state.validation_errors:
+        st.error(f"{len(st.session_state.validation_errors)} issues found")
+        for err in st.session_state.validation_errors[:3]:
+            st.caption(f"• {err}")
+    else:
+        st.success("No validation errors")
 
     st.divider()
 
@@ -638,5 +804,5 @@ with st.sidebar:
         st.rerun()
 
     st.divider()
-    st.caption("Pokemon AI Video Studio v1.0")
-    st.caption("Storyboard-only mode (videos disabled)")
+    st.caption("Pokemon AI Video Studio v2.0")
+    st.caption("With validation & feedback")
