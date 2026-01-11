@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-01-11T08:30:34.279583",
+  "storyboard": "dragonite_counterattack",
+  "results": [
+    {
+      "file": "scene_01_4x.jpg",
+      "valid": true,
+      "width": 4016,
+      "height": 3612,
+      "file_size_mb": 3.04,
+      "aspect_ratio": 1.11,
+      "issues": []
+    },
+    {
+      "file": "scene_02_4x.jpg",
+      "valid": true,
+      "width": 4016,
+      "height": 3612,
+      "file_size_mb": 2.92,
+      "aspect_ratio": 1.11,
+      "issues": []
+    },
+    {
+      "file": "scene_03_4x.jpg",
+      "valid": true,
+      "width": 4016,
+      "height": 3612,
+      "file_size_mb": 2.99,
+      "aspect_ratio": 1.11,
+      "issues": []
+    },
+    {
+      "file": "scene_04_4x.jpg",
+      "valid": true,
+      "width": 4016,
+      "height": 3612,
+      "file_size_mb": 3.0,
+      "aspect_ratio": 1.11,
+      "issues": []
+    }
+  ],
+  "passed": 4,
+  "total": 4,
+  "forbidden_elements": [
+    "shields",
+    "defensive barriers",
+    "protective auras",
+    "trainers",
+    "text labels",
+    "healing effects"
+  ],
+  "continuity_elements": {
+    "burn_marks": "Must be visible on Dragonite in all panels",
+    "both_pokemon": "Charizard and Dragonite must be present",
+    "volcanic_environment": "Background must be consistent"
+  }
+}

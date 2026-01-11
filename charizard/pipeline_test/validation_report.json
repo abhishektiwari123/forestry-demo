@@ -1,0 +1,110 @@
+{
+  "timestamp": "2026-01-11T08:43:13.099011",
+  "total_scenes": 4,
+  "passed": 4,
+  "failed": 0,
+  "validation_log": [
+    {
+      "scene": "scene_01",
+      "passed": false,
+      "issues": [
+        "Dimension too small: 1365x768, min: 1280"
+      ],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 363.7
+      }
+    },
+    {
+      "scene": "scene_02",
+      "passed": false,
+      "issues": [
+        "Dimension too small: 1365x768, min: 1280"
+      ],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 360.5
+      }
+    },
+    {
+      "scene": "scene_03",
+      "passed": false,
+      "issues": [
+        "Dimension too small: 1365x768, min: 1280"
+      ],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 355.3
+      }
+    },
+    {
+      "scene": "scene_04",
+      "passed": false,
+      "issues": [
+        "Dimension too small: 1365x768, min: 1280"
+      ],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 395.0
+      }
+    },
+    {
+      "scene": "scene_01_16x9_2x",
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 939.8
+      }
+    },
+    {
+      "scene": "scene_02_16x9_2x",
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 935.6
+      }
+    },
+    {
+      "scene": "scene_03_16x9_2x",
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 934.2
+      }
+    },
+    {
+      "scene": "scene_04_16x9_2x",
+      "passed": true,
+      "issues": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "aspect_ratio": 1.777,
+        "file_size_kb": 1013.4
+      }
+    }
+  ],
+  "scenes": [
+    "charizard/pipeline_test/upscaled/scene_01_16x9_2x.jpg",
+    "charizard/pipeline_test/upscaled/scene_02_16x9_2x.jpg",
+    "charizard/pipeline_test/upscaled/scene_03_16x9_2x.jpg",
+    "charizard/pipeline_test/upscaled/scene_04_16x9_2x.jpg"
+  ]
+}
