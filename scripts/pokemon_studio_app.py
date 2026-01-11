@@ -497,9 +497,16 @@ elif st.session_state.step == 3:
 
                 response = call_kie_api("playground/createTask", payload, method="POST")
 
-                if "error" in response:
+                # Check for None or error response
+                if response is None:
+                    st.error("API Error: No response from server")
+                    st.warning("💡 The API is not accessible. Click **Use Demo Mode** to test the workflow with sample images.")
+                elif "error" in response:
                     st.error(f"API Error: {response['error']}")
                     st.warning("💡 The API is not accessible. Click **Use Demo Mode** to test the workflow with sample images.")
+                elif response.get("code") != 200:
+                    st.error(f"API Error: {response.get('message', 'Unknown error')} (Code: {response.get('code')})")
+                    st.warning("💡 Check your API key or try Demo Mode.")
                 else:
                     task_id = response.get("data", {}).get("taskId")
 
@@ -518,10 +525,10 @@ elif st.session_state.step == 3:
 
                             status = call_kie_api(f"playground/recordInfo?taskId={task_id}")
 
-                            if "error" in status:
+                            if status is None or "error" in status:
                                 continue
 
-                            state = status.get("data", {}).get("state", "").lower()
+                            state = (status.get("data") or {}).get("state", "").lower()
 
                             if state == "success":
                                 result_json = status.get("data", {}).get("resultJson", "{}")
