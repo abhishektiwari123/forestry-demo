@@ -30,6 +30,9 @@ st.set_page_config(
     layout="wide"
 )
 
+# Best practices file path
+BEST_PRACTICES_FILE = os.path.join(os.path.dirname(__file__), "best_practices.json")
+
 # Initialize session state
 if "step" not in st.session_state:
     st.session_state.step = 1
@@ -75,7 +78,125 @@ def get_api_key():
                     return line.strip().split("=", 1)[1]
     return ""
 
+
+def get_anthropic_api_key():
+    """Get Anthropic API key for Claude."""
+    # Try Streamlit secrets first
+    try:
+        return st.secrets["ANTHROPIC_API_KEY"]
+    except:
+        pass
+
+    # Try environment variable
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return os.environ.get("ANTHROPIC_API_KEY")
+
+    # Try .env file
+    env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.exists(env_path):
+        with open(env_path) as f:
+            for line in f:
+                if line.startswith("ANTHROPIC_API_KEY="):
+                    return line.strip().split("=", 1)[1]
+    return ""
+
+
 KIE_API_KEY = get_api_key()
+ANTHROPIC_API_KEY = get_anthropic_api_key()
+
+
+def load_best_practices() -> dict:
+    """Load best practices from JSON file."""
+    if os.path.exists(BEST_PRACTICES_FILE):
+        try:
+            with open(BEST_PRACTICES_FILE, 'r') as f:
+                return json.load(f)
+        except:
+            pass
+    return {"practices": [], "prompt_improvements": []}
+
+
+def save_best_practices(data: dict):
+    """Save best practices to JSON file."""
+    try:
+        with open(BEST_PRACTICES_FILE, 'w') as f:
+            json.dump(data, f, indent=2)
+    except Exception as e:
+        st.warning(f"Could not save best practices: {e}")
+
+
+def call_claude_for_prompt_improvement(current_prompt: str, feedback: str, failed_checks: list) -> tuple[str, str]:
+    """
+    Call Claude API to intelligently improve the prompt based on feedback.
+    Returns (improved_prompt, best_practice_learned)
+    """
+    if not ANTHROPIC_API_KEY:
+        # Fallback to simple append if no API key
+        return None, None
+
+    # Build the request to Claude
+    failed_checks_text = ", ".join(failed_checks) if failed_checks else "None"
+
+    system_prompt = """You are an expert at crafting image generation prompts for Nano Banana Pro AI model.
+Your task is to improve a Pokemon battle storyboard prompt based on user feedback.
+
+Rules:
+1. Keep the same structure (4-panel split-screen format)
+2. Make specific, targeted improvements based on the feedback
+3. Don't remove existing good elements
+4. Be more explicit about what failed
+5. Extract a "best practice" lesson that can be applied to future prompts
+
+Respond in JSON format:
+{
+    "improved_prompt": "the full improved prompt text",
+    "best_practice": "A concise lesson learned (e.g., 'Always specify Pokemon facing direction explicitly')",
+    "changes_made": "Brief summary of what you changed"
+}"""
+
+    user_message = f"""Current prompt:
+{current_prompt}
+
+User feedback: {feedback}
+
+Failed validation checks: {failed_checks_text}
+
+Please improve this prompt to address the feedback and failed checks."""
+
+    try:
+        response = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": ANTHROPIC_API_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json"
+            },
+            json={
+                "model": "claude-sonnet-4-20250514",
+                "max_tokens": 4096,
+                "messages": [{"role": "user", "content": user_message}],
+                "system": system_prompt
+            },
+            timeout=60
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            content = result.get("content", [{}])[0].get("text", "")
+
+            # Parse JSON response
+            try:
+                parsed = json.loads(content)
+                return parsed.get("improved_prompt"), parsed.get("best_practice")
+            except json.JSONDecodeError:
+                # Try to extract from text if not valid JSON
+                return None, None
+        else:
+            return None, None
+
+    except Exception as e:
+        st.warning(f"Claude API error: {e}")
+        return None, None
 
 # Create validator
 validator = PromptValidator()
@@ -281,6 +402,9 @@ elif st.session_state.step == 2:
     if "prompt_improvements" not in st.session_state:
         st.session_state.prompt_improvements = []
 
+    # Load saved best practices
+    best_practices_data = load_best_practices()
+
     # Generate prompt if not already done
     if not st.session_state.prompt:
         # Use OPTIMIZED format (proven to produce better quality)
@@ -295,19 +419,30 @@ elif st.session_state.step == 2:
         st.session_state.gen_params = {
             "model": prompt_config.get("model", "nano-banana-pro"),
             "resolution": prompt_config.get("resolution", "2K"),
-            "aspect_ratio": prompt_config.get("aspect_ratio", "1:1"),
+            "aspect_ratio": prompt_config.get("aspect_ratio", "16:9"),
             "output_format": prompt_config.get("output_format", "png")
         }
 
-    # Show accumulated prompt improvements if any
+    # Show saved best practices
+    if best_practices_data.get("practices"):
+        with st.expander("📚 Saved Best Practices (from previous sessions)", expanded=False):
+            st.success("**Lessons learned from previous generations:**")
+            for i, practice in enumerate(best_practices_data["practices"][-10:], 1):  # Show last 10
+                st.markdown(f"**{i}.** {practice.get('lesson', practice)}")
+                if isinstance(practice, dict) and practice.get('date'):
+                    st.caption(f"Added: {practice['date']}")
+
+    # Show accumulated prompt improvements from current session
     if st.session_state.prompt_improvements:
-        with st.expander("📝 Prompt Improvement History", expanded=True):
-            st.warning("**Previous feedback incorporated into prompt:**")
+        with st.expander("📝 Current Session Feedback History", expanded=True):
+            st.warning("**Feedback incorporated into prompt this session:**")
             for i, improvement in enumerate(st.session_state.prompt_improvements, 1):
                 st.markdown(f"**{i}. {improvement['type']}:**")
                 st.caption(improvement['feedback'])
                 if improvement.get('failed_checks'):
                     st.caption(f"Failed checks: {', '.join(improvement['failed_checks'])}")
+                if improvement.get('best_practice'):
+                    st.success(f"💡 Lesson: {improvement['best_practice']}")
 
     st.subheader("Generated Prompt")
     st.info("Review the prompt below. You can edit it before generating the image.")
@@ -519,19 +654,45 @@ elif st.session_state.step == 3:
                 combined_feedback = " | ".join(all_feedback_parts)
 
                 if combined_feedback:
-                    # Store in improvement history
+                    # Try to use Claude API for intelligent prompt improvement
+                    with st.spinner("🤖 Using Claude AI to improve prompt..."):
+                        improved_prompt, best_practice = call_claude_for_prompt_improvement(
+                            st.session_state.prompt,
+                            combined_feedback,
+                            failed_checks
+                        )
+
+                    if improved_prompt:
+                        # Claude successfully improved the prompt
+                        st.session_state.prompt = improved_prompt
+
+                        # Save best practice to file
+                        if best_practice:
+                            bp_data = load_best_practices()
+                            bp_data["practices"].append({
+                                "lesson": best_practice,
+                                "date": datetime.now().isoformat(),
+                                "feedback": combined_feedback
+                            })
+                            save_best_practices(bp_data)
+                            st.success(f"💡 New best practice saved: {best_practice}")
+                    else:
+                        # Fallback to simple append
+                        st.session_state.prompt = incorporate_feedback_into_prompt(
+                            st.session_state.prompt,
+                            f"PREVIOUS IMAGE ISSUES: {combined_feedback}"
+                        )
+
+                    # Store in session improvement history
                     if "prompt_improvements" not in st.session_state:
                         st.session_state.prompt_improvements = []
                     st.session_state.prompt_improvements.append({
                         "type": "Image Regeneration",
                         "feedback": combined_feedback,
-                        "failed_checks": failed_checks
+                        "failed_checks": failed_checks,
+                        "best_practice": best_practice if best_practice else None,
+                        "used_claude": improved_prompt is not None
                     })
-
-                    st.session_state.prompt = incorporate_feedback_into_prompt(
-                        st.session_state.prompt,
-                        f"PREVIOUS IMAGE ISSUES: {combined_feedback}"
-                    )
 
                 st.session_state.storyboard_image = None
                 log_feedback("image", combined_feedback, "regenerate")
