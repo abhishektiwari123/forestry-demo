@@ -145,8 +145,8 @@ def extract_panels(image_path: str, output_dir: str) -> list:
             # Bottom text: "SCENE DESCRIPTION"
 
             # Sample top region to find where actual image starts
-            top_crop = int(panel_h * 0.13)  # Remove top ~13% (panel number)
-            bottom_crop = int(panel_h * 0.12)  # Remove bottom ~12% (description)
+            top_crop = int(panel_h * 0.14)  # Remove top ~14% (panel number)
+            bottom_crop = int(panel_h * 0.15)  # Remove bottom ~15% (description)
 
             # Crop to content only (remove text labels)
             clean_panel = panel.crop((0, top_crop, panel_w, panel_h - bottom_crop))
