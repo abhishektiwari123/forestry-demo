@@ -848,6 +848,7 @@ elif st.session_state.step == 4:
         # Panel-by-panel validation
         st.subheader("🔍 Panel Validation")
 
+        panel_checks = {}
         panel_issues = []
         for i in range(len(st.session_state.panel_images)):
             if not st.session_state.selected_panels[i]:
@@ -856,8 +857,10 @@ elif st.session_state.step == 4:
                 col1, col2 = st.columns(2)
                 with col1:
                     ok = st.checkbox(f"Panel {i+1} content correct", key=f"panel_{i}_ok")
+                    panel_checks[f"panel_{i+1}_content"] = ok
                 with col2:
                     border_ok = st.checkbox(f"No visible borders/edges", key=f"panel_{i}_border")
+                    panel_checks[f"panel_{i+1}_borders"] = border_ok
 
                 notes = st.text_input(f"Issues with Panel {i+1}", key=f"panel_{i}_notes")
                 if notes:
@@ -871,9 +874,34 @@ elif st.session_state.step == 4:
             key="border_check"
         )
 
-        feedback = st.text_area("Overall feedback on panel splitting:", key="split_feedback")
+        # Collect failed checks
+        failed_panel_checks = [k for k, v in panel_checks.items() if not v]
+        if "Heavy borders" in has_borders:
+            failed_panel_checks.append("heavy_borders_between_panels")
+        elif "Some borders" in has_borders:
+            failed_panel_checks.append("some_borders_visible")
 
-        col1, col2, col3 = st.columns(3)
+        # Show failed checks as auto-feedback
+        if failed_panel_checks or panel_issues:
+            st.warning("**Issues detected:**")
+            for check in failed_panel_checks:
+                if "content" in check:
+                    panel_num = check.split("_")[1]
+                    st.markdown(f"- Panel {panel_num} content not correct")
+                elif "borders" in check and "panel" in check:
+                    panel_num = check.split("_")[1]
+                    st.markdown(f"- Panel {panel_num} has visible borders")
+                elif "heavy_borders" in check:
+                    st.markdown("- Heavy borders visible between panels")
+                elif "some_borders" in check:
+                    st.markdown("- Some borders visible between panels")
+            for issue in panel_issues:
+                st.markdown(f"- {issue}")
+
+        feedback = st.text_area("Additional feedback on panels:", key="split_feedback",
+                               placeholder="e.g., 'Panel 2 is cut off', 'Pokemon not fully visible in panel 3'")
+
+        col1, col2, col3, col4 = st.columns(4)
         with col1:
             if st.button("⬅️ Back to Image"):
                 st.session_state.step = 3
@@ -883,11 +911,79 @@ elif st.session_state.step == 4:
                 st.session_state.panel_images = []
                 st.rerun()
         with col3:
-            can_proceed = "No borders" in has_borders
+            # Button to go back and regenerate with feedback
+            if st.button("🔄 Regenerate Image"):
+                # Combine panel issues and feedback
+                all_feedback_parts = []
+
+                if failed_panel_checks:
+                    check_labels = []
+                    for check in failed_panel_checks:
+                        if "content" in check:
+                            panel_num = check.split("_")[1]
+                            check_labels.append(f"Panel {panel_num} content incorrect")
+                        elif "borders" in check:
+                            check_labels.append("Visible borders between panels - need cleaner split-screen")
+                    all_feedback_parts.append("PANEL ISSUES: " + "; ".join(check_labels))
+
+                if panel_issues:
+                    all_feedback_parts.append("SPECIFIC ISSUES: " + "; ".join(panel_issues))
+
+                if feedback.strip():
+                    all_feedback_parts.append("USER FEEDBACK: " + feedback.strip())
+
+                combined_feedback = " | ".join(all_feedback_parts)
+
+                if combined_feedback:
+                    # Try Claude API for improvement
+                    with st.spinner("🤖 Using Claude AI to improve prompt..."):
+                        improved_prompt, best_practice = call_claude_for_prompt_improvement(
+                            st.session_state.prompt,
+                            combined_feedback,
+                            failed_panel_checks
+                        )
+
+                    if improved_prompt:
+                        st.session_state.prompt = improved_prompt
+                        if best_practice:
+                            bp_data = load_best_practices()
+                            bp_data["practices"].append({
+                                "lesson": best_practice,
+                                "date": datetime.now().isoformat(),
+                                "feedback": combined_feedback,
+                                "stage": "panel_splitting"
+                            })
+                            save_best_practices(bp_data)
+                    else:
+                        st.session_state.prompt = incorporate_feedback_into_prompt(
+                            st.session_state.prompt,
+                            f"PANEL SPLITTING ISSUES: {combined_feedback}"
+                        )
+
+                    # Store in session history
+                    if "prompt_improvements" not in st.session_state:
+                        st.session_state.prompt_improvements = []
+                    st.session_state.prompt_improvements.append({
+                        "type": "Panel Splitting Feedback",
+                        "feedback": combined_feedback,
+                        "failed_checks": failed_panel_checks,
+                        "best_practice": best_practice if 'best_practice' in dir() and best_practice else None
+                    })
+
+                # Clear images and go back to step 3
+                st.session_state.storyboard_image = None
+                st.session_state.panel_images = []
+                log_feedback("split", combined_feedback, "regenerate")
+                st.session_state.step = 3
+                st.rerun()
+        with col4:
+            can_proceed = "No borders" in has_borders and len(failed_panel_checks) == 0
             if st.button("✅ Approve & Upscale", type="primary", disabled=not can_proceed):
                 log_feedback("split", feedback, "approved")
                 st.session_state.step = 5
                 st.rerun()
+            if not can_proceed:
+                st.caption("Fix all issues first")
 
     else:
         # Need to split
