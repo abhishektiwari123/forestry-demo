@@ -204,7 +204,7 @@ Please improve this prompt to address the feedback and failed checks. Return ONL
                 "content-type": "application/json"
             },
             json={
-                "model": "claude-3-5-sonnet-20241022",  # Use stable model ID
+                "model": "claude-3-haiku-20240307",  # Working model ID
                 "max_tokens": 4096,
                 "messages": [{"role": "user", "content": user_message}],
                 "system": system_prompt
