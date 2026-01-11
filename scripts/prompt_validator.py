@@ -438,21 +438,22 @@ class PromptValidator:
     def generate_optimized_storyboard_prompt(
         self,
         pokemon_names: list,
-        environment: str = "volcanic"
+        environment: str = "volcanic",
+        use_cinematic: bool = True
     ) -> dict:
         """
         Generate an OPTIMIZED storyboard prompt using the PROVEN USER FORMAT.
 
         Key principles (from Nano Banana Pro best practices):
-        - Use SIMPLE, SHORT Pokemon descriptions (not overly detailed)
-        - Use natural language prose structure
-        - Include technical photography specs (camera, lens, lighting)
-        - Square 2048x2048 resolution
-        - Model pushes toward realism naturally
+        - Use CINEMATIC action sequence format with timestamps
+        - Very detailed Pokemon descriptions with specific colors
+        - Explicit facial expressions and reactions
+        - 16:9 widescreen aspect ratio for cinematic look
 
         Args:
             pokemon_names: [attacker, defender] Pokemon names
             environment: Environment setting
+            use_cinematic: If True, use cinematic 16:9 format (recommended)
 
         Returns:
             Dict with prompt, negative_prompt, and recommended parameters
@@ -460,13 +461,111 @@ class PromptValidator:
         p1_name = pokemon_names[0]
         p2_name = pokemon_names[1]
 
+        # Use CINEMATIC format (proven to produce better results)
+        if use_cinematic:
+            return self._generate_cinematic_prompt(pokemon_names, environment)
+
+        # Fallback to panel-based format
+        return self._generate_panel_prompt(pokemon_names, environment)
+
+    def _generate_cinematic_prompt(
+        self,
+        pokemon_names: list,
+        environment: str = "volcanic"
+    ) -> dict:
+        """
+        Generate CINEMATIC action sequence prompt (user's proven format).
+        Uses 10-second action sequence with timestamps.
+        """
+        p1_name = pokemon_names[0]
+        p2_name = pokemon_names[1]
+
+        # Pokemon-specific details matching user's proven format
+        pokemon_details = {
+            "charizard": {
+                "height": "5'7\"",
+                "desc": "lean orange dragon with realistic detailed reptilian scales, teal wings, cream belly, flaming tail",
+                "attack": "orange-red Flamethrower stream",
+                "attack_effect": "massive flames",
+                "damage_type": "BLACKENED BURNT SCORCH MARKS and charred patterns",
+                "wing_desc": "teal wings"
+            },
+            "dragonite": {
+                "height": "7'3\"",
+                "desc": "bulky ORANGE-TAN body with realistic scales, teal wings, two antennae, cream belly stripes, NO tail flame",
+                "attack": "orange-purple Dragon Pulse beam",
+                "attack_effect": "massive energy beam",
+                "damage_type": "BLACKENED IMPACT DAMAGE and energy burns",
+                "wing_desc": "teal wings"
+            },
+            "pikachu": {
+                "height": "1'4\"",
+                "desc": "small yellow electric mouse with red cheek pouches, lightning bolt tail, pointy ears with black tips",
+                "attack": "bright yellow Thunderbolt lightning",
+                "attack_effect": "massive electrical discharge",
+                "damage_type": "ELECTRICAL BURN MARKS and singed fur",
+                "wing_desc": ""
+            },
+            "mewtwo": {
+                "height": "6'7\"",
+                "desc": "pale purple humanoid with long thick tail, three-fingered hands, piercing purple eyes, psychic aura",
+                "attack": "purple Psychic energy waves",
+                "attack_effect": "massive telekinetic force",
+                "damage_type": "PSYCHIC DAMAGE with visible distortion marks",
+                "wing_desc": ""
+            },
+            "haunter": {
+                "height": "5'3\"",
+                "desc": "dark purple ghost with floating disembodied hands, glowing white eyes, menacing grin, semi-transparent body",
+                "attack": "dark purple Shadow Ball",
+                "attack_effect": "massive ghost energy sphere",
+                "damage_type": "GHOSTLY BURNS and ethereal damage marks",
+                "wing_desc": ""
+            }
+        }
+
+        p1 = pokemon_details.get(p1_name.lower(), pokemon_details["charizard"])
+        p2 = pokemon_details.get(p2_name.lower(), pokemon_details["dragonite"])
+
+        # Environment descriptions
+        env_map = {
+            "volcanic": "volcanic valley background with lava pools and smoke",
+            "forest": "ancient forest background with towering trees and dappled sunlight",
+            "ocean": "coastal cliffs background with crashing waves and stormy sky",
+            "cave": "underground cavern background with glowing crystals",
+            "mountain": "mountain peak background above clouds"
+        }
+        env_desc = env_map.get(environment, env_map["volcanic"])
+
+        # Build prompt using USER'S EXACT PROVEN FORMAT
+        prompt = f"""PHOTOREALISTIC hyperrealistic CGI render: COMPLETE 10-SECOND ACTION SEQUENCE with BOTH Pokemon: OPENING (0-4s): Smaller {p1_name} ({p1['height']}, {p1['desc']}) on LEFT side launching massive sustained {p1['attack']} from open jaws with fierce determined expression, flames traveling across frame toward significantly larger {p2_name} ({p2['height']}, 30% bigger, {p2['desc']}) on RIGHT side, {p2_name} with PAINED FACIAL EXPRESSION (eyes squinting in pain, mouth open wide showing teeth in grimace, eyebrows furrowed in distress, face contorted) being PUSHED BACKWARD by force of {p1['attack_effect']}, body leaning back and recoiling from heat and impact, attempting to brace with arms raised defensively but failing against overwhelming fire stream, flame stream clearly connecting both Pokemon with visible bright orange-red impact glow where flames strike {p2_name}'s torso, intense heat distortion and fire sparks bursting from impact point, physical knockback evident. TRANSITION (4-6s): Flames dissipating, close-up on {p2_name}'s torso and cream belly revealing {p2['damage_type']}, smoke wisping from burnt scales showing realistic heat damage texture, {p2_name}'s facial expression transitioning from PAIN to FIERCE ANGER (eyes narrowing with determination and rage, teeth bared in aggressive snarl, eyebrows furrowed in fury showing intense resolve for revenge). FINALE (6-10s): {p2_name} recovering from knockback and CHARGING FORWARD aggressively toward {p1_name} with {p2['wing_desc'] or 'arms'} spread wide pulling back for powerful counter-attack, body accelerating rapidly with building momentum, {p1_name} visible in frame bracing for incoming revenge attack, dramatic battle tension rising, side-angle wide shot capturing complete revenge charge sequence, realistic physics with dynamic motion, camera starts side-angle capturing both Pokemon, zooms into impact showing damage and pain, then pulls back wide as {p2_name} charges forward for revenge, realistic detailed reptilian scales with texture depth, leathery wing texture, natural lighting with physically accurate shadows, organic weathering appearance, dramatic cinematic composition, 8K quality, {env_desc}, battle-worn with scratches and scars visible, weathered appearance"""
+
+        negative_prompt = "anime, cartoon, manga, chibi, 2d, 3d render, cgi, digital art, illustration, drawing, sketch, painted, stylized, pixel art, vector, flat colors, shields, defensive barriers, protective auras, trainers, humans, people, pokeballs in hand, text, labels, watermarks, logos, multiple scenes, split screen, grid layout, panel layout, low quality, blurry, distorted, deformed, bad anatomy, extra limbs, missing limbs, wrong proportions, ugly, duplicate, nsfw, gore, blood, violence"
+
+        # CINEMATIC format uses 16:9 widescreen and JPG
+        return {
+            "prompt": prompt,
+            "negative_prompt": negative_prompt,
+            "resolution": "2K",
+            "aspect_ratio": "16:9",  # Widescreen cinematic
+            "output_format": "jpg",
+            "model": "nano-banana-pro"
+        }
+
+    def _generate_panel_prompt(
+        self,
+        pokemon_names: list,
+        environment: str = "volcanic"
+    ) -> dict:
+        """
+        Generate 4-panel storyboard prompt (alternative format).
+        Uses square 1:1 aspect ratio for grid layout.
+        """
+        p1_name = pokemon_names[0]
+        p2_name = pokemon_names[1]
+
         p1_info = self.pokemon_info.get(p1_name.lower(), {})
         p2_info = self.pokemon_info.get(p2_name.lower(), {})
-
-        # SIMPLE Pokemon descriptions (proven to work better than detailed)
-        # Format: "type-description with key visual features"
-        p1_type = p1_info.get('type', 'dragon').split('/')[0]
-        p2_type = p2_info.get('type', 'dragon').split('/')[0]
 
         # Simple feature summaries
         p1_simple_features = self._get_simple_features(p1_name.lower())
@@ -496,7 +595,6 @@ class PromptValidator:
         }
         env_desc = env_map.get(environment, env_map["volcanic"])
 
-        # Build prompt using EXACT USER FORMAT that worked
         prompt = f"""Photorealistic 4-panel Pokemon battle storyboard
 wildlife photography style, BBC Earth documentary quality
 shot on RED camera, natural cinematic lighting, 8K detail
@@ -518,15 +616,14 @@ Composition: Dynamic action poses, clear character separation, consistent charac
 
         negative_prompt = "anime, cartoon, manga, chibi, 2d, 3d render, cgi, digital art, illustration, drawing, sketch, painted, stylized, pixel art, vector, flat colors, shields, defensive barriers, protective auras, trainers, humans, people, pokeballs in hand, text, labels, watermarks, logos, multiple scenes, split screen, grid layout, panel layout, low quality, blurry, distorted, deformed, bad anatomy, extra limbs, missing limbs, wrong proportions, ugly, duplicate, nsfw, gore, blood, violence"
 
-        # KIE API uses resolution and aspect_ratio, NOT width/height
-        # Model should be "nano-banana-pro" for better quality
+        # Panel format uses 1:1 square for grid layout
         return {
             "prompt": prompt,
             "negative_prompt": negative_prompt,
-            "resolution": "2K",  # Options: 1K, 2K, 4K
+            "resolution": "2K",
             "aspect_ratio": "1:1",  # Square for 4-panel grid
             "output_format": "png",
-            "model": "nano-banana-pro"  # Use Pro model for better quality
+            "model": "nano-banana-pro"
         }
 
     def _get_simple_features(self, pokemon_name: str) -> str:

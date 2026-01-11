@@ -80,14 +80,15 @@ def test_optimized_prompt():
     # Build API payload - Nano Banana Pro API format
     # Model: nano-banana-pro (NOT google/nano-banana)
     # Uses: resolution (1K, 2K, 4K) and aspect_ratio
+    # Now uses config values from prompt generator (cinematic: 16:9, jpg)
     payload = {
-        "model": "nano-banana-pro",
+        "model": prompt_config.get("model", "nano-banana-pro"),
         "input": {
             "prompt": prompt_config["prompt"],
             "image_input": [],
-            "aspect_ratio": "1:1",  # Square for 4-panel grid
-            "resolution": "2K",  # Higher quality: 2K resolution
-            "output_format": "png"
+            "aspect_ratio": prompt_config.get("aspect_ratio", "16:9"),
+            "resolution": prompt_config.get("resolution", "2K"),
+            "output_format": prompt_config.get("output_format", "jpg")
         }
     }
 
@@ -162,7 +163,8 @@ def test_optimized_prompt():
                     print(f"Image URL: {urls[0]}")
 
                     # Download the image
-                    output_path = "test_output/optimized_storyboard.png"
+                    ext = prompt_config.get("output_format", "jpg")
+                    output_path = f"test_output/optimized_storyboard.{ext}"
                     os.makedirs("test_output", exist_ok=True)
 
                     dl_cmd = ["curl", "-k", "-L", "-s", "-o", output_path, urls[0]]
@@ -195,7 +197,8 @@ def main():
 
     print("\n" + "=" * 60)
     if success:
-        print("✅ TEST PASSED - Check test_output/optimized_storyboard.png")
+        print("✅ TEST PASSED - Check test_output/optimized_storyboard.jpg")
+        print("Format: 16:9 widescreen, JPG (cinematic format)")
     else:
         print("❌ TEST FAILED")
     print("=" * 60)
