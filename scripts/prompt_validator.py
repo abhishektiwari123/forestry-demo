@@ -558,8 +558,8 @@ class PromptValidator:
         environment: str = "volcanic"
     ) -> dict:
         """
-        Generate 4-panel storyboard prompt (alternative format).
-        Uses square 1:1 aspect ratio for grid layout.
+        Generate 4-panel storyboard prompt.
+        Uses 16:9 widescreen aspect ratio for better split-screen layout.
         """
         p1_name = pokemon_names[0]
         p2_name = pokemon_names[1]
@@ -595,33 +595,34 @@ class PromptValidator:
         }
         env_desc = env_map.get(environment, env_map["volcanic"])
 
-        prompt = f"""Photorealistic 4-panel Pokemon battle storyboard
+        prompt = f"""Photorealistic 4-panel split-screen Pokemon battle storyboard, 2x2 grid layout, 16:9 widescreen format
 wildlife photography style, BBC Earth documentary quality
 shot on RED camera, natural cinematic lighting, 8K detail
+
+LAYOUT: 2x2 split-screen grid with 4 equal panels, clear panel divisions, each panel showing different battle moment
 
 Pokemon: Photorealistic {p1_name}, {p1_simple_features}. Photorealistic {p2_name}, {p2_simple_features}
 
 Environment: {env_desc}
 
-Panels:
-Panel 1: {p1_name} launching {p1_attack_name} - VISIBLE {p1_attack_simple}, aggressive stance, attack beam/effect clearly visible between them
-Panel 2: {p2_name} being hit by the attack, VISIBLE impact explosion on body, pain expression, burn marks/damage appearing, {p1_name} visible in attack follow-through pose
-Panel 3: {p2_name} charging {p2_attack_name} - VISIBLE {p2_attack_simple} forming at mouth/hands, energy gathering with visible glow, fierce determination, preparing to counterattack
-Panel 4: {p2_name} releasing {p2_attack_name} - VISIBLE {p2_attack_simple} beam/effect hitting {p1_name}, impact explosion on {p1_name}, both showing battle damage
+Panel 1 (TOP-LEFT): {p1_name} launching {p1_attack_name} - VISIBLE {p1_attack_simple}, aggressive stance, attack beam/effect clearly visible between them
+Panel 2 (TOP-RIGHT): {p2_name} being hit by the attack, VISIBLE impact explosion on body, pain expression, burn marks/damage appearing, {p1_name} visible in attack follow-through pose
+Panel 3 (BOTTOM-LEFT): {p2_name} charging {p2_attack_name} - VISIBLE {p2_attack_simple} forming at mouth/hands, energy gathering with visible glow, fierce determination, preparing to counterattack
+Panel 4 (BOTTOM-RIGHT): {p2_name} releasing {p2_attack_name} - VISIBLE {p2_attack_simple} beam/effect hitting {p1_name}, impact explosion on {p1_name}, both showing battle damage
 
 Key features to maintain: {p1_key_features}, {p2_key_features}
 
 Style: Photorealistic, lifelike, detailed textures, natural lighting, documentary feel
-Composition: Dynamic action poses, clear character separation, consistent character design across panels"""
+Composition: 2x2 split-screen grid, dynamic action poses, clear character separation, consistent character design across all 4 panels"""
 
-        negative_prompt = "anime, cartoon, manga, chibi, 2d, 3d render, cgi, digital art, illustration, drawing, sketch, painted, stylized, pixel art, vector, flat colors, shields, defensive barriers, protective auras, trainers, humans, people, pokeballs in hand, text, labels, watermarks, logos, multiple scenes, split screen, grid layout, panel layout, low quality, blurry, distorted, deformed, bad anatomy, extra limbs, missing limbs, wrong proportions, ugly, duplicate, nsfw, gore, blood, violence"
+        negative_prompt = "anime, cartoon, manga, chibi, 2d, 3d render, cgi, digital art, illustration, drawing, sketch, painted, stylized, pixel art, vector, flat colors, shields, defensive barriers, protective auras, trainers, humans, people, pokeballs in hand, text, labels, watermarks, logos, single image, no panels, no grid, low quality, blurry, distorted, deformed, bad anatomy, extra limbs, missing limbs, wrong proportions, ugly, duplicate, nsfw, gore, blood, violence"
 
-        # Panel format uses 1:1 square for grid layout
+        # Panel format uses 16:9 widescreen for better split-screen layout
         return {
             "prompt": prompt,
             "negative_prompt": negative_prompt,
             "resolution": "2K",
-            "aspect_ratio": "1:1",  # Square for 4-panel grid
+            "aspect_ratio": "16:9",  # Widescreen for 2x2 split-screen
             "output_format": "png",
             "model": "nano-banana-pro"
         }
