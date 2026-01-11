@@ -80,6 +80,39 @@ KIE_API_KEY = get_api_key()
 # Create validator
 validator = PromptValidator()
 
+# Demo mode - create sample images when API is unavailable
+DEMO_MODE = False  # Will be set to True if API fails
+
+
+def create_demo_storyboard():
+    """Create a demo storyboard image with colored panels."""
+    from PIL import ImageDraw, ImageFont
+
+    # Create a 1600x900 image (16:9)
+    img = Image.new('RGB', (1600, 900), color='#2a2a2a')
+    draw = ImageDraw.Draw(img)
+
+    # Panel colors and labels
+    panels = [
+        ((0, 0, 800, 450), '#ff6b6b', 'Panel 1: Charizard attacks'),
+        ((800, 0, 1600, 450), '#ffa500', 'Panel 2: Dragonite hit'),
+        ((0, 450, 800, 900), '#4ecdc4', 'Panel 3: Dragonite charges'),
+        ((800, 450, 1600, 900), '#9b59b6', 'Panel 4: Counter attack'),
+    ]
+
+    for (x1, y1, x2, y2), color, label in panels:
+        # Draw panel background
+        draw.rectangle([x1+5, y1+5, x2-5, y2-5], fill=color)
+        # Draw label
+        text_x = x1 + (x2 - x1) // 2 - 100
+        text_y = y1 + (y2 - y1) // 2 - 10
+        draw.text((text_x, text_y), label, fill='white')
+
+    # Add demo watermark
+    draw.text((700, 430), "DEMO MODE - Sample Image", fill='yellow')
+
+    return img
+
 
 def log_feedback(step: str, feedback: str, action: str):
     """Log user feedback for each step."""
@@ -435,7 +468,22 @@ elif st.session_state.step == 3:
         with st.expander("View Prompt", expanded=False):
             st.text(st.session_state.prompt)
 
-        if st.button("🎨 Generate Storyboard", type="primary"):
+        col1, col2 = st.columns(2)
+
+        with col1:
+            generate_clicked = st.button("🎨 Generate Storyboard", type="primary")
+
+        with col2:
+            demo_clicked = st.button("🎭 Use Demo Mode", type="secondary",
+                                     help="Use sample image to test workflow without API")
+
+        if demo_clicked:
+            st.session_state.storyboard_image = create_demo_storyboard()
+            st.session_state.demo_mode = True
+            st.success("✅ Demo storyboard created!")
+            st.rerun()
+
+        if generate_clicked:
             with st.spinner("Generating storyboard... This may take 30-60 seconds"):
                 # Submit generation request
                 payload = {
@@ -450,6 +498,7 @@ elif st.session_state.step == 3:
 
                 if "error" in response:
                     st.error(f"API Error: {response['error']}")
+                    st.warning("💡 The API is not accessible. Click **Use Demo Mode** to test the workflow with sample images.")
                 else:
                     task_id = response.get("data", {}).get("taskId")
 
