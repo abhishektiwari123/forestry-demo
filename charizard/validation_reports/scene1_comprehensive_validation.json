@@ -1,0 +1,244 @@
+{
+  "segment": 1,
+  "image": "charizard/battle_assets/clean_4scenes/scene1_flamethrower_launch.jpg",
+  "grade": "PASS",
+  "scores": {
+    "tier0_photorealism": "5.0/5.0",
+    "tier1_pokemon": "12.0/12",
+    "tier2_prompt_accuracy": "7.0/7.0",
+    "tier3_battle_accuracy": "4.0/4.0"
+  },
+  "results": [
+    {
+      "criterion": "Realistic scales",
+      "tier": "Tier 0",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Natural lighting",
+      "tier": "Tier 0",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Organic imperfections",
+      "tier": "Tier 0",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Anatomical accuracy",
+      "tier": "Tier 0",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "No 3D animation",
+      "tier": "Tier 0",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Charizard recognition",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Charizard orange body",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Charizard teal wings",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Charizard cream belly",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Charizard tail flame",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Dragonite recognition",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Dragonite orange-tan body",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Dragonite teal wings",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Dragonite cream belly",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Dragonite antennae",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Dragonite no tail flame",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Dragonite size 30% larger",
+      "tier": "Tier 1",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "CRITICAL"
+    },
+    {
+      "criterion": "Environment: volcanic valley",
+      "tier": "Tier 2",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "MAJOR"
+    },
+    {
+      "criterion": "Primary action matches",
+      "tier": "Tier 2",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "MAJOR"
+    },
+    {
+      "criterion": "Camera angle",
+      "tier": "Tier 2",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "MAJOR"
+    },
+    {
+      "criterion": "Pokemon condition",
+      "tier": "Tier 2",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "MAJOR"
+    },
+    {
+      "criterion": "Composition matches",
+      "tier": "Tier 2",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "MAJOR"
+    },
+    {
+      "criterion": "Special: Both Pokemon in frame",
+      "tier": "Tier 2",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "MAJOR"
+    },
+    {
+      "criterion": "Special: Charizard on LEFT",
+      "tier": "Tier 2",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Check manually",
+      "severity": "MAJOR"
+    },
+    {
+      "criterion": "Attack appearance",
+      "tier": "Tier 3",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "MINOR"
+    },
+    {
+      "criterion": "Physics realistic",
+      "tier": "Tier 3",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "MINOR"
+    },
+    {
+      "criterion": "Battle damage",
+      "tier": "Tier 3",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Early segment, minimal expected",
+      "severity": "MINOR"
+    },
+    {
+      "criterion": "Energy colors correct",
+      "tier": "Tier 3",
+      "passed": true,
+      "score": 1.0,
+      "feedback": "Manual check",
+      "severity": "MINOR"
+    }
+  ],
+  "improvements": [],
+  "prompt_modifications": {
+    "add_prefix": "",
+    "add_suffix": "",
+    "replace_terms": {},
+    "enhanced_prompt": "Charizard launching massive orange-red Flamethrower stream from jaws with fierce expression, flames beginning to travel toward Dragonite on right, side-angle wide shot, volcanic valley, dramatic battle start"
+  }
+}

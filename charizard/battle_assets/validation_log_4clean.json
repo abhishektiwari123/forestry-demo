@@ -1,0 +1,110 @@
+[
+  {
+    "path": "charizard/battle_assets/clean_4scenes/scene1_flamethrower_launch.jpg",
+    "passed": true,
+    "checks": {
+      "file_size_mb": 2.82,
+      "resolution": "2752x1536",
+      "aspect_ratio": 1.79
+    },
+    "issues": [],
+    "warnings": []
+  },
+  {
+    "path": "charizard/battle_assets/videos/clean4_scene1_flamethrower_launch.mp4",
+    "passed": true,
+    "checks": {
+      "file_size_mb": 14.17,
+      "duration_seconds": 5.04,
+      "resolution": "1928x1076",
+      "has_audio": true
+    },
+    "issues": [],
+    "warnings": []
+  },
+  {
+    "path": "charizard/battle_assets/clean_4scenes/scene2_impact_pain.jpg",
+    "passed": true,
+    "checks": {
+      "file_size_mb": 2.57,
+      "resolution": "2752x1536",
+      "aspect_ratio": 1.79
+    },
+    "issues": [],
+    "warnings": []
+  },
+  {
+    "path": "charizard/battle_assets/videos/clean4_scene2_impact_pain.mp4",
+    "passed": true,
+    "checks": {
+      "file_size_mb": 11.35,
+      "duration_seconds": 5.04,
+      "resolution": "1928x1076",
+      "has_audio": true
+    },
+    "issues": [],
+    "warnings": []
+  },
+  {
+    "path": "charizard/battle_assets/clean_4scenes/scene3_burn_marks_anger.jpg",
+    "passed": true,
+    "checks": {
+      "file_size_mb": 2.67,
+      "resolution": "2752x1536",
+      "aspect_ratio": 1.79
+    },
+    "issues": [],
+    "warnings": []
+  },
+  {
+    "path": "charizard/battle_assets/videos/clean4_scene3_burn_marks_anger.mp4",
+    "passed": false,
+    "checks": {
+      "file_size_mb": 0.0
+    },
+    "issues": [
+      "File too small: 0.00 MB < 5.0 MB"
+    ],
+    "warnings": [
+      "Could not get video metadata: Command 'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"charizard/battle_assets/videos/clean4_scene3_burn_marks_anger.mp4\"' returned non-zero exit status 1."
+    ]
+  },
+  {
+    "path": "charizard/battle_assets/clean_4scenes/scene4_revenge_charge.jpg",
+    "passed": true,
+    "checks": {
+      "file_size_mb": 2.59,
+      "resolution": "2752x1536",
+      "aspect_ratio": 1.79
+    },
+    "issues": [],
+    "warnings": []
+  },
+  {
+    "path": "charizard/battle_assets/videos/clean4_scene4_revenge_charge.mp4",
+    "passed": true,
+    "checks": {
+      "file_size_mb": 11.66,
+      "duration_seconds": 5.04,
+      "resolution": "1928x1076",
+      "has_audio": true
+    },
+    "issues": [],
+    "warnings": []
+  },
+  {
+    "path": "charizard/battle_assets/videos/final_4clean_sequence_20s.mp4",
+    "passed": false,
+    "checks": {
+      "file_size_mb": 25.52,
+      "duration_seconds": 10.13,
+      "resolution": "1928x1076",
+      "has_audio": true
+    },
+    "issues": [
+      "File too small: 25.52 MB < 30.0 MB",
+      "Duration too short: 10.1s < 18.0s"
+    ],
+    "warnings": []
+  }
+]
