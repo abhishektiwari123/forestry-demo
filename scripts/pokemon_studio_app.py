@@ -277,6 +277,10 @@ if st.session_state.step == 1:
 elif st.session_state.step == 2:
     st.header("Step 2: Prompt Generation & Review")
 
+    # Initialize prompt improvement history if not exists
+    if "prompt_improvements" not in st.session_state:
+        st.session_state.prompt_improvements = []
+
     # Generate prompt if not already done
     if not st.session_state.prompt:
         # Use OPTIMIZED format (proven to produce better quality)
@@ -294,6 +298,16 @@ elif st.session_state.step == 2:
             "aspect_ratio": prompt_config.get("aspect_ratio", "1:1"),
             "output_format": prompt_config.get("output_format", "png")
         }
+
+    # Show accumulated prompt improvements if any
+    if st.session_state.prompt_improvements:
+        with st.expander("📝 Prompt Improvement History", expanded=True):
+            st.warning("**Previous feedback incorporated into prompt:**")
+            for i, improvement in enumerate(st.session_state.prompt_improvements, 1):
+                st.markdown(f"**{i}. {improvement['type']}:**")
+                st.caption(improvement['feedback'])
+                if improvement.get('failed_checks'):
+                    st.caption(f"Failed checks: {', '.join(improvement['failed_checks'])}")
 
     st.subheader("Generated Prompt")
     st.info("Review the prompt below. You can edit it before generating the image.")
@@ -451,10 +465,27 @@ elif st.session_state.step == 3:
 
         # Feedback for regeneration
         st.subheader("📝 Feedback for Regeneration")
+
+        # Show failed checks as auto-generated feedback
+        if failed_checks:
+            failed_check_labels = {
+                "panel1_pokemon1": f"{st.session_state.pokemon[0]} not visible on LEFT in Panel 1",
+                "panel1_pokemon2": f"{st.session_state.pokemon[1]} not visible on RIGHT in Panel 1",
+                "panel1_attack": "Attack beam/effect not visible in Panel 1",
+                "facing": "Pokemon not facing each other in all panels",
+                "damage": f"Battle damage not visible on {st.session_state.pokemon[1]} in Panels 3-4",
+                "style": "Style looks like anime/cartoon instead of photorealistic",
+                "no_borders": "Thick borders visible between panels",
+            }
+            auto_feedback = [failed_check_labels.get(fc, fc) for fc in failed_checks]
+            st.warning("**Issues detected from checklist:**")
+            for issue in auto_feedback:
+                st.markdown(f"- {issue}")
+
         feedback = st.text_area(
-            "What needs to be fixed?",
+            "Additional feedback (what needs to be fixed?):",
             key="image_feedback",
-            placeholder="e.g., 'Dragonite is facing away', 'No attack beam visible in panel 1', 'Style looks like anime'"
+            placeholder="e.g., 'Dragonite is facing away', 'Fire attack looks weak', 'Colors are too dark'"
         )
 
         col1, col2, col3 = st.columns(3)
@@ -464,13 +495,46 @@ elif st.session_state.step == 3:
                 st.rerun()
         with col2:
             if st.button("🔄 Regenerate with Feedback"):
+                # Combine failed checks and manual feedback
+                all_feedback_parts = []
+
+                # Add failed checks as feedback
+                if failed_checks:
+                    failed_check_labels = {
+                        "panel1_pokemon1": f"{st.session_state.pokemon[0]} must be visible on LEFT in Panel 1",
+                        "panel1_pokemon2": f"{st.session_state.pokemon[1]} must be visible on RIGHT in Panel 1",
+                        "panel1_attack": "Attack beam/effect must be clearly visible in Panel 1",
+                        "facing": "Both Pokemon must be FACING each other in ALL panels",
+                        "damage": f"Battle damage must be visible on {st.session_state.pokemon[1]} in Panels 3-4",
+                        "style": "Style must be PHOTOREALISTIC, NOT anime or cartoon",
+                        "no_borders": "No thick borders between panels",
+                    }
+                    check_feedback = [failed_check_labels.get(fc, fc) for fc in failed_checks]
+                    all_feedback_parts.append("FAILED CHECKS: " + "; ".join(check_feedback))
+
+                # Add manual feedback
                 if feedback.strip():
+                    all_feedback_parts.append("USER FEEDBACK: " + feedback.strip())
+
+                combined_feedback = " | ".join(all_feedback_parts)
+
+                if combined_feedback:
+                    # Store in improvement history
+                    if "prompt_improvements" not in st.session_state:
+                        st.session_state.prompt_improvements = []
+                    st.session_state.prompt_improvements.append({
+                        "type": "Image Regeneration",
+                        "feedback": combined_feedback,
+                        "failed_checks": failed_checks
+                    })
+
                     st.session_state.prompt = incorporate_feedback_into_prompt(
                         st.session_state.prompt,
-                        f"PREVIOUS IMAGE ISSUES: {feedback}"
+                        f"PREVIOUS IMAGE ISSUES: {combined_feedback}"
                     )
+
                 st.session_state.storyboard_image = None
-                log_feedback("image", feedback, "regenerate")
+                log_feedback("image", combined_feedback, "regenerate")
                 st.rerun()
         with col3:
             can_proceed = len(failed_checks) == 0
