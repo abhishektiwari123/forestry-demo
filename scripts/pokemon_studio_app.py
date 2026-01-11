@@ -126,7 +126,8 @@ def log_feedback(step: str, feedback: str, action: str):
 
 def call_kie_api(endpoint: str, payload: dict = None, method: str = "GET"):
     """Call KIE API using requests library."""
-    base_url = "https://api.kieai.erweima.ai/api/v1"
+    # Updated API endpoint (changed from api.kieai.erweima.ai to api.kie.ai)
+    base_url = "https://api.kie.ai/api/v1"
     headers = {
         "Authorization": f"Bearer {KIE_API_KEY}",
         "Content-Type": "application/json"
@@ -494,7 +495,7 @@ elif st.session_state.step == 3:
                     "imageAspect": "16:9"
                 }
 
-                response = call_kie_api("generate", payload, method="POST")
+                response = call_kie_api("playground/createTask", payload, method="POST")
 
                 if "error" in response:
                     st.error(f"API Error: {response['error']}")
@@ -515,7 +516,7 @@ elif st.session_state.step == 3:
                             progress.progress((i + 1) / 60)
                             status_text.text(f"Waiting for generation... ({(i+1)*5}s)")
 
-                            status = call_kie_api(f"recordInfo?taskId={task_id}")
+                            status = call_kie_api(f"playground/recordInfo?taskId={task_id}")
 
                             if "error" in status:
                                 continue
