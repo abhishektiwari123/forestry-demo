@@ -56,6 +56,8 @@ if "validation_errors" not in st.session_state:
     st.session_state.validation_errors = []
 if "user_feedback" not in st.session_state:
     st.session_state.user_feedback = ""
+if "prompt_updated_notice" not in st.session_state:
+    st.session_state.prompt_updated_notice = None
 
 # Load API key from secrets or environment
 def get_api_key():
@@ -132,6 +134,7 @@ def call_claude_for_prompt_improvement(current_prompt: str, feedback: str, faile
     """
     if not ANTHROPIC_API_KEY:
         # Fallback to simple append if no API key
+        st.warning("⚠️ No Anthropic API key found. Using simple feedback append.")
         return None, None
 
     # Build the request to Claude
@@ -147,12 +150,8 @@ Rules:
 4. Be more explicit about what failed
 5. Extract a "best practice" lesson that can be applied to future prompts
 
-Respond in JSON format:
-{
-    "improved_prompt": "the full improved prompt text",
-    "best_practice": "A concise lesson learned (e.g., 'Always specify Pokemon facing direction explicitly')",
-    "changes_made": "Brief summary of what you changed"
-}"""
+IMPORTANT: Respond with ONLY raw JSON (no markdown code blocks). Format:
+{"improved_prompt": "the full improved prompt text", "best_practice": "A concise lesson learned", "changes_made": "Brief summary of what you changed"}"""
 
     user_message = f"""Current prompt:
 {current_prompt}
@@ -161,7 +160,7 @@ User feedback: {feedback}
 
 Failed validation checks: {failed_checks_text}
 
-Please improve this prompt to address the feedback and failed checks."""
+Please improve this prompt to address the feedback and failed checks. Return ONLY raw JSON."""
 
     try:
         response = requests.post(
@@ -184,14 +183,35 @@ Please improve this prompt to address the feedback and failed checks."""
             result = response.json()
             content = result.get("content", [{}])[0].get("text", "")
 
+            # Clean up potential markdown code blocks
+            content = content.strip()
+            if content.startswith("```json"):
+                content = content[7:]  # Remove ```json
+            elif content.startswith("```"):
+                content = content[3:]  # Remove ```
+            if content.endswith("```"):
+                content = content[:-3]  # Remove trailing ```
+            content = content.strip()
+
             # Parse JSON response
             try:
                 parsed = json.loads(content)
-                return parsed.get("improved_prompt"), parsed.get("best_practice")
-            except json.JSONDecodeError:
-                # Try to extract from text if not valid JSON
+                improved_prompt = parsed.get("improved_prompt")
+                best_practice = parsed.get("best_practice")
+                changes_made = parsed.get("changes_made", "")
+
+                if improved_prompt:
+                    st.success(f"✅ Claude improved the prompt! Changes: {changes_made}")
+                    return improved_prompt, best_practice
+                else:
+                    st.warning("⚠️ Claude response missing improved_prompt")
+                    return None, None
+            except json.JSONDecodeError as e:
+                st.warning(f"⚠️ Could not parse Claude response as JSON: {e}")
+                st.code(content[:500])  # Show first 500 chars for debugging
                 return None, None
         else:
+            st.error(f"❌ Claude API error: {response.status_code} - {response.text[:200]}")
             return None, None
 
     except Exception as e:
@@ -566,6 +586,11 @@ elif st.session_state.step == 2:
 elif st.session_state.step == 3:
     st.header("Step 3: Storyboard Image Generation")
 
+    # Show notification if prompt was updated
+    if st.session_state.prompt_updated_notice:
+        st.success(f"🔄 {st.session_state.prompt_updated_notice}")
+        st.session_state.prompt_updated_notice = None  # Clear after showing
+
     if st.session_state.storyboard_image is not None:
         # Already generated - show result
         st.success("✅ Storyboard generated!")
@@ -665,6 +690,7 @@ elif st.session_state.step == 3:
                     if improved_prompt:
                         # Claude successfully improved the prompt
                         st.session_state.prompt = improved_prompt
+                        st.session_state.prompt_updated_notice = "Prompt improved by Claude AI! Review the updated prompt below."
 
                         # Save best practice to file
                         if best_practice:
@@ -675,13 +701,13 @@ elif st.session_state.step == 3:
                                 "feedback": combined_feedback
                             })
                             save_best_practices(bp_data)
-                            st.success(f"💡 New best practice saved: {best_practice}")
                     else:
                         # Fallback to simple append
                         st.session_state.prompt = incorporate_feedback_into_prompt(
                             st.session_state.prompt,
                             f"PREVIOUS IMAGE ISSUES: {combined_feedback}"
                         )
+                        st.session_state.prompt_updated_notice = "Feedback appended to prompt (Claude API unavailable)."
 
                     # Store in session improvement history
                     if "prompt_improvements" not in st.session_state:
@@ -945,6 +971,7 @@ elif st.session_state.step == 4:
 
                     if improved_prompt:
                         st.session_state.prompt = improved_prompt
+                        st.session_state.prompt_updated_notice = "Prompt improved by Claude AI based on panel issues!"
                         if best_practice:
                             bp_data = load_best_practices()
                             bp_data["practices"].append({
@@ -959,6 +986,7 @@ elif st.session_state.step == 4:
                             st.session_state.prompt,
                             f"PANEL SPLITTING ISSUES: {combined_feedback}"
                         )
+                        st.session_state.prompt_updated_notice = "Feedback appended to prompt (Claude API unavailable)."
 
                     # Store in session history
                     if "prompt_improvements" not in st.session_state:
