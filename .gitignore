@@ -1,7 +1,12 @@
 _site/
 .sass-cache/
 .DS_Store
-*/.DS_Storescripts/.env
+*/.DS_Store
 scripts/.env
 __pycache__/
 *.pyc
+
+# Test output directories
+charizard/
+storyboard_test/
+studio_output_*/
