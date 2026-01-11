@@ -600,17 +600,33 @@ elif st.session_state.step == 4:
         # Already split - show panels
         st.success("✅ Panels extracted!")
 
+        # Initialize selected panels if not exists
+        if "selected_panels" not in st.session_state:
+            st.session_state.selected_panels = [True] * len(st.session_state.panel_images)
+
         cols = st.columns(2)
         for i, panel_img in enumerate(st.session_state.panel_images):
             with cols[i % 2]:
                 st.image(panel_img, caption=f"Panel {i+1}", use_container_width=True)
                 st.caption(f"Size: {panel_img.size[0]}x{panel_img.size[1]}")
+                # Add skip checkbox
+                st.session_state.selected_panels[i] = st.checkbox(
+                    f"✅ Include Panel {i+1} for video generation",
+                    value=st.session_state.selected_panels[i],
+                    key=f"select_panel_{i}"
+                )
+
+        # Show selected count
+        selected_count = sum(st.session_state.selected_panels)
+        st.info(f"📊 {selected_count} of {len(st.session_state.panel_images)} panels selected for video generation")
 
         # Panel-by-panel validation
         st.subheader("🔍 Panel Validation")
 
         panel_issues = []
-        for i in range(4):
+        for i in range(len(st.session_state.panel_images)):
+            if not st.session_state.selected_panels[i]:
+                continue  # Skip validation for unselected panels
             with st.expander(f"Panel {i+1} Review", expanded=True):
                 col1, col2 = st.columns(2)
                 with col1:
@@ -689,14 +705,36 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     st.header("Step 5: Upscaling Panels")
 
+    # Get selected panels from previous step
+    selected_panels = st.session_state.get("selected_panels", [True] * 4)
+    selected_indices = [i for i, sel in enumerate(selected_panels) if sel]
+
     if "upscaled_images" in st.session_state and st.session_state.upscaled_images:
         st.success("✅ Panels upscaled!")
 
+        # Initialize video selection if not exists
+        if "panels_for_video" not in st.session_state:
+            st.session_state.panels_for_video = [True] * len(st.session_state.upscaled_images)
+
+        st.subheader("🎬 Select Panels for Video Generation")
+        st.info("Uncheck panels you don't want to generate videos for")
+
         cols = st.columns(2)
         for i, up_img in enumerate(st.session_state.upscaled_images):
+            original_panel_num = st.session_state.upscaled_panel_indices[i] + 1
             with cols[i % 2]:
-                st.image(up_img, caption=f"Upscaled Panel {i+1}", use_container_width=True)
+                st.image(up_img, caption=f"Panel {original_panel_num}", use_container_width=True)
                 st.caption(f"Size: {up_img.size[0]}x{up_img.size[1]}")
+                # Checkbox to select for video generation
+                st.session_state.panels_for_video[i] = st.checkbox(
+                    f"🎬 Generate video for Panel {original_panel_num}",
+                    value=st.session_state.panels_for_video[i],
+                    key=f"video_select_{i}"
+                )
+
+        # Show selection summary
+        video_count = sum(st.session_state.panels_for_video)
+        st.info(f"📊 {video_count} panels selected for video generation")
 
         feedback = st.text_area("Feedback on upscaled panels:", key="upscale_feedback")
 
@@ -708,41 +746,61 @@ elif st.session_state.step == 5:
         with col2:
             if st.button("🔄 Re-upscale"):
                 st.session_state.upscaled_images = []
+                if "panels_for_video" in st.session_state:
+                    del st.session_state.panels_for_video
                 st.rerun()
         with col3:
-            if st.button("✅ Approve & Create Video Prompts", type="primary"):
+            can_proceed = video_count > 0
+            if st.button("✅ Approve & Create Video Prompts", type="primary", disabled=not can_proceed):
                 log_feedback("upscale", feedback, "approved")
                 st.session_state.step = 6
                 st.rerun()
+            if not can_proceed:
+                st.caption("Select at least 1 panel")
 
     else:
-        st.info("Upscale panels using LANCZOS resampling (content-preserving, no AI regeneration).")
+        st.info("Upscale selected panels using LANCZOS resampling (content-preserving, no AI regeneration).")
 
-        # Show current panels
-        if st.session_state.panel_images:
-            cols = st.columns(4)
-            for i, panel in enumerate(st.session_state.panel_images):
-                with cols[i]:
-                    st.image(panel, caption=f"Panel {i+1}\n{panel.size[0]}x{panel.size[1]}", use_container_width=True)
+        # Show only selected panels
+        if st.session_state.panel_images and selected_indices:
+            st.write(f"**{len(selected_indices)} panels selected for upscaling:**")
+            cols = st.columns(min(4, len(selected_indices)))
+            for col_idx, panel_idx in enumerate(selected_indices):
+                panel = st.session_state.panel_images[panel_idx]
+                with cols[col_idx % len(cols)]:
+                    st.image(panel, caption=f"Panel {panel_idx + 1}\n{panel.size[0]}x{panel.size[1]}", use_container_width=True)
+        elif not selected_indices:
+            st.warning("⚠️ No panels selected! Go back and select at least one panel.")
 
         scale = st.selectbox("Upscale factor", [2, 3, 4], index=0, key="scale_select")
 
-        if st.session_state.panel_images:
-            original_size = st.session_state.panel_images[0].size
+        if st.session_state.panel_images and selected_indices:
+            original_size = st.session_state.panel_images[selected_indices[0]].size
             new_size = (original_size[0] * scale, original_size[1] * scale)
             st.info(f"Will upscale from {original_size[0]}x{original_size[1]} to {new_size[0]}x{new_size[1]}")
 
-        if st.button("⬆️ Upscale Panels", type="primary"):
-            with st.spinner("Upscaling panels..."):
-                upscaled = []
-                for panel in st.session_state.panel_images:
-                    new_size = (panel.size[0] * scale, panel.size[1] * scale)
-                    up_img = panel.resize(new_size, Image.LANCZOS)
-                    upscaled.append(up_img)
-
-                st.session_state.upscaled_images = upscaled
-                st.success("✅ Upscaling complete!")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("⬅️ Back to Split"):
+                st.session_state.step = 4
                 st.rerun()
+        with col2:
+            if st.button("⬆️ Upscale Selected Panels", type="primary", disabled=not selected_indices):
+                with st.spinner("Upscaling panels..."):
+                    upscaled = []
+                    upscaled_indices = []
+                    for panel_idx in selected_indices:
+                        panel = st.session_state.panel_images[panel_idx]
+                        new_size = (panel.size[0] * scale, panel.size[1] * scale)
+                        up_img = panel.resize(new_size, Image.LANCZOS)
+                        upscaled.append(up_img)
+                        upscaled_indices.append(panel_idx)
+
+                    st.session_state.upscaled_images = upscaled
+                    st.session_state.upscaled_panel_indices = upscaled_indices
+                    st.session_state.panels_for_video = [True] * len(upscaled)
+                    st.success("✅ Upscaling complete!")
+                    st.rerun()
 
 
 # ============================================================================
@@ -751,52 +809,58 @@ elif st.session_state.step == 5:
 elif st.session_state.step == 6:
     st.header("Step 6: Video Motion Prompts")
 
-    st.info("Generate and review motion prompts for each panel before creating videos.")
+    # Get panels selected for video generation
+    panels_for_video = st.session_state.get("panels_for_video", [])
+    upscaled_indices = st.session_state.get("upscaled_panel_indices", [])
+    selected_for_video = [(i, idx) for i, (sel, idx) in enumerate(zip(panels_for_video, upscaled_indices)) if sel]
 
-    # Define scene actions
-    scene_actions = [
-        f"{st.session_state.pokemon[0]} launching attack, fire streaming from mouth",
-        f"{st.session_state.pokemon[1]} being hit, reacting to impact, body recoiling",
-        f"{st.session_state.pokemon[1]} charging counter-attack, energy gathering at mouth",
-        f"{st.session_state.pokemon[1]} releasing attack beam toward {st.session_state.pokemon[0]}"
-    ]
+    st.info(f"Generate and review motion prompts for {len(selected_for_video)} selected panels.")
 
-    # Show upscaled panels for reference
-    st.subheader("📸 Reference Panels")
-    if "upscaled_images" in st.session_state:
-        cols = st.columns(4)
-        for i, img in enumerate(st.session_state.upscaled_images):
-            with cols[i]:
-                st.image(img, caption=f"Scene {i+1}", use_container_width=True)
+    # Define scene actions based on original panel numbers
+    scene_actions = {
+        0: f"{st.session_state.pokemon[0]} launching attack, fire streaming from mouth",
+        1: f"{st.session_state.pokemon[1]} being hit, reacting to impact, body recoiling",
+        2: f"{st.session_state.pokemon[1]} charging counter-attack, energy gathering at mouth",
+        3: f"{st.session_state.pokemon[1]} releasing attack beam toward {st.session_state.pokemon[0]}"
+    }
 
-    # Generate or edit video prompts
-    st.subheader("🎬 Motion Prompts for Each Scene")
+    # Show selected upscaled panels for reference
+    st.subheader("📸 Panels Selected for Video Generation")
+    if "upscaled_images" in st.session_state and selected_for_video:
+        num_cols = min(4, len(selected_for_video))
+        cols = st.columns(num_cols)
+        for col_idx, (img_idx, panel_idx) in enumerate(selected_for_video):
+            with cols[col_idx % num_cols]:
+                st.image(st.session_state.upscaled_images[img_idx], caption=f"Panel {panel_idx + 1}", use_container_width=True)
 
-    video_prompts = []
+    # Generate or edit video prompts only for selected panels
+    st.subheader("🎬 Motion Prompts for Selected Panels")
+
+    video_prompts = {}
     prompt_validations = []
 
-    for i in range(4):
-        with st.expander(f"Scene {i+1} Motion Prompt", expanded=True):
+    for img_idx, panel_idx in selected_for_video:
+        panel_num = panel_idx + 1
+        with st.expander(f"Panel {panel_num} Motion Prompt", expanded=True):
             # Generate if not exists
-            if len(st.session_state.video_prompts) <= i:
-                pokemon_name = st.session_state.pokemon[0] if i in [0] else st.session_state.pokemon[1]
-                if i == 3:
-                    pokemon_name = st.session_state.pokemon[1]  # Dragonite attacks in scene 4
+            existing_prompts = st.session_state.get("video_prompts", {})
+            if panel_idx not in existing_prompts:
+                pokemon_name = st.session_state.pokemon[0] if panel_idx == 0 else st.session_state.pokemon[1]
                 default_prompt = validator.generate_holistic_video_prompt(
                     pokemon_name=pokemon_name,
-                    action=scene_actions[i],
+                    action=scene_actions.get(panel_idx, "battle action"),
                     scene_context=f"volcanic battlefield, {st.session_state.environment} environment"
                 )
             else:
-                default_prompt = st.session_state.video_prompts[i]
+                default_prompt = existing_prompts[panel_idx]
 
             edited = st.text_area(
-                f"Motion prompt for Scene {i+1}",
+                f"Motion prompt for Panel {panel_num}",
                 value=default_prompt,
                 height=100,
-                key=f"video_prompt_{i}"
+                key=f"video_prompt_{panel_idx}"
             )
-            video_prompts.append(edited)
+            video_prompts[panel_idx] = edited
 
             # Validate
             validation = validator.validate_video_prompt(edited)
@@ -815,10 +879,12 @@ elif st.session_state.step == 6:
     st.session_state.video_prompts = video_prompts
 
     # Overall validation
-    all_valid = all(v.passed for v in prompt_validations)
+    all_valid = all(v.passed for v in prompt_validations) if prompt_validations else False
 
     if all_valid:
         st.success("✅ All video prompts are valid!")
+    elif not selected_for_video:
+        st.warning("⚠️ No panels selected for video generation. Go back and select panels.")
     else:
         st.error("❌ Some video prompts have issues. Fix them before generating videos.")
 
