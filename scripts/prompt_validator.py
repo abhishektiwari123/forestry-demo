@@ -167,147 +167,222 @@ SCENE_DESCRIPTION_BEST_PRACTICES = {
 # Detailed Pokemon information for holistic prompts
 POKEMON_DETAILED_INFO = {
     "charizard": {
-        "body_color": "orange body with cream belly",
+        "name": "Charizard",
+        "body_color": "orange body with cream/pale yellow underbelly",
+        "height": "5'7\" (1.7 meters)",
+        "weight": "199.5 lbs (90.5 kg)",
+        "body_type": "bipedal dragon, muscular reptilian build",
         "features": [
-            "two large blue inner wings with orange membrane",
-            "flame constantly burning at tail tip",
-            "long neck with powerful jaws",
-            "sharp claws on hands and feet",
-            "two horns on head",
-            "dragon-like appearance",
-            "muscular build"
+            "two large blue-green inner membrane wings with orange outer edge",
+            "flame constantly burning at tail tip (blue when angry, orange normal)",
+            "long powerful neck with defined scales",
+            "powerful jaws with visible fangs",
+            "sharp white claws on three-fingered hands",
+            "sharp claws on three-toed feet",
+            "two backward-pointing horns on head",
+            "small pointed nose horn",
+            "cream-colored wing membranes",
+            "thick powerful tail ending in flame",
+            "visible muscle definition on arms and legs",
+            "scaly textured skin with subtle orange gradient"
         ],
         "type": "fire/flying",
         "attacks": {
-            "flamethrower": "stream of intense fire from mouth, orange-red flames",
-            "fire_blast": "star-shaped massive fire explosion",
-            "dragon_breath": "blue-purple dragon energy breath",
-            "wing_attack": "powerful wing strike with blue-glowing wings",
-            "fire_spin": "spiraling tornado of flames",
-            "heat_wave": "wave of intense heat distortion"
+            "flamethrower": "continuous stream of intense orange-red fire from mouth, flames spiraling outward, heat distortion visible",
+            "fire_blast": "star-shaped massive fire explosion, five-pointed flame projectile",
+            "dragon_breath": "blue-purple dragon energy breath with sparkles",
+            "wing_attack": "powerful wing strike with blue-glowing wing edges",
+            "fire_spin": "spiraling tornado of flames surrounding target",
+            "heat_wave": "wave of intense heat distortion rippling through air"
+        },
+        "attack_visuals": {
+            "flamethrower": "VISIBLE orange-red flame stream shooting from open mouth, fire trail in air, heat shimmer effect",
+            "charging": "throat glowing orange, flames licking from mouth corners, tail flame intensifying"
         },
         "expressions": {
-            "fierce": "narrowed eyes, bared teeth, aggressive stance",
-            "attacking": "mouth wide open, flames visible, leaning forward",
-            "damaged": "wincing, one eye closed, smoke rising from body",
-            "victorious": "head raised high, triumphant roar, wings spread"
+            "fierce": "narrowed reptilian eyes with visible slit pupils, bared fangs, aggressive forward-leaning stance, wings partially spread",
+            "attacking": "mouth wide open with flames visible inside, body leaning forward, wings back, tail raised with intensified flame",
+            "damaged": "wincing expression, one eye closed, visible scorch marks on scales, smoke rising from body, staggered stance",
+            "victorious": "head raised high in triumphant roar, wings fully spread wide, tail flame burning bright blue",
+            "charging_attack": "throat bulging with fire energy, orange glow visible in chest, intense focused eyes"
         },
-        "size": "approximately 5'7\" (1.7m) tall, large wingspan",
-        "habitat": "volcanic mountains, hot climates",
-        "documentary_description": "Photorealistic Charizard, orange fire-dragon with powerful blue wings, flame burning at tail tip, muscular reptilian build, sharp claws and horns"
+        "damage_appearance": {
+            "burn_marks": "blackened scorch marks on orange scales, smoke wisping from wounds",
+            "impact_wounds": "cracked scales, visible bruising under scales as darker patches",
+            "exhaustion": "lowered wings, dimmer tail flame, heavy breathing visible"
+        },
+        "size": "approximately 5'7\" (1.7m) tall standing, 15ft wingspan when fully extended",
+        "habitat": "volcanic mountains, hot climates, mountain peaks",
+        "scale_texture": "overlapping hexagonal scales with slight iridescent sheen in firelight",
+        "documentary_description": "Photorealistic Charizard - large bipedal fire dragon standing 5'7\" tall with orange scaly skin, cream underbelly, two powerful blue-membrane wings with 15ft wingspan, muscular reptilian build, long neck, two backward horns on head, sharp white claws on hands and feet, iconic flame burning at thick tail tip, fierce reptilian eyes with slit pupils"
     },
     "dragonite": {
-        "body_color": "orange-yellow body with cream belly",
+        "name": "Dragonite",
+        "body_color": "orange-yellow/amber body with cream/pale belly and inner wings",
+        "height": "7'3\" (2.2 meters)",
+        "weight": "463 lbs (210 kg)",
+        "body_type": "bipedal dragon, rotund powerful build, deceptively strong",
         "features": [
-            "two small wings (disproportionately small for body)",
-            "two antennae on head",
-            "round friendly face with small eyes",
-            "thick tail",
-            "small horn on forehead",
-            "chubby rounded body",
-            "gentle expression by default"
+            "two small teal-green wings (disproportionately small for body size)",
+            "two long thin antennae on top of head",
+            "round friendly face with small kind eyes",
+            "thick powerful tail tapering to rounded tip",
+            "small rounded horn on forehead",
+            "chubby rounded body hiding immense strength",
+            "gentle expression by default but fierce when angered",
+            "three-clawed hands and feet",
+            "cream-colored belly and inner wing membrane",
+            "smooth skin texture compared to scaled Pokemon",
+            "thick sturdy legs supporting heavy body"
         ],
         "type": "dragon/flying",
         "attacks": {
-            "dragon_pulse": "orange-purple swirling energy beam from mouth",
-            "hyper_beam": "devastating golden-white energy beam",
-            "thunder_punch": "fist crackling with electricity",
-            "dragon_claw": "glowing purple-blue slashing claws",
-            "outrage": "red-aura rampage state, fierce attacking",
-            "dragon_rush": "full body charge with dragon energy aura"
+            "dragon_pulse": "orange-purple swirling energy beam from mouth, spiral pattern visible",
+            "hyper_beam": "devastating golden-white concentrated energy beam, extremely bright",
+            "thunder_punch": "fist surrounded by crackling yellow electricity, lightning arcs",
+            "dragon_claw": "claws glowing purple-blue with dragon energy, visible aura",
+            "outrage": "red-aura rampage state, eyes glowing red, fierce uncontrolled attacking",
+            "dragon_rush": "full body charge surrounded by blue dragon-shaped energy aura"
+        },
+        "attack_visuals": {
+            "dragon_pulse": "VISIBLE orange-purple spiral beam shooting from open mouth, energy crackling along beam",
+            "hyper_beam": "VISIBLE massive golden-white beam, so bright it illuminates entire scene, recoil visible",
+            "charging": "antennae glowing bright, mouth open with visible energy sphere forming, body tensing"
         },
         "expressions": {
-            "fierce": "narrowed eyes (unusual), jaw clenched, aggressive stance",
-            "charging": "mouth open with energy gathering, antennae glowing",
-            "damaged": "visible burn marks, pained expression, determination",
-            "attacking": "forward lean, wings spread, energy releasing"
+            "fierce": "narrowed eyes (unusual for normally gentle face), jaw clenched tight, aggressive forward stance, wings spread",
+            "charging": "mouth open with visible energy sphere forming inside, antennae glowing brightly, determined expression",
+            "damaged": "visible burn marks on orange skin, pained expression but showing determination, one eye squinting",
+            "attacking": "forward lean with full commitment, wings spread for balance, energy releasing from mouth",
+            "determined": "furrowed brow, set jaw, unwavering gaze, battle-ready stance despite injuries"
         },
-        "size": "approximately 7'3\" (2.2m) tall, large powerful body",
-        "habitat": "oceans, islands, mountainous regions",
-        "documentary_description": "Photorealistic Dragonite, large orange dragon-type with small wings, friendly rounded face, antennae on head, powerful thick body"
+        "damage_appearance": {
+            "burn_marks": "blackened patches on orange skin, blistering visible, smoke rising",
+            "impact_wounds": "darker bruised areas, visible swelling",
+            "accumulated_damage": "multiple burn marks, exhausted posture, heavy breathing, but still fighting"
+        },
+        "size": "approximately 7'3\" (2.2m) tall, powerful body mass, small wings ~6ft span",
+        "habitat": "oceans, remote islands, mountainous regions, open skies",
+        "skin_texture": "smooth leathery skin with slight sheen, not scaled",
+        "documentary_description": "Photorealistic Dragonite - large bipedal dragon standing 7'3\" tall with orange-amber smooth skin, cream underbelly, surprisingly small teal wings for its massive body, two thin antennae on head, round friendly face with small eyes, small forehead horn, thick powerful tail, rotund yet immensely powerful build, three-clawed hands and feet"
     },
     "pikachu": {
+        "name": "Pikachu",
         "body_color": "bright yellow with brown stripes on back",
+        "height": "1'4\" (0.4 meters)",
+        "weight": "13.2 lbs (6 kg)",
+        "body_type": "small quadruped mouse, compact and agile",
         "features": [
             "lightning bolt shaped tail (flat, yellow with brown base)",
-            "red circular cheek pouches (store electricity)",
+            "red circular cheek pouches (store electricity, glow when charging)",
             "long pointy ears with black tips",
-            "small compact body",
-            "large brown eyes",
-            "short arms and legs"
+            "small compact furry body",
+            "large expressive brown eyes",
+            "short stubby arms and legs",
+            "two brown stripes across back",
+            "small black nose",
+            "pink inner ears"
         ],
         "type": "electric",
         "attacks": {
-            "thunderbolt": "powerful yellow lightning bolt from body",
+            "thunderbolt": "powerful yellow lightning bolt from body, branching electricity",
             "thunder": "massive storm of lightning from sky",
             "quick_attack": "fast dash leaving blur trail",
-            "iron_tail": "tail glowing silver-white, striking",
-            "electro_ball": "sphere of electricity at tail"
+            "iron_tail": "tail glowing silver-white metallic, striking",
+            "electro_ball": "sphere of electricity forming at tail"
+        },
+        "attack_visuals": {
+            "thunderbolt": "VISIBLE yellow lightning arcing from red cheek pouches, electricity branching",
+            "charging": "cheek pouches glowing bright red, electricity crackling around body, fur standing on end"
         },
         "expressions": {
-            "determined": "narrowed eyes, cheeks sparking",
-            "attacking": "cheeks glowing red, electricity arcing",
-            "happy": "wide smile, ears up",
-            "battle_ready": "crouched stance, tail raised"
+            "determined": "narrowed eyes, cheeks sparking with electricity",
+            "attacking": "cheeks glowing bright red, electricity arcing across body",
+            "happy": "wide smile, ears up and forward",
+            "battle_ready": "crouched low stance, tail raised and crackling"
         },
         "size": "approximately 1'4\" (0.4m) tall, small mouse-like",
         "habitat": "forests, power plants, urban areas",
-        "documentary_description": "Photorealistic Pikachu, small yellow electric mouse with red cheek pouches, lightning bolt tail, pointy black-tipped ears"
+        "fur_texture": "short soft yellow fur with slight static effect",
+        "documentary_description": "Photorealistic Pikachu - small electric mouse standing 1'4\" tall with bright yellow fur, red circular cheek pouches that store electricity, distinctive lightning bolt shaped tail, long pointy ears with black tips, large expressive brown eyes, two brown stripes on back"
     },
     "mewtwo": {
-        "body_color": "pale purple body with darker purple tail",
+        "name": "Mewtwo",
+        "body_color": "pale purple/lavender body with darker purple tail",
+        "height": "6'7\" (2.0 meters)",
+        "weight": "269 lbs (122 kg)",
+        "body_type": "humanoid psychic being, elegant yet powerful",
         "features": [
-            "long thick purple tail",
-            "three round fingers on each hand",
-            "two short horns on head",
-            "psychic aura visible around body",
-            "no wings",
-            "humanoid stance",
-            "intense piercing eyes",
-            "tube-like connection on back of head"
+            "long thick purple tail with bulbous end",
+            "three round fingers on each large hand",
+            "two short curved horns extending from back of head",
+            "psychic aura visible around body (purple energy)",
+            "no wings, floats using psychic power",
+            "humanoid bipedal stance",
+            "intense piercing purple eyes",
+            "tube-like structure connecting from back of head to spine",
+            "muscular feline-like legs",
+            "purple sections on thighs",
+            "pale lavender main body"
         ],
         "type": "psychic",
         "attacks": {
-            "psychic": "purple telekinetic waves, objects floating",
-            "shadow_ball": "dark purple-black sphere of ghost energy",
-            "aura_sphere": "blue fighting-type energy sphere",
-            "psystrike": "powerful pink-purple psychic blast"
+            "psychic": "purple telekinetic waves emanating outward, visible distortion",
+            "shadow_ball": "dark purple-black sphere of ghost energy, swirling darkness",
+            "aura_sphere": "blue fighting-type energy sphere, bright glow",
+            "psystrike": "powerful pink-purple psychic wave blast"
+        },
+        "attack_visuals": {
+            "psychic": "VISIBLE purple energy waves radiating from body, objects floating nearby",
+            "charging": "eyes glowing bright purple, psychic aura intensifying, energy gathering at hands"
         },
         "expressions": {
-            "intense": "glowing eyes, psychic aura flaring",
-            "attacking": "hand raised, energy gathering",
-            "focused": "calm but power visible, hovering",
-            "powerful": "full aura display, intimidating presence"
+            "intense": "glowing purple eyes, psychic aura flaring around body",
+            "attacking": "arm extended with palm forward, energy gathering at hand",
+            "focused": "calm expression but immense power visible, hovering above ground",
+            "powerful": "full psychic aura display, intimidating presence, eyes blazing"
         },
-        "size": "approximately 6'7\" (2.0m) tall, floating usually",
+        "size": "approximately 6'7\" (2.0m) tall, usually floating",
         "habitat": "caves, laboratories, isolated locations",
-        "documentary_description": "Photorealistic Mewtwo, powerful psychic Pokemon with pale purple body, long tail, intense eyes, psychic aura emanating"
+        "skin_texture": "smooth almost organic-metallic surface, pale lavender",
+        "documentary_description": "Photorealistic Mewtwo - powerful psychic Pokemon standing 6'7\" tall with pale purple humanoid body, long thick purple tail, three-fingered hands, two curved horns on back of head, intense glowing purple eyes, visible psychic aura emanating, tube structure on back of neck, muscular feline-like legs"
     },
     "haunter": {
-        "body_color": "dark purple gaseous body",
+        "name": "Haunter",
+        "body_color": "dark purple gaseous/ethereal body",
+        "height": "5'3\" (1.6 meters)",
+        "weight": "0.2 lbs (0.1 kg) - nearly weightless ghost",
+        "body_type": "floating ghost, no solid lower body",
         "features": [
-            "floating disembodied hands",
-            "no visible legs (floats)",
-            "large pointed tongue",
-            "glowing eyes",
-            "spiky gaseous form",
-            "mischievous expression"
+            "two floating disembodied hands with claws",
+            "no visible legs (floats, lower body fades to gas)",
+            "large pointed pink tongue often visible",
+            "glowing white eyes with no pupils",
+            "spiky gaseous purple form",
+            "mischievous wide grin",
+            "triangular spikes around head",
+            "semi-transparent ghostly body"
         ],
         "type": "ghost/poison",
         "attacks": {
-            "shadow_ball": "dark purple ghost energy sphere",
-            "lick": "long tongue attack, paralyzing",
-            "hypnosis": "swirling hypnotic waves from eyes",
-            "dream_eater": "dark aura absorbing energy"
+            "shadow_ball": "dark purple ghost energy sphere forming between hands",
+            "lick": "long tongue extending to paralyze target",
+            "hypnosis": "swirling hypnotic waves emanating from eyes",
+            "dream_eater": "dark aura absorbing energy from sleeping target"
+        },
+        "attack_visuals": {
+            "shadow_ball": "VISIBLE dark purple sphere forming between floating hands, ghostly energy swirling",
+            "charging": "hands raised, dark energy gathering between them, eyes glowing brighter"
         },
         "expressions": {
-            "menacing": "wide grin, glowing eyes, hovering close",
-            "attacking": "hands forward, tongue out",
-            "lurking": "partially transparent, emerging from shadows"
+            "menacing": "wide toothy grin, glowing eyes, hovering close threateningly",
+            "attacking": "hands thrust forward, tongue out, eyes intensely glowing",
+            "lurking": "partially transparent, half-emerging from shadows"
         },
-        "size": "approximately 5'3\" (1.6m) tall, gaseous form",
-        "habitat": "abandoned buildings, caves, darkness",
-        "documentary_description": "Photorealistic Haunter, purple ghost-type with floating hands, gaseous body, glowing eyes, menacing grin"
+        "size": "approximately 5'3\" (1.6m) when fully manifested, gaseous form",
+        "habitat": "abandoned buildings, dark caves, haunted locations",
+        "body_texture": "semi-transparent gaseous form, constantly shifting",
+        "documentary_description": "Photorealistic Haunter - ethereal ghost Pokemon hovering at 5'3\" with dark purple gaseous body, two floating disembodied clawed hands, glowing white pupil-less eyes, large pointed pink tongue, wide menacing grin, spiky head silhouette, semi-transparent and constantly shifting form"
     }
 }
 
@@ -326,6 +401,40 @@ class PromptValidator:
         self.scene_practices = SCENE_DESCRIPTION_BEST_PRACTICES
         self.pokemon_info = POKEMON_DETAILED_INFO
 
+    def get_pokemon_full_description(self, pokemon_name: str) -> str:
+        """
+        Get a complete physical description of a Pokemon for image generation.
+
+        Args:
+            pokemon_name: Name of the Pokemon
+
+        Returns:
+            Comprehensive description string
+        """
+        name_lower = pokemon_name.lower()
+        info = self.pokemon_info.get(name_lower, {})
+
+        if not info:
+            return f"Photorealistic {pokemon_name}"
+
+        parts = [
+            f"Photorealistic {info.get('name', pokemon_name)}",
+            f"({info.get('height', 'unknown height')}, {info.get('weight', 'unknown weight')})",
+            f"- Body: {info.get('body_color', 'unknown color')}, {info.get('body_type', 'unknown build')}",
+        ]
+
+        # Add key features
+        features = info.get('features', [])[:6]  # Top 6 features
+        if features:
+            parts.append(f"- Features: {', '.join(features)}")
+
+        # Add texture if available
+        texture = info.get('scale_texture') or info.get('skin_texture') or info.get('fur_texture') or info.get('body_texture')
+        if texture:
+            parts.append(f"- Texture: {texture}")
+
+        return " ".join(parts)
+
     def generate_holistic_storyboard_prompt(
         self,
         pokemon_names: list,
@@ -334,13 +443,15 @@ class PromptValidator:
         panel_count: int = 4
     ) -> tuple[str, str]:
         """
-        Generate a holistic storyboard prompt with detailed Pokemon information.
+        Generate a COMPREHENSIVE storyboard prompt with FULL Pokemon details.
+        Each panel is treated as a detailed standalone image prompt.
 
         CRITICAL REQUIREMENTS:
         - Both Pokemon FACING EACH OTHER in every panel
         - Explicit LEFT/RIGHT positioning maintained
         - Battle damage CONTINUITY (accumulated damage shown)
-        - VISIBLE attack effects
+        - VISIBLE attack effects with detailed descriptions
+        - Full physical descriptions of both Pokemon
 
         Args:
             pokemon_names: List of Pokemon in the scene
@@ -351,86 +462,213 @@ class PromptValidator:
         Returns:
             Tuple of (prompt, negative_prompt)
         """
-        # Get detailed Pokemon info
-        pokemon_descriptions = []
-        pokemon_features = []
+        # Get FULL detailed Pokemon info
+        p1_name = pokemon_names[0]
+        p2_name = pokemon_names[1]
+        p1_info = self.pokemon_info.get(p1_name.lower(), {})
+        p2_info = self.pokemon_info.get(p2_name.lower(), {})
 
-        for name in pokemon_names:
-            name_lower = name.lower()
-            if name_lower in self.pokemon_info:
-                info = self.pokemon_info[name_lower]
-                pokemon_descriptions.append(info["documentary_description"])
-                pokemon_features.extend(info["features"][:3])
-
-        # Build environment description
+        # Build comprehensive environment description
         env_descriptions = {
-            "volcanic": "volcanic battlefield with molten lava, smoke rising, dramatic orange glow",
-            "forest": "ancient forest clearing, dappled sunlight, natural atmosphere",
-            "ocean": "coastal cliffside, turbulent ocean, stormy sky",
-            "cave": "underground cavern with crystals, bioluminescent glow",
-            "urban": "abandoned city at dusk, overgrown ruins",
-            "mountain": "mountain peak above clouds, majestic alpine"
+            "volcanic": "volcanic battlefield - black volcanic rock terrain, pools of glowing molten lava, smoke and ash rising, dramatic orange-red ambient glow from lava, heat distortion in air, dark stormy sky with fire reflections",
+            "forest": "ancient forest clearing - massive ancient trees surrounding clearing, dappled golden sunlight filtering through canopy, soft forest floor with moss and ferns, mystical atmospheric haze, natural green tones",
+            "ocean": "coastal cliffside - dramatic rocky cliffs over turbulent ocean, crashing waves below, stormy dark sky with lightning, sea spray in air, blue-grey color palette with white foam",
+            "cave": "underground cavern - vast cavern with glowing crystals, bioluminescent fungi, stalactites hanging from ceiling, mysterious purple-blue ambient glow, rock formations",
+            "urban": "abandoned city - crumbling skyscrapers at sunset, overgrown with vines, dramatic orange sunset light, debris and rubble, post-apocalyptic atmosphere",
+            "mountain": "mountain peak - above the clouds, rocky alpine terrain, snow patches, majestic vista, clear blue sky, golden hour lighting, epic scale"
         }
         env_desc = env_descriptions.get(environment, env_descriptions["volcanic"])
 
-        # Get attack info
-        p1_info = self.pokemon_info.get(pokemon_names[0].lower(), {})
-        p2_info = self.pokemon_info.get(pokemon_names[1].lower(), {})
+        # Get attack details
+        p1_attacks = p1_info.get("attacks", {})
+        p2_attacks = p2_info.get("attacks", {})
+        p1_attack_visuals = p1_info.get("attack_visuals", {})
+        p2_attack_visuals = p2_info.get("attack_visuals", {})
 
-        p1_attacks = list(p1_info.get("attacks", {}).items())
-        p2_attacks = list(p2_info.get("attacks", {}).items())
+        # Select primary attacks
+        p1_attack_name = list(p1_attacks.keys())[0] if p1_attacks else "attack"
+        p2_attack_name = list(p2_attacks.keys())[0] if p2_attacks else "attack"
+        p1_attack_desc = p1_attacks.get(p1_attack_name, "energy beam")
+        p2_attack_desc = p2_attacks.get(p2_attack_name, "energy beam")
+        p1_attack_visual = p1_attack_visuals.get(p1_attack_name.replace("_", ""), p1_attack_visuals.get("flamethrower", "visible attack effect"))
+        p2_attack_visual = p2_attack_visuals.get(p2_attack_name.replace("_", ""), p2_attack_visuals.get("dragon_pulse", "visible attack effect"))
 
-        p1_attack = p1_attacks[0] if p1_attacks else ("attack", "energy beam")
-        p2_attack = p2_attacks[0] if p2_attacks else ("attack", "energy beam")
+        # Get expressions for each scene
+        p1_expressions = p1_info.get("expressions", {})
+        p2_expressions = p2_info.get("expressions", {})
 
-        # Get p1 damage effect description for continuity
-        p1_damage_desc = "burn marks" if "fire" in p1_info.get("type", "") else "impact wounds"
+        # Get damage appearance details
+        p1_damage_type = "fire" if "fire" in p1_info.get("type", "") else "impact"
+        p1_damage_appearance = p1_info.get("damage_appearance", {})
+        p2_damage_appearance = p2_info.get("damage_appearance", {})
+        damage_desc = p1_damage_appearance.get("burn_marks", "blackened burn marks") if p1_damage_type == "fire" else p1_damage_appearance.get("impact_wounds", "impact damage")
+        accumulated_damage = p2_damage_appearance.get("accumulated_damage", f"multiple {damage_desc}, exhausted but determined")
 
-        # Build panel descriptions with EXPLICIT facing, positioning, and damage continuity
-        panel_descs = [
-            f"Panel 1 (top-left): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
-            f"{pokemon_names[0]} launching {p1_attack[0]} attack - VISIBLE {p1_attack[1]} beam shooting from mouth toward {pokemon_names[1]}. "
-            f"Both Pokemon facing each other in battle stance, attack effect visible between them.",
+        # Build COMPREHENSIVE panel descriptions - each panel is a detailed standalone image
+        panel_descs = []
 
-            f"Panel 2 (top-right): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
-            f"{pokemon_names[1]} HIT by attack - VISIBLE impact explosion on {pokemon_names[1]}'s body, pain expression, {p1_damage_desc} appearing on {pokemon_names[1]}. "
-            f"{pokemon_names[0]} in follow-through pose. Both facing each other.",
+        # === PANEL 1: Initial Attack ===
+        panel1 = f"""
+PANEL 1 (TOP-LEFT) - {p1_name} ATTACKS:
 
-            f"Panel 3 (bottom-left): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
-            f"{pokemon_names[1]} NOW SHOWING {p1_damage_desc} FROM PREVIOUS ATTACK (damage continuity). "
-            f"{pokemon_names[1]} charging {p2_attack[0]} - VISIBLE {p2_attack[1]} forming at mouth, energy gathering. "
-            f"Fierce determination despite injuries. Both facing each other.",
+COMPOSITION:
+- {p1_name} positioned on LEFT side of frame, body angled RIGHT, facing {p2_name}
+- {p2_name} positioned on RIGHT side of frame, body angled LEFT, facing {p1_name}
+- Both Pokemon clearly visible and FACING EACH OTHER
+- Attack effect visible in CENTER between them
 
-            f"Panel 4 (bottom-right): {pokemon_names[0]} on LEFT facing RIGHT, {pokemon_names[1]} on RIGHT facing LEFT. "
-            f"{pokemon_names[1]} STILL SHOWING {p1_damage_desc} (damage continuity). "
-            f"{pokemon_names[1]} releasing {p2_attack[0]} - VISIBLE {p2_attack[1]} beam hitting {pokemon_names[0]}. "
-            f"Both Pokemon showing battle damage, facing each other."
-        ]
+{p1_name.upper()} (LEFT SIDE):
+- Full body visible: {p1_info.get('documentary_description', f'Photorealistic {p1_name}')}
+- Height: {p1_info.get('height', 'large')}, Body: {p1_info.get('body_color', 'colored body')}
+- Key features: {', '.join(p1_info.get('features', ['powerful build'])[:4])}
+- Expression: {p1_expressions.get('attacking', 'fierce attacking expression')}
+- Pose: Leaning forward aggressively, mouth WIDE OPEN releasing attack
+- ATTACK EFFECT: {p1_attack_visual}
 
-        # Build the holistic prompt - VERY EXPLICIT about requirements
+{p2_name.upper()} (RIGHT SIDE):
+- Full body visible: {p2_info.get('documentary_description', f'Photorealistic {p2_name}')}
+- Height: {p2_info.get('height', 'large')}, Body: {p2_info.get('body_color', 'colored body')}
+- Key features: {', '.join(p2_info.get('features', ['powerful build'])[:4])}
+- Expression: {p2_expressions.get('fierce', 'battle-ready fierce expression')}
+- Pose: Defensive stance, bracing for impact, facing the incoming attack
+
+ENVIRONMENT: {env_desc}
+LIGHTING: Dramatic side lighting, attack effect illuminating both Pokemon
+"""
+        panel_descs.append(panel1)
+
+        # === PANEL 2: Impact ===
+        panel2 = f"""
+PANEL 2 (TOP-RIGHT) - {p2_name} HIT BY ATTACK:
+
+COMPOSITION:
+- {p1_name} positioned on LEFT side of frame, facing RIGHT toward {p2_name}
+- {p2_name} positioned on RIGHT side of frame, facing LEFT toward {p1_name}
+- VISIBLE IMPACT EXPLOSION on {p2_name}'s body
+- Both Pokemon still facing each other
+
+{p1_name.upper()} (LEFT SIDE):
+- Full body visible: {p1_info.get('body_color', 'colored body')}, {p1_info.get('body_type', 'powerful build')}
+- Features: {', '.join(p1_info.get('features', [])[:3])}
+- Expression: Follow-through pose after attack, intense satisfaction
+- Pose: Attack follow-through, body still extended from release
+
+{p2_name.upper()} (RIGHT SIDE) - BEING HIT:
+- Full body visible but showing IMPACT REACTION
+- Body: {p2_info.get('body_color', 'colored body')} NOW WITH VISIBLE DAMAGE STARTING
+- Expression: {p2_expressions.get('damaged', 'pained expression, wincing')}
+- VISIBLE: Impact explosion on body, {damage_desc} beginning to appear
+- Pose: Body recoiling backward from hit, head thrown back in pain
+- NEW DAMAGE VISIBLE: {damage_desc} appearing on {p2_name}'s body
+
+ATTACK EFFECT: Impact explosion visible, {p1_attack_desc} hitting {p2_name}
+ENVIRONMENT: {env_desc}, dust/debris from impact
+"""
+        panel_descs.append(panel2)
+
+        # === PANEL 3: Counter-Attack Charging ===
+        panel3 = f"""
+PANEL 3 (BOTTOM-LEFT) - {p2_name} CHARGES COUNTER-ATTACK:
+
+COMPOSITION:
+- {p1_name} positioned on LEFT side of frame, facing RIGHT
+- {p2_name} positioned on RIGHT side of frame, facing LEFT
+- {p2_name} NOW VISIBLY DAMAGED but charging attack
+- Energy gathering effect at {p2_name}'s mouth
+
+{p1_name.upper()} (LEFT SIDE):
+- Full body visible: {p1_info.get('body_color', 'colored body')}
+- Features: {', '.join(p1_info.get('features', [])[:3])}
+- Expression: Alert, watching {p2_name} charge up
+- Pose: Battle stance, wings/limbs ready
+
+{p2_name.upper()} (RIGHT SIDE) - DAMAGED BUT FIGHTING:
+- Full body visible with ACCUMULATED DAMAGE FROM PANEL 2
+- Body: {p2_info.get('body_color', 'colored body')} WITH VISIBLE {damage_desc.upper()}
+- *** DAMAGE CONTINUITY: {damage_desc} clearly visible from previous attack ***
+- Expression: {p2_expressions.get('charging', 'determined, charging attack')} - fierce despite injuries
+- Pose: Stance widened, mouth opening with energy forming
+- CHARGING EFFECT: {p2_attack_visuals.get('charging', 'visible energy gathering at mouth')}
+- {p2_attack_desc} forming, energy sphere/beam building
+
+ENVIRONMENT: {env_desc}
+LIGHTING: Glow from {p2_name}'s charging attack illuminating scene
+"""
+        panel_descs.append(panel3)
+
+        # === PANEL 4: Counter-Attack Release ===
+        panel4 = f"""
+PANEL 4 (BOTTOM-RIGHT) - {p2_name} RELEASES COUNTER-ATTACK:
+
+COMPOSITION:
+- {p1_name} positioned on LEFT side of frame, facing RIGHT - NOW BEING HIT
+- {p2_name} positioned on RIGHT side of frame, facing LEFT - ATTACKING
+- VISIBLE ATTACK BEAM from {p2_name} hitting {p1_name}
+- Both Pokemon STILL FACING EACH OTHER
+
+{p1_name.upper()} (LEFT SIDE) - NOW BEING HIT:
+- Full body visible, reacting to incoming attack
+- Body: {p1_info.get('body_color', 'colored body')}
+- Expression: {p1_expressions.get('damaged', 'reacting to impact, pained')}
+- Pose: Body bracing or recoiling from {p2_name}'s attack
+- Impact visible on {p1_name}'s body
+
+{p2_name.upper()} (RIGHT SIDE) - ATTACKING WITH DAMAGE:
+- Full body visible: {p2_info.get('body_color', 'colored body')}
+- *** DAMAGE CONTINUITY: STILL SHOWING {damage_desc.upper()} from earlier ***
+- {accumulated_damage}
+- Expression: {p2_expressions.get('attacking', 'fierce determination, releasing attack')}
+- Pose: Full extension, mouth wide open releasing attack
+- ATTACK EFFECT: {p2_attack_visual}
+
+ATTACK VISIBLE: {p2_attack_desc} - beam/energy traveling from {p2_name} to {p1_name}
+ENVIRONMENT: {env_desc}
+LIGHTING: Attack beam illuminating entire scene
+"""
+        panel_descs.append(panel4)
+
+        # Build the COMPREHENSIVE holistic prompt
         prompt_parts = [
-            f"Photorealistic 4-panel Pokemon battle storyboard, 2x2 grid layout",
+            "=== PHOTOREALISTIC 4-PANEL POKEMON BATTLE STORYBOARD ===",
+            "2x2 grid layout, each panel is a detailed photorealistic scene",
             "",
-            "=== CRITICAL COMPOSITION RULES ===",
-            f"- {pokemon_names[0]} ALWAYS on LEFT side of frame, facing RIGHT",
-            f"- {pokemon_names[1]} ALWAYS on RIGHT side of frame, facing LEFT",
+            "### ABSOLUTE STYLE REQUIREMENTS ###",
+            "- PHOTOREALISTIC wildlife documentary photography style",
+            "- BBC Earth / National Geographic quality",
+            "- Shot on RED Komodo 6K camera, natural cinematic lighting",
+            "- Real creature textures: scales, skin, feathers must look REAL",
+            "- 8K detail, shallow depth of field, atmospheric perspective",
+            "- ABSOLUTELY NOT: anime, cartoon, 3D render, CGI, illustration, stylized",
+            "",
+            "### CRITICAL POSITIONING RULES (EVERY PANEL) ###",
+            f"- {p1_name} ALWAYS on LEFT side of frame, body facing RIGHT toward {p2_name}",
+            f"- {p2_name} ALWAYS on RIGHT side of frame, body facing LEFT toward {p1_name}",
             "- BOTH Pokemon visible and FACING EACH OTHER in EVERY panel",
-            "- Consistent positioning maintained across all 4 panels",
-            f"- Battle damage accumulates: {pokemon_names[1]} shows {p1_damage_desc} in panels 3-4",
+            "- Consistent size relationship maintained (based on actual heights)",
             "",
-            "=== STYLE ===",
-            "Photorealistic wildlife photography, BBC Earth documentary quality",
-            "Shot on RED camera, natural cinematic lighting, 8K detail",
-            "NOT anime, NOT cartoon, NOT 3D render - PHOTOREALISTIC ONLY",
+            "### DAMAGE CONTINUITY REQUIREMENT ###",
+            f"- Panel 1-2: {p2_name} gets hit, {damage_desc} begins appearing",
+            f"- Panel 3-4: {p2_name} MUST STILL SHOW {damage_desc} from earlier hit",
+            "- Damage accumulates and persists across panels",
             "",
-            f"=== POKEMON ===",
-            f"{pokemon_names[0]}: {pokemon_descriptions[0] if pokemon_descriptions else 'fire dragon'}",
-            f"{pokemon_names[1]}: {pokemon_descriptions[1] if len(pokemon_descriptions) > 1 else 'dragon type'}",
+            f"### {p1_name.upper()} COMPLETE DESCRIPTION ###",
+            p1_info.get('documentary_description', f'Photorealistic {p1_name}'),
+            f"Height: {p1_info.get('height', 'unknown')}, Weight: {p1_info.get('weight', 'unknown')}",
+            f"Body: {p1_info.get('body_color', 'unknown')}, {p1_info.get('body_type', 'powerful build')}",
+            f"Features: {', '.join(p1_info.get('features', [])[:6])}",
+            f"Texture: {p1_info.get('scale_texture', p1_info.get('skin_texture', 'detailed texture'))}",
             "",
-            f"=== ENVIRONMENT ===",
+            f"### {p2_name.upper()} COMPLETE DESCRIPTION ###",
+            p2_info.get('documentary_description', f'Photorealistic {p2_name}'),
+            f"Height: {p2_info.get('height', 'unknown')}, Weight: {p2_info.get('weight', 'unknown')}",
+            f"Body: {p2_info.get('body_color', 'unknown')}, {p2_info.get('body_type', 'powerful build')}",
+            f"Features: {', '.join(p2_info.get('features', [])[:6])}",
+            f"Texture: {p2_info.get('skin_texture', p2_info.get('scale_texture', 'detailed texture'))}",
+            "",
+            "### ENVIRONMENT ###",
             env_desc,
             "",
-            "=== PANEL DESCRIPTIONS ===",
+            "### DETAILED PANEL DESCRIPTIONS ###",
             *panel_descs,
         ]
 
