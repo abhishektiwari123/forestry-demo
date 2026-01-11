@@ -170,36 +170,59 @@ def main():
     if args.prompt:
         prompt = args.prompt
     elif 'panel_01' in panel_name:
+        # CORRECTED: Added negative constraints to prevent unwanted retreat
         prompt = ("Camera zooming in on Charizard's open mouth as massive Flamethrower stream releases, "
-                  "then panning to follow the orange-red flame trajectory toward Dragonite, "
-                  "side tracking shot showing full horizontal attack path, photorealistic motion, "
-                  "smooth camera work, heat distortion visible, cinematic cinematography, "
-                  "both Pokemon airborne, dramatic lighting")
+                  "Charizard MAINTAINING stable hover position in place, wings beating steadily NOT moving backward, "
+                  "focused expression watching attack travel toward Dragonite, camera panning to follow flame trajectory "
+                  "while Charizard STAYS in attack position, "
+                  "NO retreating, NO flying away, NOT moving backward after attack, Charizard HOLDS position firmly, "
+                  "MAINTAINS original location, STAYS committed to attack stance, AVOID defensive withdrawal, "
+                  "Dragonite on right STAYING in position, NOT dodging, MAINTAINS defensive stance, "
+                  "side tracking shot showing full horizontal attack path, heat distortion visible, "
+                  "both Pokemon airborne MAINTAINING positions, photorealistic motion, smooth camera work, "
+                  "cinematic cinematography, dramatic lighting, 8K quality")
     elif 'panel_02' in panel_name:
-        prompt = ("Flamethrower impact striking Dragonite with explosive burst, "
-                  "Dragonite recoiling in pain with pained expression, body pushed backward, "
-                  "flames engulfing torso, photorealistic motion, impact effects, "
-                  "camera slight shake emphasizing force")
+        # Added negative constraints for direct hit
+        prompt = ("Flamethrower stream STRIKING Dragonite's torso with explosive impact burst, "
+                  "Dragonite recoiling in pain with pained expression, body pushed backward by force but STAYING in frame, "
+                  "taking DIRECT undefended hit, NO dodging, NO defensive barriers, NO shields appearing, "
+                  "NOT avoiding impact, Dragonite TAKES full hit, STAYS in camera view, does NOT fly away, "
+                  "Charizard visible in background MAINTAINING attack position NOT retreating, "
+                  "flames engulfing torso, photorealistic impact effects, camera slight shake emphasizing force, "
+                  "dramatic lighting, cinematic quality, smooth motion")
     elif 'panel_03' in panel_name:
-        prompt = ("Flames dissipating revealing severe burn marks on Dragonite, "
-                  "smoke rising from burnt areas, exhausted breathing, slight body movement, "
-                  "photorealistic damage detail, cinematic lighting")
+        # Added position maintenance constraints
+        prompt = ("Flames dissipating revealing severe burn marks on Dragonite, smoke rising from burnt areas, "
+                  "exhausted breathing with slight body movement STAYING in position, pained expression, "
+                  "NO rapid movement, NOT flying away, Dragonite MAINTAINS location showing damage, "
+                  "STAYS visible in frame displaying burn effects, HOLDS exhausted pose, "
+                  "photorealistic burn damage detail, realistic smoke physics, cinematic lighting, "
+                  "slow motion reveal, 8K detail quality")
     elif 'panel_04' in panel_name:
-        prompt = ("Dragonite's expression transforming from pain to fierce anger, "
-                  "eyes narrowing with rage, teeth baring, fists clenching, "
-                  "building energy for counter-attack, smoke still rising from burns, "
-                  "photorealistic emotion, dramatic intensity")
+        # Added constraints to prevent premature movement
+        prompt = ("Dragonite's expression transforming from pain to fierce anger, eyes narrowing with rage, "
+                  "teeth baring aggressively, fists clenching, body tensing WHILE STAYING in position, "
+                  "building counter-attack energy, NO premature movement, NOT lunging forward yet, "
+                  "MAINTAINS current location, STAYS in frame building rage, burn marks STAY visible throughout, "
+                  "HOLDS tension before action, smoke still rising from burns, "
+                  "photorealistic emotion transformation, dramatic intensity building, cinematic close-up, perfect continuity")
     elif 'panel_05' in panel_name:
-        prompt = ("Camera behind Charizard as Dragonite charges forward aggressively from background "
-                  "approaching toward camera and toward Charizard, wings beating powerfully, "
-                  "fierce angry expression, closing distance rapidly, depth movement toward foreground, "
-                  "over-the-shoulder dramatic shot, motion blur showing velocity, "
-                  "Charizard bracing defensively in foreground, photorealistic motion, cinematic")
+        # Added directional constraints for proper charge
+        prompt = ("Over-the-shoulder view from behind Charizard in foreground showing Dragonite charging FORWARD AGGRESSIVELY "
+                  "from background TOWARD camera and Charizard, closing distance rapidly, wings beating powerfully FOR FORWARD THRUST, "
+                  "fierce angry expression, approaching TO ATTACK, NO lateral movement, NOT flying past, NOT circling, "
+                  "Dragonite CHARGES DIRECTLY TOWARD target, STAYS on collision course, MAINTAINS forward approach vector, "
+                  "Charizard in foreground STAYS in position bracing defensively NOT retreating, "
+                  "over-the-shoulder dynamic shot, motion blur showing forward velocity, depth movement background to foreground, "
+                  "photorealistic motion, cinematic aggressive approach, dramatic tension")
     elif 'panel_06' in panel_name:
-        prompt = ("Thunder Punch electrified fist striking Charizard with massive yellow electric explosion, "
-                  "bright lightning arcs bursting outward, Charizard recoiling in pain, "
-                  "electric current running through body, dramatic impact, photorealistic electricity, "
-                  "camera emphasizing connection point")
+        # Added impact commitment constraints
+        prompt = ("Dragonite's electrified fist making FULL CONTACT with Charizard in devastating Thunder Punch, "
+                  "massive yellow electric explosion at impact point, Charizard recoiling in pain, electric current through body, "
+                  "NO missing, NOT glancing blow, DIRECT FULL IMPACT, both Pokemon STAY in frame during hit, "
+                  "NOT flying apart immediately, contact MAINTAINED for impact moment, HOLDS connection showing force, "
+                  "bright lightning arcs bursting outward, photorealistic electricity effects, "
+                  "camera emphasizing connection point, dramatic impact, cinematic quality, slow motion at contact moment")
     else:
         prompt = "Photorealistic Pokemon battle scene with cinematic motion, smooth camera work"
 
