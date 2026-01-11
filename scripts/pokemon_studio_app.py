@@ -161,13 +161,16 @@ def call_claude_for_prompt_improvement(current_prompt: str, feedback: str, faile
     Call Claude API to intelligently improve the prompt based on feedback.
     Returns (improved_prompt, best_practice_learned)
     """
-    if not ANTHROPIC_API_KEY:
+    # Check both global and session state API key
+    api_key = ANTHROPIC_API_KEY or st.session_state.get("anthropic_api_key", "")
+
+    if not api_key:
         # Fallback to simple append if no API key
-        st.warning("⚠️ No Anthropic API key found. Using simple feedback append.")
+        st.warning("⚠️ No Anthropic API key found. Enter it in the sidebar or add to .env file.")
         return None, None
 
     # Debug: Show API key is loaded (first/last 4 chars only)
-    st.info(f"🔑 API Key loaded: {ANTHROPIC_API_KEY[:7]}...{ANTHROPIC_API_KEY[-4:]}")
+    st.info(f"🔑 API Key loaded: {api_key[:7]}...{api_key[-4:]}")
 
     # Build the request to Claude
     failed_checks_text = ", ".join(failed_checks) if failed_checks else "None"
@@ -199,7 +202,7 @@ Please improve this prompt to address the feedback and failed checks. Return ONL
         response = requests.post(
             "https://api.anthropic.com/v1/messages",
             headers={
-                "x-api-key": ANTHROPIC_API_KEY,
+                "x-api-key": api_key,
                 "anthropic-version": "2023-06-01",
                 "content-type": "application/json"
             },
@@ -1396,11 +1399,24 @@ with st.sidebar:
     else:
         st.error("KIE: ❌ Not found")
 
-    if ANTHROPIC_API_KEY:
-        st.success(f"Claude: ✅ {ANTHROPIC_API_KEY[:10]}...")
+    # Use session state API key if set, otherwise use global
+    current_anthropic_key = st.session_state.get("anthropic_api_key", ANTHROPIC_API_KEY)
+
+    if current_anthropic_key:
+        st.success(f"Claude: ✅ {current_anthropic_key[:10]}...")
     else:
         st.error("Claude: ❌ Not found")
-        st.caption("Add ANTHROPIC_API_KEY to .env file")
+        # Allow manual entry
+        manual_key = st.text_input(
+            "Enter Anthropic API Key:",
+            type="password",
+            key="manual_api_key",
+            placeholder="sk-ant-api03-..."
+        )
+        if manual_key and manual_key.startswith("sk-ant-"):
+            st.session_state.anthropic_api_key = manual_key
+            st.success("✅ Key saved! Refresh to use.")
+            st.rerun()
 
     st.divider()
 
