@@ -67,20 +67,23 @@ class StoryboardTester:
             f.write("\n\n--- NEGATIVE PROMPT ---\n")
             f.write(negative_prompt)
 
-        # Generate with Nano Banana Pro
+        # Generate with Nano Banana API (updated endpoint)
+        # API: POST https://api.kie.ai/api/v1/jobs/createTask
+        # Model: google/nano-banana
         payload = {
-            "model": "nano-banana-pro",
-            "prompt": prompt,
-            "negativePrompt": negative_prompt,
-            "imageCount": 1,
-            "imageAspect": "16:9"  # Wide format for 2x2 grid
+            "model": "google/nano-banana",
+            "input": {
+                "prompt": prompt,
+                "output_format": "png",
+                "image_size": "16:9"  # Wide format for 2x2 grid
+            }
         }
 
-        self.log("Submitting to Nano Banana Pro API...")
+        self.log("Submitting to Nano Banana API...")
 
         curl_cmd = [
             "curl", "-k", "-s", "-X", "POST",
-            "https://api.kieai.erweima.ai/api/v1/generate",
+            "https://api.kie.ai/api/v1/jobs/createTask",
             "-H", f"Authorization: Bearer {self.kie_api_key}",
             "-H", "Content-Type: application/json",
             "-d", json.dumps(payload)
@@ -110,7 +113,7 @@ class StoryboardTester:
 
                 status_cmd = [
                     "curl", "-k", "-s",
-                    f"https://api.kieai.erweima.ai/api/v1/recordInfo?taskId={task_id}",
+                    f"https://api.kie.ai/api/v1/jobs/recordInfo?taskId={task_id}",
                     "-H", f"Authorization: Bearer {self.kie_api_key}"
                 ]
 

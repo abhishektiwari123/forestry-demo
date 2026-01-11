@@ -486,16 +486,19 @@ elif st.session_state.step == 3:
 
         if generate_clicked:
             with st.spinner("Generating storyboard... This may take 30-60 seconds"):
-                # Submit generation request
+                # Submit generation request using the correct API format
+                # API: POST /api/v1/jobs/createTask
+                # Model: google/nano-banana
                 payload = {
-                    "model": "nano-banana-pro",
-                    "prompt": st.session_state.prompt,
-                    "negativePrompt": st.session_state.negative_prompt,
-                    "imageCount": 1,
-                    "imageAspect": "16:9"
+                    "model": "google/nano-banana",
+                    "input": {
+                        "prompt": st.session_state.prompt,
+                        "output_format": "png",
+                        "image_size": "16:9"
+                    }
                 }
 
-                response = call_kie_api("playground/createTask", payload, method="POST")
+                response = call_kie_api("jobs/createTask", payload, method="POST")
 
                 # Check for None or error response
                 if response is None:
@@ -505,7 +508,9 @@ elif st.session_state.step == 3:
                     st.error(f"API Error: {response['error']}")
                     st.warning("💡 The API is not accessible. Click **Use Demo Mode** to test the workflow with sample images.")
                 elif response.get("code") != 200:
-                    st.error(f"API Error: {response.get('message', 'Unknown error')} (Code: {response.get('code')})")
+                    # New API uses 'msg' instead of 'message'
+                    error_msg = response.get('msg') or response.get('message') or 'Unknown error'
+                    st.error(f"API Error: {error_msg} (Code: {response.get('code')})")
                     st.warning("💡 Check your API key or try Demo Mode.")
                 else:
                     task_id = response.get("data", {}).get("taskId")
@@ -523,7 +528,7 @@ elif st.session_state.step == 3:
                             progress.progress((i + 1) / 60)
                             status_text.text(f"Waiting for generation... ({(i+1)*5}s)")
 
-                            status = call_kie_api(f"playground/recordInfo?taskId={task_id}")
+                            status = call_kie_api(f"jobs/recordInfo?taskId={task_id}")
 
                             if status is None or "error" in status:
                                 continue
