@@ -43,21 +43,27 @@ class StoryboardTester:
         print(f"[{timestamp}] [{level}] {msg}")
 
     def generate_storyboard(self, pokemon_names: list, environment: str = "volcanic") -> str:
-        """Generate a single storyboard image."""
+        """Generate a single storyboard image using OPTIMIZED format."""
 
-        # Generate prompt using our improved generator
-        prompt, negative_prompt = self.validator.generate_holistic_storyboard_prompt(
+        # Use OPTIMIZED format (proven to produce better quality)
+        # Returns dict with prompt, negative_prompt, and generation parameters
+        prompt_config = self.validator.generate_optimized_storyboard_prompt(
             pokemon_names=pokemon_names,
-            scene_type="battle",
-            environment=environment,
-            panel_count=4
+            environment=environment
         )
 
-        self.log(f"Generated prompt ({len(prompt)} chars)")
+        prompt = prompt_config["prompt"]
+        negative_prompt = prompt_config["negative_prompt"]
+
+        self.log(f"Generated OPTIMIZED prompt ({len(prompt)} chars)")
         print("\n" + "="*60)
-        print("PROMPT:")
+        print("OPTIMIZED PROMPT:")
         print("="*60)
         print(prompt)
+        print("="*60)
+        print(f"Resolution: {prompt_config['width']}x{prompt_config['height']}")
+        print(f"Guidance Scale: {prompt_config['guidance_scale']}")
+        print(f"Inference Steps: {prompt_config['num_inference_steps']}")
         print("="*60 + "\n")
 
         # Save prompt for reference
@@ -66,16 +72,27 @@ class StoryboardTester:
             f.write(prompt)
             f.write("\n\n--- NEGATIVE PROMPT ---\n")
             f.write(negative_prompt)
+            f.write("\n\n--- GENERATION PARAMETERS ---\n")
+            f.write(f"width: {prompt_config['width']}\n")
+            f.write(f"height: {prompt_config['height']}\n")
+            f.write(f"guidance_scale: {prompt_config['guidance_scale']}\n")
+            f.write(f"num_inference_steps: {prompt_config['num_inference_steps']}\n")
 
-        # Generate with Nano Banana API (updated endpoint)
+        # Generate with Nano Banana API using OPTIMIZED parameters
         # API: POST https://api.kie.ai/api/v1/jobs/createTask
         # Model: google/nano-banana
+        # Key: 2048x2048 square resolution for better quality
         payload = {
             "model": "google/nano-banana",
             "input": {
                 "prompt": prompt,
+                "negative_prompt": negative_prompt,
                 "output_format": "png",
-                "image_size": "16:9"  # Wide format for 2x2 grid
+                "width": prompt_config["width"],
+                "height": prompt_config["height"],
+                "guidance_scale": prompt_config["guidance_scale"],
+                "num_inference_steps": prompt_config["num_inference_steps"],
+                "num_images": 1
             }
         }
 
@@ -167,7 +184,7 @@ class StoryboardTester:
         print("STORYBOARD ANALYSIS")
         print("="*60)
         print(f"Size: {width}x{height}")
-        print(f"Aspect ratio: {width/height:.2f} (target: 1.78 for 16:9)")
+        print(f"Aspect ratio: {width/height:.2f} (target: 1.00 for square 2048x2048)")
 
         # Extract individual panels
         panels_dir = os.path.join(self.output_dir, "panels")

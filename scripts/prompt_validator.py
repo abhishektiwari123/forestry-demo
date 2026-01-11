@@ -435,6 +435,240 @@ class PromptValidator:
 
         return " ".join(parts)
 
+    def generate_optimized_storyboard_prompt(
+        self,
+        pokemon_names: list,
+        environment: str = "volcanic"
+    ) -> dict:
+        """
+        Generate an OPTIMIZED storyboard prompt using the PROVEN USER FORMAT.
+
+        Key principles (from Nano Banana Pro best practices):
+        - Use SIMPLE, SHORT Pokemon descriptions (not overly detailed)
+        - Use natural language prose structure
+        - Include technical photography specs (camera, lens, lighting)
+        - Square 2048x2048 resolution
+        - Model pushes toward realism naturally
+
+        Args:
+            pokemon_names: [attacker, defender] Pokemon names
+            environment: Environment setting
+
+        Returns:
+            Dict with prompt, negative_prompt, and recommended parameters
+        """
+        p1_name = pokemon_names[0]
+        p2_name = pokemon_names[1]
+
+        p1_info = self.pokemon_info.get(p1_name.lower(), {})
+        p2_info = self.pokemon_info.get(p2_name.lower(), {})
+
+        # SIMPLE Pokemon descriptions (proven to work better than detailed)
+        # Format: "type-description with key visual features"
+        p1_type = p1_info.get('type', 'dragon').split('/')[0]
+        p2_type = p2_info.get('type', 'dragon').split('/')[0]
+
+        # Simple feature summaries
+        p1_simple_features = self._get_simple_features(p1_name.lower())
+        p2_simple_features = self._get_simple_features(p2_name.lower())
+
+        # Get attack names
+        p1_attacks = p1_info.get('attacks', {})
+        p2_attacks = p2_info.get('attacks', {})
+        p1_attack_name = list(p1_attacks.keys())[0] if p1_attacks else "fire_attack"
+        p2_attack_name = list(p2_attacks.keys())[0] if p2_attacks else "energy_attack"
+
+        # Simple attack descriptions
+        p1_attack_simple = self._get_simple_attack_desc(p1_name.lower(), p1_attack_name)
+        p2_attack_simple = self._get_simple_attack_desc(p2_name.lower(), p2_attack_name)
+
+        # Simple key features for consistency
+        p1_key_features = self._get_key_features(p1_name.lower())
+        p2_key_features = self._get_key_features(p2_name.lower())
+
+        # Environment description
+        env_map = {
+            "volcanic": "volcanic mountain battlefield with molten lava rivers, smoke and ash in the air, dramatic orange-red lighting",
+            "forest": "ancient forest clearing with towering trees, dappled golden sunlight filtering through canopy",
+            "ocean": "coastal cliffs over turbulent ocean, crashing waves, stormy sky with lightning",
+            "cave": "vast underground cavern with glowing crystals, bioluminescent glow, mysterious atmosphere",
+            "mountain": "mountain peak above clouds, rocky alpine terrain, golden hour lighting"
+        }
+        env_desc = env_map.get(environment, env_map["volcanic"])
+
+        # Build prompt using EXACT USER FORMAT that worked
+        prompt = f"""Photorealistic 4-panel Pokemon battle storyboard
+wildlife photography style, BBC Earth documentary quality
+shot on RED camera, natural cinematic lighting, 8K detail
+
+Pokemon: Photorealistic {p1_name}, {p1_simple_features}. Photorealistic {p2_name}, {p2_simple_features}
+
+Environment: {env_desc}
+
+Panels:
+Panel 1: {p1_name} launching {p1_attack_name} - VISIBLE {p1_attack_simple}, aggressive stance, attack beam/effect clearly visible between them
+Panel 2: {p2_name} being hit by the attack, VISIBLE impact explosion on body, pain expression, burn marks/damage appearing, {p1_name} visible in attack follow-through pose
+Panel 3: {p2_name} charging {p2_attack_name} - VISIBLE {p2_attack_simple} forming at mouth/hands, energy gathering with visible glow, fierce determination, preparing to counterattack
+Panel 4: {p2_name} releasing {p2_attack_name} - VISIBLE {p2_attack_simple} beam/effect hitting {p1_name}, impact explosion on {p1_name}, both showing battle damage
+
+Key features to maintain: {p1_key_features}, {p2_key_features}
+
+Style: Photorealistic, lifelike, detailed textures, natural lighting, documentary feel
+Composition: Dynamic action poses, clear character separation, consistent character design across panels"""
+
+        negative_prompt = "anime, cartoon, manga, chibi, 2d, 3d render, cgi, digital art, illustration, drawing, sketch, painted, stylized, pixel art, vector, flat colors, shields, defensive barriers, protective auras, trainers, humans, people, pokeballs in hand, text, labels, watermarks, logos, multiple scenes, split screen, grid layout, panel layout, low quality, blurry, distorted, deformed, bad anatomy, extra limbs, missing limbs, wrong proportions, ugly, duplicate, nsfw, gore, blood, violence"
+
+        return {
+            "prompt": prompt,
+            "negative_prompt": negative_prompt,
+            "width": 2048,
+            "height": 2048,
+            "guidance_scale": 7.5,
+            "num_inference_steps": 30,
+            "num_images": 1
+        }
+
+    def _get_simple_features(self, pokemon_name: str) -> str:
+        """Get SIMPLE feature description (proven to work better than detailed)."""
+        simple_descriptions = {
+            "charizard": "orange fire-dragon with powerful blue wings, flame burning at tail tip, muscular reptilian build, sharp claws and horns",
+            "dragonite": "large orange dragon-type with small wings, friendly rounded face, antennae on head, powerful thick body",
+            "pikachu": "small yellow electric mouse with red cheek pouches, lightning bolt tail, pointy ears with black tips",
+            "mewtwo": "pale purple psychic humanoid, long thick tail, piercing purple eyes, floating with psychic aura",
+            "haunter": "dark purple ghost with floating hands, glowing white eyes, menacing grin, semi-transparent body"
+        }
+        return simple_descriptions.get(pokemon_name, "powerful dragon creature")
+
+    def _get_simple_attack_desc(self, pokemon_name: str, attack_name: str) -> str:
+        """Get SIMPLE attack description."""
+        attack_descriptions = {
+            "charizard": {
+                "flamethrower": "stream of intense fire from mouth, orange-red flames traveling forward",
+                "fire_blast": "massive star-shaped fire explosion from mouth",
+                "dragon_breath": "blue-purple dragon energy breath"
+            },
+            "dragonite": {
+                "dragon_pulse": "orange-purple swirling energy beam from mouth",
+                "hyper_beam": "golden-white concentrated energy beam from mouth",
+                "thunder_punch": "fist crackling with yellow electricity"
+            },
+            "pikachu": {
+                "thunderbolt": "powerful yellow lightning bolt from body",
+                "thunder": "massive storm of lightning from sky"
+            },
+            "mewtwo": {
+                "psychic": "purple telekinetic waves emanating from body",
+                "shadow_ball": "dark purple-black sphere of ghost energy"
+            },
+            "haunter": {
+                "shadow_ball": "dark purple ghost energy sphere between hands",
+                "lick": "long tongue extending forward"
+            }
+        }
+        pokemon_attacks = attack_descriptions.get(pokemon_name, {})
+        return pokemon_attacks.get(attack_name, "energy attack from mouth")
+
+    def _get_key_features(self, pokemon_name: str) -> str:
+        """Get KEY features to maintain consistency across panels."""
+        key_features = {
+            "charizard": "two large blue inner wings with orange membrane, flame constantly burning at tail tip, long neck with powerful jaws",
+            "dragonite": "two small wings (disproportionately small for body), two antennae on head, round friendly face with small eyes",
+            "pikachu": "red circular cheek pouches, lightning bolt shaped tail, long pointy ears with black tips",
+            "mewtwo": "long thick purple tail, three-fingered hands, two curved horns on back of head",
+            "haunter": "floating disembodied clawed hands, glowing white eyes, spiky head silhouette"
+        }
+        return key_features.get(pokemon_name, "distinctive features")
+
+    def generate_single_panel_prompt(
+        self,
+        pokemon_names: list,
+        panel_number: int,
+        environment: str = "volcanic"
+    ) -> tuple[str, str]:
+        """
+        Generate a SHORT, FOCUSED prompt for a SINGLE panel image.
+
+        This approach generates 4 separate high-quality images that can be
+        combined into a storyboard grid afterward. Much better quality than
+        trying to generate all 4 panels in one image.
+
+        Args:
+            pokemon_names: [attacker, defender] Pokemon names
+            panel_number: 1-4 indicating which panel
+            environment: Environment setting
+
+        Returns:
+            Tuple of (prompt, negative_prompt)
+        """
+        p1_name = pokemon_names[0]  # Attacker in panel 1-2
+        p2_name = pokemon_names[1]  # Defender, counterattacks in panel 3-4
+
+        p1_info = self.pokemon_info.get(p1_name.lower(), {})
+        p2_info = self.pokemon_info.get(p2_name.lower(), {})
+
+        # Environment descriptions (short)
+        env_map = {
+            "volcanic": "volcanic battlefield, lava pools, smoke",
+            "forest": "ancient forest clearing, dappled sunlight",
+            "ocean": "coastal cliffs, crashing waves, stormy sky",
+            "cave": "underground cavern, glowing crystals",
+            "mountain": "mountain peak above clouds, snow"
+        }
+        env_desc = env_map.get(environment, env_map["volcanic"])
+
+        # Get key visual info
+        p1_color = p1_info.get('body_color', 'orange body')
+        p2_color = p2_info.get('body_color', 'orange-yellow body')
+        p1_height = p1_info.get('height', "5'7\"").split()[0]
+        p2_height = p2_info.get('height', "7'3\"").split()[0]
+
+        # Get primary attack visuals
+        p1_attacks = p1_info.get('attacks', {})
+        p2_attacks = p2_info.get('attacks', {})
+        p1_attack = list(p1_attacks.values())[0] if p1_attacks else "fire breath"
+        p2_attack = list(p2_attacks.values())[0] if p2_attacks else "energy beam"
+
+        # Build panel-specific SHORT prompts (under 500 chars)
+        if panel_number == 1:
+            # Panel 1: Initial Attack
+            prompt = f"""PHOTOREALISTIC wildlife photography: {p1_name} ({p1_height}, {p1_color}) on LEFT side launching {p1_attack} toward {p2_name} ({p2_height}, {p2_color}) on RIGHT side. Both Pokemon facing each other in battle stance. VISIBLE attack beam connecting them. {env_desc}. Dramatic lighting, 8K detail, BBC Earth documentary style, cinematic composition."""
+
+        elif panel_number == 2:
+            # Panel 2: Impact Hit
+            prompt = f"""PHOTOREALISTIC wildlife photography: {p2_name} ({p2_color}) on RIGHT being HIT by attack from {p1_name} on LEFT. VISIBLE IMPACT EXPLOSION on {p2_name}'s body, pained expression, recoiling backward. {p1_name} ({p1_color}) follow-through attack pose. Both facing each other. {env_desc}. 8K detail, dramatic lighting, BBC Earth documentary style."""
+
+        elif panel_number == 3:
+            # Panel 3: Counter-Attack Charging
+            prompt = f"""PHOTOREALISTIC wildlife photography: {p2_name} ({p2_color}) on RIGHT with VISIBLE BURN MARKS/DAMAGE from previous attack, mouth open with VISIBLE ENERGY CHARGING, fierce determined expression. {p1_name} ({p1_color}) on LEFT in defensive stance. Both facing each other. {env_desc}. 8K detail, energy glow effect, BBC Earth documentary style."""
+
+        else:  # Panel 4
+            # Panel 4: Counter-Attack Release
+            prompt = f"""PHOTOREALISTIC wildlife photography: {p2_name} ({p2_color}) on RIGHT releasing massive {p2_attack} toward {p1_name} on LEFT. {p2_name} still shows burn damage from earlier. {p1_name} ({p1_color}) being HIT, recoiling from impact. VISIBLE attack beam between them. {env_desc}. 8K detail, dramatic lighting, BBC Earth documentary style."""
+
+        negative_prompt = "anime, cartoon, 3d render, cgi, illustration, drawing, sketch, stylized, text, watermark, low quality, blurry, deformed, bad anatomy"
+
+        return prompt, negative_prompt
+
+    def get_all_panel_prompts(
+        self,
+        pokemon_names: list,
+        environment: str = "volcanic"
+    ) -> list[tuple[str, str]]:
+        """
+        Get all 4 panel prompts for generating individual storyboard images.
+
+        Args:
+            pokemon_names: [attacker, defender] Pokemon names
+            environment: Environment setting
+
+        Returns:
+            List of 4 (prompt, negative_prompt) tuples
+        """
+        return [
+            self.generate_single_panel_prompt(pokemon_names, i, environment)
+            for i in range(1, 5)
+        ]
+
     def generate_cinematic_storyboard_prompt(
         self,
         pokemon_names: list,

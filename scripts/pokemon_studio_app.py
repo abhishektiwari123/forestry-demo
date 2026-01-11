@@ -279,14 +279,20 @@ elif st.session_state.step == 2:
 
     # Generate prompt if not already done
     if not st.session_state.prompt:
-        # Use cinematic format (proven to work better)
-        prompt, negative_prompt = validator.generate_cinematic_storyboard_prompt(
+        # Use OPTIMIZED format (proven to produce better quality)
+        # Returns dict with prompt, negative_prompt, and generation parameters
+        prompt_config = validator.generate_optimized_storyboard_prompt(
             pokemon_names=st.session_state.pokemon,
-            scene_type="battle",
             environment=st.session_state.environment
         )
-        st.session_state.prompt = prompt
-        st.session_state.negative_prompt = negative_prompt
+        st.session_state.prompt = prompt_config["prompt"]
+        st.session_state.negative_prompt = prompt_config["negative_prompt"]
+        st.session_state.gen_params = {
+            "width": prompt_config["width"],
+            "height": prompt_config["height"],
+            "guidance_scale": prompt_config["guidance_scale"],
+            "num_inference_steps": prompt_config["num_inference_steps"]
+        }
 
     st.subheader("Generated Prompt")
     st.info("Review the prompt below. You can edit it before generating the image.")
@@ -305,6 +311,20 @@ elif st.session_state.step == 2:
             height=100
         )
         st.session_state.negative_prompt = edited_negative
+
+    # Show generation parameters
+    with st.expander("View Generation Parameters"):
+        gen_params = st.session_state.get("gen_params", {})
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Width", f"{gen_params.get('width', 2048)}px")
+        with col2:
+            st.metric("Height", f"{gen_params.get('height', 2048)}px")
+        with col3:
+            st.metric("Guidance", gen_params.get('guidance_scale', 7.5))
+        with col4:
+            st.metric("Steps", gen_params.get('num_inference_steps', 30))
+        st.info("Using 2048x2048 square resolution for better 4-panel quality")
 
     # Validation
     st.subheader("🔍 Prompt Validation")
@@ -486,15 +506,30 @@ elif st.session_state.step == 3:
 
         if generate_clicked:
             with st.spinner("Generating storyboard... This may take 30-60 seconds"):
-                # Submit generation request using the correct API format
+                # Submit generation request using the OPTIMIZED API format
                 # API: POST /api/v1/jobs/createTask
                 # Model: google/nano-banana
+                # Key: Use 2048x2048 square resolution for better quality
+
+                # Get generation parameters (or use defaults)
+                gen_params = st.session_state.get("gen_params", {
+                    "width": 2048,
+                    "height": 2048,
+                    "guidance_scale": 7.5,
+                    "num_inference_steps": 30
+                })
+
                 payload = {
                     "model": "google/nano-banana",
                     "input": {
                         "prompt": st.session_state.prompt,
+                        "negative_prompt": st.session_state.negative_prompt,
                         "output_format": "png",
-                        "image_size": "16:9"
+                        "width": gen_params["width"],
+                        "height": gen_params["height"],
+                        "guidance_scale": gen_params["guidance_scale"],
+                        "num_inference_steps": gen_params["num_inference_steps"],
+                        "num_images": 1
                     }
                 }
 
