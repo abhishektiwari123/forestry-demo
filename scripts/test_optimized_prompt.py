@@ -78,18 +78,15 @@ def test_optimized_prompt():
     print(f"Inference Steps: {prompt_config['num_inference_steps']}")
     print("=" * 60)
 
-    # Build API payload
+    # Build API payload - Jobs API requires input wrapper
+    # Try with aspect_ratio instead of width/height (which may not be supported)
     payload = {
         "model": "google/nano-banana",
         "input": {
             "prompt": prompt_config["prompt"],
             "negative_prompt": prompt_config["negative_prompt"],
             "output_format": "png",
-            "width": prompt_config["width"],
-            "height": prompt_config["height"],
-            "guidance_scale": prompt_config["guidance_scale"],
-            "num_inference_steps": prompt_config["num_inference_steps"],
-            "num_images": 1
+            "aspect_ratio": "1:1"  # Square for 4-panel grid
         }
     }
 
