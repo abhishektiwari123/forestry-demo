@@ -256,6 +256,75 @@ Please improve this prompt to address the feedback and failed checks. Return ONL
         st.warning(f"Claude API error: {e}")
         return None, None
 
+
+def call_claude_for_video_prompt_improvement(current_prompt: str, feedback: str, panel_num: int, pokemon_name: str, action: str) -> str:
+    """
+    Call Claude API to improve a video motion prompt.
+    Returns improved_prompt or None if failed.
+    """
+    # Check both global and session state API key
+    api_key = ANTHROPIC_API_KEY or st.session_state.get("anthropic_api_key", "")
+
+    if not api_key:
+        st.warning("⚠️ No Anthropic API key found. Enter it in the sidebar.")
+        return None
+
+    system_prompt = """You are an expert at crafting video motion prompts for AI video generation.
+Your task is to improve a Pokemon battle video motion prompt based on user feedback.
+
+Rules:
+1. Keep the motion description realistic and achievable by AI video generation
+2. Focus on smooth, natural movements
+3. Include camera motion hints if helpful
+4. Keep it concise but descriptive
+5. Emphasize the key action moment
+
+IMPORTANT: Respond with ONLY the improved prompt text. No JSON, no explanation, just the prompt."""
+
+    user_message = f"""Current video motion prompt for Panel {panel_num}:
+{current_prompt}
+
+Pokemon: {pokemon_name}
+Action: {action}
+
+User feedback: {feedback}
+
+Please improve this video motion prompt. Return ONLY the improved prompt text."""
+
+    try:
+        with st.spinner(f"🤖 Claude improving Panel {panel_num} motion prompt..."):
+            response = requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json"
+                },
+                json={
+                    "model": "claude-3-haiku-20240307",  # Using Haiku for faster response
+                    "max_tokens": 1024,
+                    "messages": [{"role": "user", "content": user_message}],
+                    "system": system_prompt
+                },
+                timeout=60
+            )
+
+        if response.status_code == 200:
+            result = response.json()
+            improved_prompt = result.get("content", [{}])[0].get("text", "").strip()
+            if improved_prompt:
+                st.success(f"✅ Panel {panel_num} motion prompt improved!")
+                return improved_prompt
+            return None
+        else:
+            st.error(f"❌ Claude API error: {response.status_code}")
+            return None
+
+    except Exception as e:
+        st.warning(f"Claude API error: {e}")
+        return None
+
+
 # Create validator
 validator = PromptValidator()
 
@@ -1295,14 +1364,16 @@ elif st.session_state.step == 6:
 
     for img_idx, panel_idx in selected_for_video:
         panel_num = panel_idx + 1
-        with st.expander(f"Panel {panel_num} Motion Prompt", expanded=True):
+        pokemon_name = st.session_state.pokemon[0] if panel_idx == 0 else st.session_state.pokemon[1]
+        action = scene_actions.get(panel_idx, "battle action")
+
+        with st.expander(f"Panel {panel_num} Motion Prompt ({pokemon_name})", expanded=True):
             # Generate if not exists
             existing_prompts = st.session_state.get("video_prompts", {})
             if panel_idx not in existing_prompts:
-                pokemon_name = st.session_state.pokemon[0] if panel_idx == 0 else st.session_state.pokemon[1]
                 default_prompt = validator.generate_holistic_video_prompt(
                     pokemon_name=pokemon_name,
-                    action=scene_actions.get(panel_idx, "battle action"),
+                    action=action,
                     scene_context=f"volcanic battlefield, {st.session_state.environment} environment"
                 )
             else:
@@ -1329,6 +1400,32 @@ elif st.session_state.step == 6:
             with col2:
                 if validation.issues:
                     st.warning(", ".join(validation.issues))
+
+            # Claude AI improvement section
+            st.markdown("---")
+            panel_feedback = st.text_input(
+                f"Feedback for Panel {panel_num}:",
+                key=f"video_feedback_{panel_idx}",
+                placeholder="e.g., 'Make the movement more dynamic', 'Add camera zoom effect'"
+            )
+
+            if st.button(f"🤖 Improve Panel {panel_num} with Claude AI", key=f"improve_video_{panel_idx}"):
+                if panel_feedback.strip():
+                    improved = call_claude_for_video_prompt_improvement(
+                        edited,
+                        panel_feedback,
+                        panel_num,
+                        pokemon_name,
+                        action
+                    )
+                    if improved:
+                        # Update the video prompts in session state
+                        if "video_prompts" not in st.session_state:
+                            st.session_state.video_prompts = {}
+                        st.session_state.video_prompts[panel_idx] = improved
+                        st.rerun()
+                else:
+                    st.warning("Please enter feedback first!")
 
     st.session_state.video_prompts = video_prompts
 
