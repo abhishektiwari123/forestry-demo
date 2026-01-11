@@ -1,0 +1,172 @@
+{
+  "timestamp": "2026-01-11T09:15:07.189197",
+  "validation_log": [
+    {
+      "stage": "post_generation_attempt_1",
+      "passed": true,
+      "score": 0.8,
+      "issues": [
+        "Vision API not configured"
+      ],
+      "suggestions": [],
+      "metrics": {}
+    },
+    {
+      "stage": "split_scene_1",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect": 1.777
+      }
+    },
+    {
+      "stage": "split_scene_2",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect": 1.777
+      }
+    },
+    {
+      "stage": "split_scene_3",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect": 1.777
+      }
+    },
+    {
+      "stage": "split_scene_4",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 1365,
+        "height": 768,
+        "aspect": 1.777
+      }
+    },
+    {
+      "stage": "upscale_scene_01",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "expected": "2730x1536",
+        "aspect": 1.777
+      }
+    },
+    {
+      "stage": "upscale_scene_02",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "expected": "2730x1536",
+        "aspect": 1.777
+      }
+    },
+    {
+      "stage": "upscale_scene_03",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "expected": "2730x1536",
+        "aspect": 1.777
+      }
+    },
+    {
+      "stage": "upscale_scene_04",
+      "passed": true,
+      "score": 1.0,
+      "issues": [],
+      "suggestions": [],
+      "metrics": {
+        "width": 2730,
+        "height": 1536,
+        "expected": "2730x1536",
+        "aspect": 1.777
+      }
+    }
+  ],
+  "results": {
+    "success": false,
+    "stages": {
+      "prompt": {
+        "stage": "pre_prompt_holistic",
+        "passed": true,
+        "score": 1.0,
+        "issues": [],
+        "suggestions": [],
+        "metrics": {
+          "method": "holistic_generation"
+        }
+      },
+      "generation": {
+        "stage": "post_generation_attempt_1",
+        "passed": true,
+        "score": 0.8,
+        "issues": [
+          "Vision API not configured"
+        ],
+        "suggestions": [],
+        "metrics": {}
+      },
+      "split": {
+        "stage": "split_summary",
+        "passed": true,
+        "score": 1.0,
+        "issues": [],
+        "suggestions": [],
+        "metrics": {
+          "total_scenes": 4,
+          "grid": "2x2"
+        }
+      },
+      "upscale": {
+        "stage": "upscale_summary",
+        "passed": true,
+        "score": 1.0,
+        "issues": [],
+        "suggestions": [],
+        "metrics": {
+          "scale": 2,
+          "total": 4
+        }
+      },
+      "video": {
+        "stage": "video_summary",
+        "passed": true,
+        "score": 1.0,
+        "issues": [],
+        "suggestions": [],
+        "metrics": {
+          "total_videos": 4
+        }
+      }
+    }
+  }
+}
