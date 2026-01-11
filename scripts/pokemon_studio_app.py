@@ -325,6 +325,159 @@ Please improve this video motion prompt. Return ONLY the improved prompt text.""
         return None
 
 
+# Video generation helper functions
+def upload_image_to_cdn(image: Image.Image) -> str | None:
+    """Upload PIL Image to CDN and return URL."""
+    import io
+
+    # Convert PIL Image to bytes
+    img_buffer = io.BytesIO()
+    image.save(img_buffer, format='PNG')
+    img_buffer.seek(0)
+
+    try:
+        response = requests.post(
+            "https://imgcdn.dev/api/1/upload",
+            files={"source": ("panel.png", img_buffer, "image/png")},
+            timeout=60
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("status_code") == 200:
+                return result.get("image", {}).get("url")
+    except Exception as e:
+        st.error(f"Image upload error: {e}")
+
+    return None
+
+
+def generate_video_from_image(image_url: str, prompt: str, duration: int = 5, enable_sound: bool = True) -> str | None:
+    """
+    Generate video from image URL using Kling 2.6 via KIE API.
+    Returns task_id for polling, or None if failed.
+    """
+    api_key = KIE_API_KEY
+    if not api_key:
+        st.error("KIE API key not found!")
+        return None
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    # Add ASMR sound enhancement to prompt
+    enhanced_prompt = prompt
+    if enable_sound:
+        enhanced_prompt += " | Natural ambient sounds, subtle creature sounds, atmospheric audio, ASMR quality"
+
+    payload = {
+        "model": "kling-2.6/image-to-video",
+        "input": {
+            "image_urls": [image_url],
+            "prompt": enhanced_prompt,
+            "duration": str(duration),
+            "sound": enable_sound
+        }
+    }
+
+    try:
+        response = requests.post(
+            "https://api.kie.ai/api/v1/jobs/createTask",
+            headers=headers,
+            json=payload,
+            timeout=30
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("code") == 200:
+                return result.get("data", {}).get("taskId")
+
+        st.error(f"Video generation API error: {response.status_code}")
+        return None
+
+    except Exception as e:
+        st.error(f"Video generation error: {e}")
+        return None
+
+
+def check_video_status(task_id: str) -> dict:
+    """
+    Check video generation status.
+    Returns dict with status and video_url if completed.
+    """
+    api_key = KIE_API_KEY
+    headers = {"Authorization": f"Bearer {api_key}"}
+
+    try:
+        response = requests.get(
+            f"https://api.kie.ai/api/v1/jobs/recordInfo?taskId={task_id}",
+            headers=headers,
+            timeout=30
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            data = result.get("data", {})
+            status = data.get("status", "").lower()
+
+            if status in ["success", "completed"]:
+                result_json = data.get("resultJson")
+                if result_json:
+                    if isinstance(result_json, str):
+                        result_json = json.loads(result_json)
+
+                    video_url = None
+                    if isinstance(result_json, list) and len(result_json) > 0:
+                        video_url = result_json[0].get("url") or result_json[0].get("video_url")
+                    elif isinstance(result_json, dict):
+                        video_url = result_json.get("url") or result_json.get("video_url")
+
+                    return {"status": "completed", "video_url": video_url}
+
+            elif status in ["failed", "error"]:
+                return {"status": "failed", "error": data.get("error", "Unknown error")}
+
+            return {"status": "processing"}
+
+        return {"status": "error", "error": f"API returned {response.status_code}"}
+
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+# ASMR Sound Best Practices for Video Generation
+VIDEO_ASMR_BEST_PRACTICES = """
+### 🎵 ASMR Sound Best Practices for Pokemon Battle Videos:
+
+1. **Environment Sounds**:
+   - Volcanic: crackling lava, distant rumbles, heat shimmer sounds
+   - Forest: rustling leaves, bird calls, gentle wind
+   - Ocean: waves, water splashes, seagull calls
+   - Cave: echoing drips, ancient creaking, subtle reverb
+
+2. **Pokemon Movement Sounds**:
+   - Wing flaps for flying types
+   - Heavy footsteps for large Pokemon
+   - Electrical crackle for electric types
+   - Fire whoosh for fire types
+
+3. **Attack Sounds**:
+   - Energy charging buildup
+   - Impact sounds (not too loud)
+   - Elemental effects (fire roar, water splash, lightning crack)
+
+4. **Atmosphere**:
+   - Keep sounds subtle and background-level
+   - Natural ambiance over dramatic music
+   - BBC documentary style - immersive but not overwhelming
+
+**Prompt Enhancement for ASMR**: Add "Natural ambient sounds, subtle creature sounds, atmospheric audio, ASMR quality" to video prompts.
+"""
+
+
 # Create validator
 validator = PromptValidator()
 
@@ -449,8 +602,8 @@ KIE_API_KEY = "your-api-key-here"
     st.stop()
 
 # Progress indicator
-steps = ["1. Setup", "2. Prompt", "3. Generate", "4. Split", "5. Upscale", "6. Video"]
-cols = st.columns(6)
+steps = ["1. Setup", "2. Prompt", "3. Generate", "4. Split", "5. Upscale", "6. Video", "7. Review"]
+cols = st.columns(7)
 for i, (col, step_name) in enumerate(zip(cols, steps)):
     if i + 1 < st.session_state.step:
         col.markdown(f"✅ {step_name}")
@@ -1439,9 +1592,31 @@ elif st.session_state.step == 6:
     else:
         st.error("❌ Some video prompts have issues. Fix them before generating videos.")
 
+    # ASMR Sound Best Practices
+    with st.expander("🎵 ASMR Sound Best Practices", expanded=False):
+        st.markdown(VIDEO_ASMR_BEST_PRACTICES)
+
     feedback = st.text_area("Final feedback before video generation:", key="video_feedback")
 
     st.divider()
+
+    # Video generation settings
+    st.subheader("⚙️ Video Generation Settings")
+    col_set1, col_set2 = st.columns(2)
+    with col_set1:
+        video_duration = st.selectbox("Video Duration", [5, 10], index=0, key="video_duration")
+        st.caption("5 seconds recommended for battle sequences")
+    with col_set2:
+        enable_sound = st.checkbox("🔊 Enable ASMR Sound Generation", value=True, key="enable_sound")
+        st.caption("Adds atmospheric audio to videos")
+
+    st.divider()
+
+    # Initialize video generation state
+    if "video_generation_tasks" not in st.session_state:
+        st.session_state.video_generation_tasks = {}
+    if "generated_videos" not in st.session_state:
+        st.session_state.generated_videos = {}
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -1471,9 +1646,187 @@ elif st.session_state.step == 6:
         st.warning("⚠️ Video generation uses API credits!")
         if st.button("🎬 Generate Videos", type="primary", disabled=not all_valid):
             log_feedback("video_prompts", feedback, "approved_for_generation")
-            st.success("✅ Ready for video generation!")
-            st.balloons()
-            st.info("Video generation would proceed here. Implementation coming soon!")
+
+            # Start video generation for each selected panel
+            st.info("🎬 Starting video generation...")
+
+            for img_idx, panel_idx in selected_for_video:
+                panel_num = panel_idx + 1
+                prompt = video_prompts.get(panel_idx, "")
+
+                if not prompt:
+                    continue
+
+                with st.spinner(f"Uploading Panel {panel_num} to CDN..."):
+                    # Get the upscaled image
+                    panel_image = st.session_state.upscaled_images[img_idx]
+                    image_url = upload_image_to_cdn(panel_image)
+
+                if image_url:
+                    st.success(f"✅ Panel {panel_num} uploaded")
+
+                    with st.spinner(f"Starting video generation for Panel {panel_num}..."):
+                        task_id = generate_video_from_image(
+                            image_url=image_url,
+                            prompt=prompt,
+                            duration=video_duration,
+                            enable_sound=enable_sound
+                        )
+
+                    if task_id:
+                        st.session_state.video_generation_tasks[panel_idx] = {
+                            "task_id": task_id,
+                            "panel_num": panel_num,
+                            "prompt": prompt,
+                            "status": "processing"
+                        }
+                        st.success(f"✅ Panel {panel_num} video task started (ID: {task_id[:16]}...)")
+                    else:
+                        st.error(f"❌ Failed to start video generation for Panel {panel_num}")
+                else:
+                    st.error(f"❌ Failed to upload Panel {panel_num}")
+
+            if st.session_state.video_generation_tasks:
+                st.success("🎬 Video generation tasks submitted! Go to Step 7 to monitor progress.")
+                st.session_state.step = 7
+                st.rerun()
+
+    # Show any existing video generation tasks
+    if st.session_state.video_generation_tasks:
+        st.divider()
+        st.subheader("📊 Active Video Generation Tasks")
+        for panel_idx, task_info in st.session_state.video_generation_tasks.items():
+            st.write(f"**Panel {task_info['panel_num']}**: {task_info['status']} (Task: {task_info['task_id'][:16]}...)")
+
+
+# ============================================================================
+# STEP 7: VIDEO REVIEW & IMPROVEMENT
+# ============================================================================
+elif st.session_state.step == 7:
+    st.header("Step 7: Video Review & Improvement")
+
+    # Initialize states
+    if "video_generation_tasks" not in st.session_state:
+        st.session_state.video_generation_tasks = {}
+    if "generated_videos" not in st.session_state:
+        st.session_state.generated_videos = {}
+
+    # Check status of all tasks
+    st.subheader("📊 Video Generation Status")
+
+    all_completed = True
+    any_processing = False
+
+    for panel_idx, task_info in list(st.session_state.video_generation_tasks.items()):
+        panel_num = task_info["panel_num"]
+        task_id = task_info["task_id"]
+
+        # Check status
+        status_result = check_video_status(task_id)
+
+        col1, col2 = st.columns([2, 3])
+        with col1:
+            st.write(f"**Panel {panel_num}**")
+
+        with col2:
+            if status_result["status"] == "completed":
+                st.success("✅ Completed")
+                if status_result.get("video_url"):
+                    st.session_state.generated_videos[panel_idx] = status_result["video_url"]
+                    task_info["status"] = "completed"
+            elif status_result["status"] == "processing":
+                st.warning("⏳ Processing...")
+                any_processing = True
+                all_completed = False
+            elif status_result["status"] == "failed":
+                st.error(f"❌ Failed: {status_result.get('error', 'Unknown')}")
+                task_info["status"] = "failed"
+            else:
+                st.error(f"❌ Error: {status_result.get('error', 'Unknown')}")
+                all_completed = False
+
+    # Refresh button
+    if any_processing:
+        st.info("⏳ Some videos are still processing. Click refresh to check status.")
+        if st.button("🔄 Refresh Status"):
+            st.rerun()
+
+    # Show completed videos
+    if st.session_state.generated_videos:
+        st.divider()
+        st.subheader("🎬 Generated Videos")
+
+        for panel_idx, video_url in st.session_state.generated_videos.items():
+            task_info = st.session_state.video_generation_tasks.get(panel_idx, {})
+            panel_num = task_info.get("panel_num", panel_idx + 1)
+
+            with st.expander(f"Panel {panel_num} Video", expanded=True):
+                st.video(video_url)
+
+                # Feedback for video improvement
+                video_feedback = st.text_input(
+                    f"Feedback for Panel {panel_num} video:",
+                    key=f"video_review_feedback_{panel_idx}",
+                    placeholder="e.g., 'Movement too slow', 'Add more fire effects', 'Sound too quiet'"
+                )
+
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button(f"🤖 Improve Panel {panel_num} Prompt with Claude", key=f"improve_video_prompt_{panel_idx}"):
+                        if video_feedback.strip():
+                            # Get current prompt
+                            current_prompt = task_info.get("prompt", "")
+                            pokemon_name = st.session_state.pokemon[0] if panel_idx == 0 else st.session_state.pokemon[1]
+                            action = f"Panel {panel_num} action"
+
+                            improved = call_claude_for_video_prompt_improvement(
+                                current_prompt,
+                                video_feedback,
+                                panel_num,
+                                pokemon_name,
+                                action
+                            )
+
+                            if improved:
+                                # Update the video prompts
+                                if "video_prompts" not in st.session_state:
+                                    st.session_state.video_prompts = {}
+                                st.session_state.video_prompts[panel_idx] = improved
+                                st.success(f"✅ Panel {panel_num} prompt improved! Go back to regenerate.")
+                        else:
+                            st.warning("Please enter feedback first!")
+
+                with col2:
+                    st.download_button(
+                        f"📥 Download Panel {panel_num}",
+                        video_url,
+                        file_name=f"panel_{panel_num}_video.mp4",
+                        mime="video/mp4",
+                        key=f"download_video_{panel_idx}"
+                    )
+
+    st.divider()
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("⬅️ Back to Prompts"):
+            st.session_state.step = 6
+            st.rerun()
+
+    with col2:
+        if st.button("🔄 Regenerate All Videos"):
+            st.session_state.video_generation_tasks = {}
+            st.session_state.generated_videos = {}
+            st.session_state.step = 6
+            st.rerun()
+
+    with col3:
+        if all_completed and st.session_state.generated_videos:
+            st.success("✅ All videos generated!")
+            if st.button("🎉 Finish & Export", type="primary"):
+                st.balloons()
+                st.success("🎉 Congratulations! Your Pokemon battle videos are ready!")
+                st.info("You can download individual videos above or save the full configuration.")
 
 
 # ============================================================================
