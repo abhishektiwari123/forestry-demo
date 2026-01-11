@@ -137,6 +137,9 @@ def call_claude_for_prompt_improvement(current_prompt: str, feedback: str, faile
         st.warning("⚠️ No Anthropic API key found. Using simple feedback append.")
         return None, None
 
+    # Debug: Show API key is loaded (first/last 4 chars only)
+    st.info(f"🔑 API Key loaded: {ANTHROPIC_API_KEY[:7]}...{ANTHROPIC_API_KEY[-4:]}")
+
     # Build the request to Claude
     failed_checks_text = ", ".join(failed_checks) if failed_checks else "None"
 
@@ -163,6 +166,7 @@ Failed validation checks: {failed_checks_text}
 Please improve this prompt to address the feedback and failed checks. Return ONLY raw JSON."""
 
     try:
+        st.info("📡 Calling Claude API...")
         response = requests.post(
             "https://api.anthropic.com/v1/messages",
             headers={
@@ -171,13 +175,15 @@ Please improve this prompt to address the feedback and failed checks. Return ONL
                 "content-type": "application/json"
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model": "claude-3-5-sonnet-20241022",  # Use stable model ID
                 "max_tokens": 4096,
                 "messages": [{"role": "user", "content": user_message}],
                 "system": system_prompt
             },
-            timeout=60
+            timeout=90  # Increase timeout
         )
+
+        st.info(f"📡 API Response: {response.status_code}")
 
         if response.status_code == 200:
             result = response.json()
@@ -575,53 +581,27 @@ elif st.session_state.step == 2:
 
             combined_feedback = " | ".join(all_feedback_parts)
 
-            # Show progress with timer
-            progress_placeholder = st.empty()
-            status_placeholder = st.empty()
+            # Simple synchronous call with spinner
+            with st.spinner("🤖 Claude AI is improving your prompt... (this may take 10-30 seconds)"):
+                import time as time_module
+                start_time = time_module.time()
 
-            with progress_placeholder:
-                progress_bar = st.progress(0)
-
-            status_placeholder.info("🤖 Calling Claude AI to improve prompt...")
-
-            # Simulate progress while waiting
-            import threading
-            import time as time_module
-
-            result_holder = {"improved_prompt": None, "best_practice": None, "done": False}
-
-            def call_api():
-                result_holder["improved_prompt"], result_holder["best_practice"] = call_claude_for_prompt_improvement(
+                improved_prompt, best_practice = call_claude_for_prompt_improvement(
                     edited_prompt,
                     combined_feedback,
                     failed_checklist
                 )
-                result_holder["done"] = True
 
-            # Start API call in thread
-            api_thread = threading.Thread(target=call_api)
-            api_thread.start()
+                elapsed = int(time_module.time() - start_time)
 
-            # Update progress while waiting
-            elapsed = 0
-            while not result_holder["done"] and elapsed < 60:
-                progress = min(elapsed / 30, 0.95)  # Max 95% until done
-                progress_bar.progress(progress)
-                status_placeholder.info(f"🤖 Claude AI improving prompt... ({elapsed}s)")
-                time_module.sleep(1)
-                elapsed += 1
-
-            api_thread.join(timeout=5)
-            progress_bar.progress(1.0)
-
-            if result_holder["improved_prompt"]:
-                st.session_state.prompt = result_holder["improved_prompt"]
+            if improved_prompt:
+                st.session_state.prompt = improved_prompt
 
                 # Save best practice
-                if result_holder["best_practice"]:
+                if best_practice:
                     bp_data = load_best_practices()
                     bp_data["practices"].append({
-                        "lesson": result_holder["best_practice"],
+                        "lesson": best_practice,
                         "date": datetime.now().isoformat(),
                         "feedback": combined_feedback,
                         "stage": "prompt_review"
@@ -635,18 +615,18 @@ elif st.session_state.step == 2:
                     "type": "Prompt Review Improvement",
                     "feedback": combined_feedback,
                     "failed_checks": failed_checklist,
-                    "best_practice": result_holder["best_practice"],
+                    "best_practice": best_practice,
                     "used_claude": True
                 })
 
-                status_placeholder.success(f"✅ Prompt improved by Claude AI! (took {elapsed}s)")
+                st.success(f"✅ Prompt improved by Claude AI! (took {elapsed}s)")
                 st.session_state.user_feedback = ""
                 time_module.sleep(1)
                 st.rerun()
             else:
                 # Fallback to simple append
                 st.session_state.prompt = incorporate_feedback_into_prompt(edited_prompt, combined_feedback)
-                status_placeholder.warning("⚠️ Claude API unavailable. Feedback appended to prompt.")
+                st.warning("⚠️ Claude API issue. Feedback appended to prompt instead.")
                 st.session_state.user_feedback = ""
                 time_module.sleep(1)
                 st.rerun()
