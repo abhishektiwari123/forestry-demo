@@ -1,0 +1,46 @@
+# Pokemon AI Auto-Improvement Daemon - systemd service file
+#
+# Installation:
+#   1. Copy this file to /etc/systemd/system/pokemon-ai-improver.service
+#   2. Edit the paths below to match your installation
+#   3. Run: sudo systemctl daemon-reload
+#   4. Run: sudo systemctl enable pokemon-ai-improver
+#   5. Run: sudo systemctl start pokemon-ai-improver
+#
+# Commands:
+#   sudo systemctl status pokemon-ai-improver  - Check status
+#   sudo systemctl stop pokemon-ai-improver    - Stop daemon
+#   sudo systemctl restart pokemon-ai-improver - Restart daemon
+#   journalctl -u pokemon-ai-improver -f       - View logs
+
+[Unit]
+Description=Pokemon AI Auto-Improvement Daemon
+Documentation=https://github.com/abhishektiwari123/forestry-demo
+After=network.target
+
+[Service]
+Type=simple
+User=user
+Group=user
+
+# IMPORTANT: Update these paths to match your installation
+WorkingDirectory=/home/user/forestry-demo
+ExecStart=/usr/bin/python3 /home/user/forestry-demo/scripts/auto_improvement_daemon.py
+
+# Environment variables (or use EnvironmentFile)
+# EnvironmentFile=/home/user/forestry-demo/scripts/.env
+
+# Restart policy
+Restart=always
+RestartSec=30
+
+# Resource limits
+MemoryLimit=2G
+CPUQuota=50%
+
+# Logging
+StandardOutput=append:/home/user/forestry-demo/scripts/logs/daemon_stdout.log
+StandardError=append:/home/user/forestry-demo/scripts/logs/daemon_stderr.log
+
+[Install]
+WantedBy=multi-user.target
