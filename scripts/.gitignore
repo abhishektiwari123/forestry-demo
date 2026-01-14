@@ -1,0 +1,22 @@
+# Runtime files - do not commit
+*.pid
+logs/*.log
+
+# Keep the logs directory but ignore contents
+!logs/.gitkeep
+
+# Environment files with secrets
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Backup files
+backups/
+
+# Learning/experiment data (can be large)
+auto_learnings.json
+code_improvements.json
+feature_suggestions.json
+experiments_log.json
