@@ -1,151 +1,221 @@
 #!/bin/bash
 #
-# Pokemon AI Auto-Improvement Daemon - Run Script
+# Pokemon AI Auto-Improvement Daemons - Run Script
+#
+# Two daemons available:
+#   1. Image Improvement - Continuously improves prompts using Claude Vision
+#   2. Code Improvement - Continuously improves codebase using Claude API
 #
 # Usage:
-#   ./run_daemon.sh start    - Start daemon in background
-#   ./run_daemon.sh stop     - Stop daemon
-#   ./run_daemon.sh status   - Show daemon status and learnings
-#   ./run_daemon.sh once     - Run single improvement cycle
-#   ./run_daemon.sh logs     - Tail the daemon logs
-#   ./run_daemon.sh install  - Install as systemd service (Linux)
+#   ./run_daemon.sh image start    - Start image improvement daemon
+#   ./run_daemon.sh code start     - Start code improvement daemon
+#   ./run_daemon.sh all start      - Start both daemons
+#   ./run_daemon.sh status         - Show status of all daemons
 #
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DAEMON_SCRIPT="$SCRIPT_DIR/auto_improvement_daemon.py"
-PID_FILE="$SCRIPT_DIR/daemon.pid"
 LOG_DIR="$SCRIPT_DIR/logs"
+
+# Daemon configurations
+IMAGE_DAEMON="$SCRIPT_DIR/auto_improvement_daemon.py"
+IMAGE_PID="$SCRIPT_DIR/image_daemon.pid"
+IMAGE_LOG="$LOG_DIR/auto_improvement.log"
+
+CODE_DAEMON="$SCRIPT_DIR/code_improvement_daemon.py"
+CODE_PID="$SCRIPT_DIR/code_daemon.pid"
+CODE_LOG="$LOG_DIR/code_improvement.log"
 
 # Ensure log directory exists
 mkdir -p "$LOG_DIR"
 
-start_daemon() {
-    if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
-        if ps -p "$PID" > /dev/null 2>&1; then
-            echo "Daemon is already running (PID: $PID)"
-            return 1
-        fi
+start_image_daemon() {
+    if [ -f "$IMAGE_PID" ] && ps -p "$(cat $IMAGE_PID)" > /dev/null 2>&1; then
+        echo "Image daemon already running (PID: $(cat $IMAGE_PID))"
+        return 1
     fi
+    echo "Starting Image Improvement Daemon..."
+    nohup python3 "$IMAGE_DAEMON" > "$LOG_DIR/image_stdout.log" 2> "$LOG_DIR/image_stderr.log" &
+    echo $! > "$IMAGE_PID"
+    echo "Image daemon started (PID: $(cat $IMAGE_PID))"
+}
 
-    echo "Starting Pokemon AI Auto-Improvement Daemon..."
-    nohup python3 "$DAEMON_SCRIPT" > "$LOG_DIR/daemon_stdout.log" 2> "$LOG_DIR/daemon_stderr.log" &
-    echo $! > "$PID_FILE"
-    echo "Daemon started with PID: $(cat $PID_FILE)"
-    echo "Logs: $LOG_DIR/auto_improvement.log"
+start_code_daemon() {
+    if [ -f "$CODE_PID" ] && ps -p "$(cat $CODE_PID)" > /dev/null 2>&1; then
+        echo "Code daemon already running (PID: $(cat $CODE_PID))"
+        return 1
+    fi
+    echo "Starting Code Improvement Daemon..."
+    nohup python3 "$CODE_DAEMON" > "$LOG_DIR/code_stdout.log" 2> "$LOG_DIR/code_stderr.log" &
+    echo $! > "$CODE_PID"
+    echo "Code daemon started (PID: $(cat $CODE_PID))"
 }
 
 stop_daemon() {
-    if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
+    local pid_file=$1
+    local name=$2
+    if [ -f "$pid_file" ]; then
+        PID=$(cat "$pid_file")
         if ps -p "$PID" > /dev/null 2>&1; then
-            echo "Stopping daemon (PID: $PID)..."
+            echo "Stopping $name daemon (PID: $PID)..."
             kill "$PID"
-            rm "$PID_FILE"
-            echo "Daemon stopped"
+            rm "$pid_file"
+            echo "$name daemon stopped"
         else
-            echo "Daemon not running (stale PID file)"
-            rm "$PID_FILE"
+            echo "$name daemon not running (stale PID)"
+            rm "$pid_file"
         fi
     else
-        echo "Daemon is not running (no PID file)"
+        echo "$name daemon not running"
     fi
 }
 
 show_status() {
     echo "========================================"
-    echo "Pokemon AI Auto-Improvement Daemon"
+    echo "  Pokemon AI Auto-Improvement Daemons"
     echo "========================================"
-
-    if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
-        if ps -p "$PID" > /dev/null 2>&1; then
-            echo "Status: RUNNING (PID: $PID)"
-            echo ""
-            # Show process info
-            ps -p "$PID" -o pid,user,%cpu,%mem,etime,command --no-headers
-        else
-            echo "Status: STOPPED (stale PID file)"
-        fi
-    else
-        echo "Status: STOPPED"
-    fi
-
     echo ""
-    echo "--- Learnings Summary ---"
-    python3 "$DAEMON_SCRIPT" --status
-}
 
-run_once() {
-    echo "Running single improvement cycle..."
-    python3 "$DAEMON_SCRIPT" --once
+    # Image daemon status
+    echo "📷 IMAGE IMPROVEMENT DAEMON"
+    if [ -f "$IMAGE_PID" ] && ps -p "$(cat $IMAGE_PID)" > /dev/null 2>&1; then
+        echo "   Status: ✅ RUNNING (PID: $(cat $IMAGE_PID))"
+        ps -p "$(cat $IMAGE_PID)" -o %cpu,%mem,etime --no-headers | xargs echo "   Resources: CPU:"
+    else
+        echo "   Status: ⏹️  STOPPED"
+    fi
+    echo ""
+    python3 "$IMAGE_DAEMON" --status 2>/dev/null || echo "   (No data yet)"
+    echo ""
+
+    # Code daemon status
+    echo "💻 CODE IMPROVEMENT DAEMON"
+    if [ -f "$CODE_PID" ] && ps -p "$(cat $CODE_PID)" > /dev/null 2>&1; then
+        echo "   Status: ✅ RUNNING (PID: $(cat $CODE_PID))"
+        ps -p "$(cat $CODE_PID)" -o %cpu,%mem,etime --no-headers | xargs echo "   Resources: CPU:"
+    else
+        echo "   Status: ⏹️  STOPPED"
+    fi
+    echo ""
+    python3 "$CODE_DAEMON" --status 2>/dev/null || echo "   (No data yet)"
+    echo ""
+    echo "========================================"
 }
 
 show_logs() {
-    if [ -f "$LOG_DIR/auto_improvement.log" ]; then
-        tail -f "$LOG_DIR/auto_improvement.log"
-    else
-        echo "No log file found. Start the daemon first."
-    fi
+    local log_type=$1
+    case "$log_type" in
+        image)
+            tail -f "$IMAGE_LOG" 2>/dev/null || echo "No image log found"
+            ;;
+        code)
+            tail -f "$CODE_LOG" 2>/dev/null || echo "No code log found"
+            ;;
+        *)
+            echo "Tailing all logs (Ctrl+C to stop)..."
+            tail -f "$IMAGE_LOG" "$CODE_LOG" 2>/dev/null
+            ;;
+    esac
 }
 
-install_service() {
-    if [ "$(id -u)" -ne 0 ]; then
-        echo "Please run with sudo for service installation"
-        exit 1
-    fi
-
-    SERVICE_FILE="$SCRIPT_DIR/pokemon-ai-improver.service"
-    if [ -f "$SERVICE_FILE" ]; then
-        cp "$SERVICE_FILE" /etc/systemd/system/
-        systemctl daemon-reload
-        systemctl enable pokemon-ai-improver
-        echo "Service installed! Commands:"
-        echo "  sudo systemctl start pokemon-ai-improver"
-        echo "  sudo systemctl status pokemon-ai-improver"
-        echo "  journalctl -u pokemon-ai-improver -f"
-    else
-        echo "Service file not found: $SERVICE_FILE"
-        exit 1
-    fi
-}
-
+# Main command handling
 case "$1" in
-    start)
-        start_daemon
+    image)
+        case "$2" in
+            start)
+                start_image_daemon
+                ;;
+            stop)
+                stop_daemon "$IMAGE_PID" "Image"
+                ;;
+            once)
+                python3 "$IMAGE_DAEMON" --once
+                ;;
+            status)
+                python3 "$IMAGE_DAEMON" --status
+                ;;
+            logs)
+                tail -f "$IMAGE_LOG"
+                ;;
+            *)
+                echo "Usage: $0 image {start|stop|once|status|logs}"
+                ;;
+        esac
         ;;
-    stop)
-        stop_daemon
+    code)
+        case "$2" in
+            start)
+                start_code_daemon
+                ;;
+            stop)
+                stop_daemon "$CODE_PID" "Code"
+                ;;
+            once)
+                python3 "$CODE_DAEMON" --once
+                ;;
+            status)
+                python3 "$CODE_DAEMON" --status
+                ;;
+            apply)
+                python3 "$CODE_DAEMON" --apply
+                ;;
+            logs)
+                tail -f "$CODE_LOG"
+                ;;
+            *)
+                echo "Usage: $0 code {start|stop|once|status|apply|logs}"
+                ;;
+        esac
+        ;;
+    all)
+        case "$2" in
+            start)
+                start_image_daemon
+                start_code_daemon
+                ;;
+            stop)
+                stop_daemon "$IMAGE_PID" "Image"
+                stop_daemon "$CODE_PID" "Code"
+                ;;
+            *)
+                echo "Usage: $0 all {start|stop}"
+                ;;
+        esac
         ;;
     status)
         show_status
         ;;
-    once)
-        run_once
-        ;;
     logs)
-        show_logs
-        ;;
-    install)
-        install_service
-        ;;
-    restart)
-        stop_daemon
-        sleep 2
-        start_daemon
+        show_logs "$2"
         ;;
     *)
-        echo "Pokemon AI Auto-Improvement Daemon"
+        echo "========================================"
+        echo "  Pokemon AI Auto-Improvement Daemons"
+        echo "========================================"
         echo ""
-        echo "Usage: $0 {start|stop|status|once|logs|install|restart}"
+        echo "Usage: $0 <daemon> <command>"
+        echo ""
+        echo "Daemons:"
+        echo "  image  - Image/prompt improvement using Claude Vision"
+        echo "  code   - Codebase improvement using Claude API"
+        echo "  all    - Both daemons"
         echo ""
         echo "Commands:"
-        echo "  start   - Start daemon in background"
-        echo "  stop    - Stop running daemon"
-        echo "  status  - Show daemon status and learnings"
-        echo "  once    - Run single improvement cycle (for testing)"
-        echo "  logs    - Tail daemon logs in real-time"
-        echo "  install - Install as systemd service (requires sudo)"
-        echo "  restart - Restart the daemon"
+        echo "  start  - Start daemon in background"
+        echo "  stop   - Stop running daemon"
+        echo "  once   - Run single improvement cycle"
+        echo "  status - Show daemon status"
+        echo "  logs   - Tail daemon logs"
+        echo ""
+        echo "Code daemon also supports:"
+        echo "  apply  - Interactively apply pending code changes"
+        echo ""
+        echo "Examples:"
+        echo "  $0 image start     # Start image improvement daemon"
+        echo "  $0 code start      # Start code improvement daemon"
+        echo "  $0 all start       # Start both daemons"
+        echo "  $0 status          # Show status of all daemons"
+        echo "  $0 code apply      # Review and apply pending code changes"
+        echo "  $0 logs            # Tail all logs"
+        echo ""
         ;;
 esac
