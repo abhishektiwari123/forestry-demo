@@ -20,3 +20,6 @@ auto_learnings.json
 code_improvements.json
 feature_suggestions.json
 experiments_log.json
+brain_state.json
+improvements_history.json
+learned_practices.json
