@@ -129,11 +129,7 @@ def get_anthropic_api_key():
 KIE_API_KEY = get_api_key()
 ANTHROPIC_API_KEY = get_anthropic_api_key()
 
-# Debug: Show if API keys are loaded at startup
-print(f"[DEBUG] KIE_API_KEY loaded: {'Yes' if KIE_API_KEY else 'No'}")
-print(f"[DEBUG] ANTHROPIC_API_KEY loaded: {'Yes' if ANTHROPIC_API_KEY else 'No'}")
-if ANTHROPIC_API_KEY:
-    print(f"[DEBUG] ANTHROPIC key: {ANTHROPIC_API_KEY[:10]}...{ANTHROPIC_API_KEY[-4:]}")
+# API keys loaded from secrets/environment (no debug output for security)
 
 
 def load_best_practices() -> dict:

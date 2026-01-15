@@ -135,8 +135,10 @@ class CodeImprovementDaemon:
             try:
                 with open(SUGGESTIONS_FILE) as f:
                     return json.load(f)
-            except:
-                pass
+            except (json.JSONDecodeError, IOError, OSError) as e:
+                logger.warning(f"Error loading suggestions file: {e}")
+            except Exception as e:
+                logger.error(f"Unexpected error loading suggestions: {e}")
         return []
 
     def save_suggestions(self):
