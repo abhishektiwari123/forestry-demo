@@ -1,0 +1,50 @@
+{
+  "source": "GI Council India Yearbook 2023-24",
+  "url": "https://www.gicouncil.in/yearbook/2023-24/",
+  "extraction_method": "Web Search (PDF blocked with 403)",
+  "extracted_date": "2025-01-15",
+  "data_points": {
+    "gdpi_fy24": {
+      "value": "Rs 2,89,673 Crore",
+      "description": "Gross Direct Premium Income FY24",
+      "growth_rate": "12.40%",
+      "comparison": "Up from Rs 2,56,984 Cr in FY23"
+    },
+    "gdpi_10yr_growth": {
+      "value": "From Rs 84,686 Cr (FY15) to Rs 2,89,673 Cr (FY24)",
+      "cagr": "14.6%"
+    },
+    "segment_breakdown": {
+      "health_pa_share": "40.3%",
+      "health_pa_prev_year": "38.0%",
+      "motor_share": "31.7%",
+      "health_cagr_10yr": "19.5%"
+    },
+    "claims_ratios": {
+      "gross_incurred_claims_ratio": "73.0%",
+      "net_incurred_claims_ratio": "82.50%"
+    },
+    "investment": {
+      "yield_on_investment": "8.94%",
+      "social_infra_investment": "Rs 1,06,359 Cr"
+    },
+    "penetration": {
+      "insurance_penetration_fy24": "0.98%",
+      "insurance_penetration_fy15": "0.68%"
+    },
+    "industry_employment": {
+      "total_employees": "179,207",
+      "new_hires_fy24": "16,301"
+    },
+    "distribution": {
+      "note": "Brokers emerged as largest contributors to GDPI, growing faster than Agents and Direct channels"
+    }
+  },
+  "key_insights_for_model": [
+    "Health & PA at 40.3% is largest segment - validates health insurance focus",
+    "Health CAGR 19.5% outpaces overall industry 14.6% - growth opportunity",
+    "Gross claims ratio 73% vs Net 82.5% - reinsurance important",
+    "Brokers growing fastest - validates need for D2C to reduce intermediary costs",
+    "Penetration still low at 0.98% - massive headroom for growth"
+  ]
+}
