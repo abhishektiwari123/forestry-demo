@@ -13,7 +13,7 @@ Based on SOPs and best practices from the project.
 
 import re
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, List
 
 
 @dataclass
@@ -22,9 +22,9 @@ class PromptValidationResult:
     prompt_type: str  # "image", "video", "scene"
     passed: bool
     score: float  # 0.0 - 1.0
-    issues: list = field(default_factory=list)
-    warnings: list = field(default_factory=list)
-    suggestions: list = field(default_factory=list)
+    issues: List[str] = field(default_factory=list)
+    warnings: List[str] = field(default_factory=list)
+    suggestions: List[str] = field(default_factory=list)
     improved_prompt: Optional[str] = None
 
     def to_dict(self) -> dict:

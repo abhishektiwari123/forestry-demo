@@ -449,7 +449,53 @@ Generate the code changes as JSON:"""
         except Exception as e:
             logger.error(f"Rollback failed: {e}")
 
-    def run_improvement_cycle(self):
+
+    def _process_improvement(self, file_path: str, code: str, improvement: dict) -> bool:
+        """Process a single improvement and return True if applied."""
+        logger.info(f"\nImprovement: {improvement.get('description', '')[:100]}")
+
+        code_changes = self.generate_code_improvement(file_path, code, improvement)
+        if not code_changes or not code_changes.get("changes"):
+            return False
+
+        risk = code_changes.get("risk_level", "high")
+        logger.info(f"Risk level: {risk}")
+
+        pending_item = {
+            "timestamp": datetime.now().isoformat(),
+            "file": file_path,
+            "improvement": improvement,
+            "changes": code_changes,
+            "status": "pending"
+        }
+
+        should_auto_apply = CONFIG["auto_apply_safe_changes"] and risk == "low"
+        if not should_auto_apply:
+            self.improvements["pending"].append(pending_item)
+            logger.info("Stored for manual review")
+            return False
+
+        logger.info("Auto-applying low-risk change...")
+        backup = self.backup_file(PROJECT_ROOT / file_path)
+
+        if not self.apply_changes(file_path, code_changes["changes"]):
+            return False
+
+        if CONFIG["require_test_pass"] and not self.run_tests():
+            logger.warning("Tests failed! Rolling back...")
+            if backup:
+                self.rollback_file(file_path, backup)
+            pending_item["status"] = "rejected"
+            pending_item["reason"] = "tests_failed"
+            self.improvements["rejected"].append(pending_item)
+            return False
+
+        logger.info("Change applied successfully!")
+        pending_item["status"] = "applied"
+        self.improvements["applied"].append(pending_item)
+        return True
+
+
         """Run one code improvement cycle."""
         logger.info("=" * 60)
         logger.info("Starting code improvement cycle")
@@ -501,56 +547,14 @@ Generate the code changes as JSON:"""
             improvements = analysis.get("improvements", [])
             high_priority = [i for i in improvements if i.get("priority") == "high"]
 
-            if high_priority and self.improvements_today < CONFIG["max_improvements_per_day"]:
-                logger.info(f"\nProcessing {len(high_priority)} high-priority improvements")
+            if not high_priority or self.improvements_today >= CONFIG["max_improvements_per_day"]:
+                continue
 
-                for improvement in high_priority[:2]:  # Process max 2 per file
-                    logger.info(f"\nImprovement: {improvement.get('description', '')[:100]}")
+            logger.info(f"\nProcessing {len(high_priority)} high-priority improvements")
 
-                    # Generate code changes
-                    code_changes = self.generate_code_improvement(file_path, code, improvement)
-
-                    if code_changes and code_changes.get("changes"):
-                        risk = code_changes.get("risk_level", "high")
-                        logger.info(f"Risk level: {risk}")
-
-                        # Store as pending
-                        pending_item = {
-                            "timestamp": datetime.now().isoformat(),
-                            "file": file_path,
-                            "improvement": improvement,
-                            "changes": code_changes,
-                            "status": "pending"
-                        }
-
-                        if CONFIG["auto_apply_safe_changes"] and risk == "low":
-                            # Auto-apply low-risk changes
-                            logger.info("Auto-applying low-risk change...")
-
-                            backup = self.backup_file(PROJECT_ROOT / file_path)
-
-                            if self.apply_changes(file_path, code_changes["changes"]):
-                                if CONFIG["require_test_pass"]:
-                                    if self.run_tests():
-                                        logger.info("Tests passed! Change applied.")
-                                        pending_item["status"] = "applied"
-                                        self.improvements["applied"].append(pending_item)
-                                        self.improvements_today += 1
-                                    else:
-                                        logger.warning("Tests failed! Rolling back...")
-                                        if backup:
-                                            self.rollback_file(file_path, backup)
-                                        pending_item["status"] = "rejected"
-                                        pending_item["reason"] = "tests_failed"
-                                        self.improvements["rejected"].append(pending_item)
-                                else:
-                                    pending_item["status"] = "applied"
-                                    self.improvements["applied"].append(pending_item)
-                                    self.improvements_today += 1
-                        else:
-                            # Store for manual review
-                            self.improvements["pending"].append(pending_item)
-                            logger.info("Stored for manual review")
+            for improvement in high_priority[:2]:  # Process max 2 per file
+                if self._process_improvement(file_path, code, improvement):
+                    self.improvements_today += 1
 
             # Store feature suggestions
             feature_suggestions = analysis.get("feature_suggestions", [])

@@ -380,6 +380,39 @@ case "$1" in
                 ;;
         esac
         ;;
+    # ============================================================
+    # YOUTUBE UPLOAD
+    # ============================================================
+    youtube)
+        case "$2" in
+            auth)
+                python3 "$SCRIPT_DIR/youtube_uploader.py" --auth
+                ;;
+            status)
+                python3 "$SCRIPT_DIR/youtube_uploader.py" --status
+                ;;
+            upload)
+                if [ -z "$3" ]; then
+                    echo "Usage: $0 youtube upload <video_file> [--title 'Title'] [--privacy private|public|unlisted]"
+                else
+                    shift 2
+                    python3 "$SCRIPT_DIR/youtube_uploader.py" --upload "$@"
+                fi
+                ;;
+            *)
+                echo "Usage: $0 youtube {auth|status|upload}"
+                echo ""
+                echo "Commands:"
+                echo "  auth    - Authenticate with YouTube (first time)"
+                echo "  status  - Show YouTube connection status"
+                echo "  upload  - Upload a video file"
+                echo ""
+                echo "Examples:"
+                echo "  $0 youtube auth"
+                echo "  $0 youtube upload video.mp4 --title 'My Video' --privacy private"
+                ;;
+        esac
+        ;;
     *)
         echo "========================================"
         echo "  Pokemon AI Auto-Improvement System"
@@ -396,6 +429,9 @@ case "$1" in
         echo "  watchdog [start|stop|logs]  - Monitors & restarts daemons"
         echo "  supervisor [start|stop]     - Professional process manager"
         echo ""
+        echo "📺 YOUTUBE UPLOAD:"
+        echo "  youtube {auth|status|upload}"
+        echo ""
         echo "📦 Manual Control:"
         echo "  image {start|stop|once|status|logs}"
         echo "  code {start|stop|once|status|apply|logs}"
@@ -405,9 +441,9 @@ case "$1" in
         echo ""
         echo "Examples:"
         echo "  $0 brain              # 🧠 Best: Fully autonomous AI ⭐"
+        echo "  $0 youtube auth       # 📺 Setup YouTube upload"
         echo "  $0 watchdog           # Auto-restart daemons"
         echo "  $0 brain status       # Check brain learning progress"
-        echo "  $0 status             # Check all status"
         echo ""
         ;;
 esac

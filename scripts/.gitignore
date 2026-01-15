@@ -23,3 +23,8 @@ experiments_log.json
 brain_state.json
 improvements_history.json
 learned_practices.json
+
+# YouTube OAuth credentials (sensitive!)
+client_secrets.json
+youtube_oauth.json
+youtube_uploads.json

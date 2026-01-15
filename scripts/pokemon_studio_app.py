@@ -165,8 +165,7 @@ def call_claude_for_prompt_improvement(current_prompt: str, feedback: str, faile
         st.warning("⚠️ No Anthropic API key found. Enter it in the sidebar or add to .env file.")
         return None, None
 
-    # Debug: Show API key is loaded (first/last 4 chars only)
-    st.info(f"🔑 API Key loaded: {api_key[:7]}...{api_key[-4:]}")
+    # API key loaded successfully (no debug output for security)
 
     # Build the request to Claude
     failed_checks_text = ", ".join(failed_checks) if failed_checks else "None"
@@ -2360,6 +2359,112 @@ elif st.session_state.step == 7:
                 st.balloons()
                 st.success("🎉 Congratulations! Your Pokemon battle videos are ready!")
                 st.info("You can download individual videos above or save the full configuration.")
+
+    # ========================================================================
+    # YOUTUBE UPLOAD SECTION
+    # ========================================================================
+    if st.session_state.generated_videos:
+        st.divider()
+        st.subheader("📺 Upload to YouTube")
+
+        # Initialize YouTube state
+        if "youtube_authenticated" not in st.session_state:
+            st.session_state.youtube_authenticated = False
+
+        # Check if YouTube uploader is available
+        try:
+            from youtube_uploader import YouTubeUploader, check_dependencies
+
+            if not check_dependencies():
+                st.warning("⚠️ YouTube dependencies not installed. Run: `pip install google-api-python-client google-auth-oauthlib`")
+            else:
+                # YouTube settings
+                with st.expander("⚙️ YouTube Upload Settings", expanded=True):
+                    col_yt1, col_yt2 = st.columns(2)
+
+                    with col_yt1:
+                        pokemon_names = st.session_state.get("pokemon", ["Pokemon1", "Pokemon2"])
+                        default_title = f"Epic Battle: {pokemon_names[0]} vs {pokemon_names[1]} - AI Generated"
+
+                        yt_title = st.text_input(
+                            "Video Title",
+                            value=default_title,
+                            max_chars=100,
+                            key="yt_title"
+                        )
+
+                        yt_privacy = st.selectbox(
+                            "Privacy",
+                            ["private", "unlisted", "public"],
+                            key="yt_privacy",
+                            help="Start with 'private' to review before making public"
+                        )
+
+                    with col_yt2:
+                        environment = st.session_state.get("environment", "battle arena")
+                        yt_description = st.text_area(
+                            "Description",
+                            value=f"🔥 AI-Generated Pokemon Battle!\n\n{pokemon_names[0]} vs {pokemon_names[1]} in {environment}\n\n#Pokemon #AI #Gaming",
+                            height=100,
+                            key="yt_description"
+                        )
+
+                        yt_tags = st.text_input(
+                            "Tags (comma-separated)",
+                            value="pokemon,ai,battle,gaming,animation",
+                            key="yt_tags"
+                        )
+
+                # Upload buttons for each video
+                st.markdown("### Upload Videos")
+
+                for panel_idx, video_url in st.session_state.generated_videos.items():
+                    task_info = st.session_state.video_generation_tasks.get(panel_idx, {})
+                    panel_num = task_info.get("panel_num", panel_idx + 1)
+
+                    col_up1, col_up2 = st.columns([3, 1])
+
+                    with col_up1:
+                        st.write(f"**Panel {panel_num}** - Ready for upload")
+
+                    with col_up2:
+                        if st.button(f"📺 Upload Panel {panel_num}", key=f"yt_upload_{panel_idx}"):
+                            with st.spinner(f"Uploading Panel {panel_num} to YouTube..."):
+                                try:
+                                    uploader = YouTubeUploader()
+                                    if uploader.authenticate():
+                                        # Download video from URL first
+                                        import tempfile
+                                        video_response = requests.get(video_url, timeout=120)
+                                        if video_response.status_code == 200:
+                                            with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp:
+                                                tmp.write(video_response.content)
+                                                tmp_path = tmp.name
+
+                                            result = uploader.upload_video(
+                                                video_path=tmp_path,
+                                                title=f"{yt_title} - Panel {panel_num}",
+                                                description=yt_description,
+                                                tags=yt_tags.split(","),
+                                                privacy=yt_privacy
+                                            )
+
+                                            if result:
+                                                st.success(f"✅ Uploaded! {result['url']}")
+                                                st.markdown(f"[Watch on YouTube]({result['url']})")
+                                            else:
+                                                st.error("Upload failed!")
+
+                                            os.unlink(tmp_path)  # Clean up
+                                        else:
+                                            st.error("Could not download video for upload")
+                                    else:
+                                        st.error("YouTube authentication failed! Run: `python scripts/youtube_uploader.py --auth`")
+                                except Exception as e:
+                                    st.error(f"Upload error: {e}")
+
+        except ImportError:
+            st.info("💡 YouTube upload available! Run `python scripts/youtube_uploader.py --auth` to set up.")
 
 
 # ============================================================================
