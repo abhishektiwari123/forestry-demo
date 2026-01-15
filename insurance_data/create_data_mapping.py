@@ -317,7 +317,307 @@ DATA_MAPPING = {
                 'table_ref': 'Business Metrics'
             }
         ]
-    }
+    },
+
+    # ICICI Lombard NSE Filing - NEW
+    'icici_lombard_nse_page_1.png': {
+        'source': 'ICICI Lombard NSE Filing 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/ICICIGI_01062024234428_SE.pdf',
+        'page': 1,
+        'data_points': [
+            {
+                'value': 'Rs 24,776.11 Crore',
+                'description': 'ICICI Lombard GWP FY24',
+                'cell_ref': 'A_Assumptions!B60',
+                'rationale': 'Our company baseline - current revenue to project D2C growth from',
+                'table_ref': 'Cover Page'
+            }
+        ]
+    },
+    'icici_lombard_nse_page_5.png': {
+        'source': 'ICICI Lombard NSE Filing 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/ICICIGI_01062024234428_SE.pdf',
+        'page': 5,
+        'data_points': [
+            {
+                'value': '8.67%',
+                'description': 'ICICI Lombard Market Share (Overall)',
+                'cell_ref': 'A_Assumptions!B61',
+                'rationale': '#3 overall but only 2.9% in retail health - massive opportunity gap',
+                'table_ref': 'Financial Highlights'
+            },
+            {
+                'value': '104.3%',
+                'description': 'Combined Ratio FY24',
+                'cell_ref': 'A_Assumptions!B62',
+                'rationale': 'Currently unprofitable in health - D2C can reduce CAC to fix this',
+                'table_ref': 'Financial Highlights'
+            }
+        ]
+    },
+    'icici_lombard_nse_page_10.png': {
+        'source': 'ICICI Lombard NSE Filing 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/ICICIGI_01062024234428_SE.pdf',
+        'page': 10,
+        'data_points': [
+            {
+                'value': '51.9%',
+                'description': 'Broker/Agent Distribution Share',
+                'cell_ref': 'A_Assumptions!B63',
+                'rationale': 'Heavy broker dependence - D2C reduces commission from 15-20% to 5%',
+                'table_ref': 'Distribution Mix'
+            },
+            {
+                'value': '17.4%',
+                'description': 'Direct Channel Share',
+                'cell_ref': 'A_Assumptions!B64',
+                'rationale': 'Current direct is low - target 35%+ via D2C transformation',
+                'table_ref': 'Distribution Mix'
+            }
+        ]
+    },
+    'icici_lombard_nse_page_15.png': {
+        'source': 'ICICI Lombard NSE Filing 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/ICICIGI_01062024234428_SE.pdf',
+        'page': 15,
+        'data_points': [
+            {
+                'value': 'Rs 4,321 Crore',
+                'description': 'Health Insurance GWP',
+                'cell_ref': 'A_Assumptions!B65',
+                'rationale': 'Current health portfolio - 17.4% of total, needs to grow to 30%',
+                'table_ref': 'Segment Performance'
+            },
+            {
+                'value': '2.9%',
+                'description': 'Retail Health Market Share',
+                'cell_ref': 'A_Assumptions!B66',
+                'rationale': 'Vs Star 33% - the gap is the opportunity. D2C is how we close it',
+                'table_ref': 'Competitive Position'
+            }
+        ]
+    },
+    'icici_lombard_nse_page_20.png': {
+        'source': 'ICICI Lombard NSE Filing 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/ICICIGI_01062024234428_SE.pdf',
+        'page': 20,
+        'data_points': [
+            {
+                'value': '96.1%',
+                'description': 'Claims Settlement Ratio',
+                'cell_ref': 'A_Assumptions!B67',
+                'rationale': 'Strong CSR - trust metric for D2C marketing, matches SAHI leaders',
+                'table_ref': 'Customer Metrics'
+            }
+        ]
+    },
+    'icici_lombard_nse_page_30.png': {
+        'source': 'ICICI Lombard NSE Filing 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/ICICIGI_01062024234428_SE.pdf',
+        'page': 30,
+        'data_points': [
+            {
+                'value': 'Rs 2,478.62 Crore',
+                'description': 'Net Profit FY24',
+                'cell_ref': 'A_Assumptions!B68',
+                'rationale': 'Profitable overall - can invest in D2C from strong base',
+                'table_ref': 'Financial Statements'
+            }
+        ]
+    },
+
+    # Star Health Annual Report - NEW
+    'star_health_ar_page_1.png': {
+        'source': 'Star Health Annual Report 2024',
+        'url': 'https://d28c6jni2fmamz.cloudfront.net/Annual_Reportfinal_73e42af5db.pdf',
+        'page': 1,
+        'data_points': [
+            {
+                'value': 'Rs 15,254.45 Crore',
+                'description': 'Star Health GWP FY24',
+                'cell_ref': 'A_Assumptions!B70',
+                'rationale': 'Market leader revenue - 3.5x ICICI Lombard health, benchmark for growth',
+                'table_ref': 'Cover Highlights'
+            }
+        ]
+    },
+    'star_health_ar_page_8.png': {
+        'source': 'Star Health Annual Report 2024',
+        'url': 'https://d28c6jni2fmamz.cloudfront.net/Annual_Reportfinal_73e42af5db.pdf',
+        'page': 8,
+        'data_points': [
+            {
+                'value': '33%',
+                'description': 'Star Health Retail Market Share',
+                'cell_ref': 'A_Assumptions!B71',
+                'rationale': 'Dominant position - built via agent network, we need D2C alternative',
+                'table_ref': 'Market Position'
+            },
+            {
+                'value': '7.5 Lakh+',
+                'description': 'Agent Network Size',
+                'cell_ref': 'A_Assumptions!B72',
+                'rationale': 'Massive distribution moat - ICICI cannot replicate, hence D2C strategy',
+                'table_ref': 'Distribution Highlights'
+            }
+        ]
+    },
+    'star_health_ar_page_15.png': {
+        'source': 'Star Health Annual Report 2024',
+        'url': 'https://d28c6jni2fmamz.cloudfront.net/Annual_Reportfinal_73e42af5db.pdf',
+        'page': 15,
+        'data_points': [
+            {
+                'value': '19%',
+                'description': 'Star Health GWP Growth FY24',
+                'cell_ref': 'A_Assumptions!B73',
+                'rationale': 'Consistent double-digit growth - market expanding, D2C can capture share',
+                'table_ref': 'Growth Metrics'
+            }
+        ]
+    },
+    'star_health_ar_page_25.png': {
+        'source': 'Star Health Annual Report 2024',
+        'url': 'https://d28c6jni2fmamz.cloudfront.net/Annual_Reportfinal_73e42af5db.pdf',
+        'page': 25,
+        'data_points': [
+            {
+                'value': '87%',
+                'description': 'Cashless Claims Ratio',
+                'cell_ref': 'A_Assumptions!B74',
+                'rationale': 'Customer experience benchmark - D2C app must enable instant cashless',
+                'table_ref': 'Claims Performance'
+            }
+        ]
+    },
+    'star_health_ar_page_40.png': {
+        'source': 'Star Health Annual Report 2024',
+        'url': 'https://d28c6jni2fmamz.cloudfront.net/Annual_Reportfinal_73e42af5db.pdf',
+        'page': 40,
+        'data_points': [
+            {
+                'value': '65.3%',
+                'description': 'Claims Ratio',
+                'cell_ref': 'A_Assumptions!B75',
+                'rationale': 'Better than GI average 82% - SAHI profitability validates focus',
+                'table_ref': 'Operating Metrics'
+            },
+            {
+                'value': '27.8%',
+                'description': 'Expense Ratio',
+                'cell_ref': 'A_Assumptions!B76',
+                'rationale': 'Below 30% cap - D2C can bring this to 20% via digital efficiency',
+                'table_ref': 'Operating Metrics'
+            }
+        ]
+    },
+    'star_health_ar_page_60.png': {
+        'source': 'Star Health Annual Report 2024',
+        'url': 'https://d28c6jni2fmamz.cloudfront.net/Annual_Reportfinal_73e42af5db.pdf',
+        'page': 60,
+        'data_points': [
+            {
+                'value': 'Rs 726 Crore',
+                'description': 'Net Profit FY24',
+                'cell_ref': 'A_Assumptions!B77',
+                'rationale': 'Profitable at scale - proves retail health model works with right distribution',
+                'table_ref': 'Financial Statements'
+            }
+        ]
+    },
+
+    # Star Health Investor Presentation - NEW
+    'star_health_investor_page_1.png': {
+        'source': 'Star Health Investor Presentation Oct 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/STARHEALTH_30102024161230_Investor_Presentation30102024.pdf',
+        'page': 1,
+        'data_points': [
+            {
+                'value': 'Q2 FY25 Results',
+                'description': 'Latest Quarterly Performance',
+                'cell_ref': 'Reference',
+                'rationale': 'Most recent data - validates continued growth momentum',
+                'table_ref': 'Cover'
+            }
+        ]
+    },
+    'star_health_investor_page_3.png': {
+        'source': 'Star Health Investor Presentation Oct 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/STARHEALTH_30102024161230_Investor_Presentation30102024.pdf',
+        'page': 3,
+        'data_points': [
+            {
+                'value': 'Rs 8,298 Crore',
+                'description': 'H1 FY25 GWP',
+                'cell_ref': 'A_Assumptions!B78',
+                'rationale': 'Run rate Rs 16,500+ Cr annual - growth continues unabated',
+                'table_ref': 'KPIs'
+            },
+            {
+                'value': '14.8%',
+                'description': 'ROE',
+                'cell_ref': 'A_Assumptions!B79',
+                'rationale': 'Strong returns - validates health insurance unit economics',
+                'table_ref': 'KPIs'
+            }
+        ]
+    },
+    'star_health_investor_page_5.png': {
+        'source': 'Star Health Investor Presentation Oct 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/STARHEALTH_30102024161230_Investor_Presentation30102024.pdf',
+        'page': 5,
+        'data_points': [
+            {
+                'value': '21%',
+                'description': 'GWP Growth Q2 FY25',
+                'cell_ref': 'A_Assumptions!B80',
+                'rationale': 'Accelerating growth - market opportunity expanding faster',
+                'table_ref': 'Growth Metrics'
+            }
+        ]
+    },
+    'star_health_investor_page_8.png': {
+        'source': 'Star Health Investor Presentation Oct 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/STARHEALTH_30102024161230_Investor_Presentation30102024.pdf',
+        'page': 8,
+        'data_points': [
+            {
+                'value': '33%+',
+                'description': 'Retail Health Market Share (Maintained)',
+                'cell_ref': 'A_Assumptions!B81',
+                'rationale': 'Dominant position sustained - validates D2C disruption strategy',
+                'table_ref': 'Market Position'
+            }
+        ]
+    },
+    'star_health_investor_page_12.png': {
+        'source': 'Star Health Investor Presentation Oct 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/STARHEALTH_30102024161230_Investor_Presentation30102024.pdf',
+        'page': 12,
+        'data_points': [
+            {
+                'value': '63.8%',
+                'description': 'Claims Ratio H1 FY25',
+                'cell_ref': 'A_Assumptions!B82',
+                'rationale': 'Improving claims ratio - pricing power and risk selection working',
+                'table_ref': 'Operating Performance'
+            }
+        ]
+    },
+    'star_health_investor_page_15.png': {
+        'source': 'Star Health Investor Presentation Oct 2024',
+        'url': 'https://nsearchives.nseindia.com/corporate/STARHEALTH_30102024161230_Investor_Presentation30102024.pdf',
+        'page': 15,
+        'data_points': [
+            {
+                'value': '7.8 Lakh',
+                'description': 'Agent Count (Latest)',
+                'cell_ref': 'A_Assumptions!B83',
+                'rationale': 'Growing network - distribution moat widening, D2C is only counter-strategy',
+                'table_ref': 'Distribution'
+            }
+        ]
+    },
 }
 
 # Additional sources we need but couldn't download (for documentation)
