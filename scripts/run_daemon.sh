@@ -33,8 +33,58 @@ WATCHDOG="$SCRIPT_DIR/watchdog.py"
 WATCHDOG_PID="$SCRIPT_DIR/watchdog.pid"
 WATCHDOG_LOG="$LOG_DIR/watchdog.log"
 
+BRAIN="$SCRIPT_DIR/autonomous_brain.py"
+BRAIN_PID="$SCRIPT_DIR/brain.pid"
+BRAIN_LOG="$LOG_DIR/autonomous_brain.log"
+
 # Ensure log directory exists
 mkdir -p "$LOG_DIR"
+
+# ============================================================
+# AUTONOMOUS BRAIN (Fully Autonomous AI)
+# ============================================================
+start_brain() {
+    if [ -f "$BRAIN_PID" ] && ps -p "$(cat $BRAIN_PID)" > /dev/null 2>&1; then
+        echo "Brain already running (PID: $(cat $BRAIN_PID))"
+        return 1
+    fi
+
+    # Stop other daemons - brain replaces them
+    stop_watchdog 2>/dev/null
+    stop_daemon "$IMAGE_PID" "Image" 2>/dev/null
+    stop_daemon "$CODE_PID" "Code" 2>/dev/null
+
+    echo "🧠 Starting Autonomous Brain..."
+    echo "   Using: Haiku (fast) → Opus 4.5 (decisions) → Sonnet (code)"
+    echo ""
+    nohup python3 "$BRAIN" > "$LOG_DIR/brain_stdout.log" 2> "$LOG_DIR/brain_stderr.log" &
+    echo $! > "$BRAIN_PID"
+    echo "Brain started (PID: $(cat $BRAIN_PID))"
+    echo ""
+    echo "✅ Fully autonomous AI improvement system active!"
+    echo "📋 Monitor with: $0 brain logs"
+}
+
+stop_brain() {
+    if [ -f "$BRAIN_PID" ]; then
+        PID=$(cat "$BRAIN_PID")
+        if ps -p "$PID" > /dev/null 2>&1; then
+            echo "Stopping brain (PID: $PID)..."
+            kill "$PID"
+            sleep 2
+            if ps -p "$PID" > /dev/null 2>&1; then
+                kill -9 "$PID" 2>/dev/null
+            fi
+            rm "$BRAIN_PID"
+            echo "Brain stopped"
+        else
+            echo "Brain not running (stale PID)"
+            rm "$BRAIN_PID"
+        fi
+    else
+        echo "Brain not running"
+    fi
+}
 
 # ============================================================
 # WATCHDOG FUNCTIONS (24/7 Auto-Restart)
@@ -305,16 +355,46 @@ case "$1" in
                 ;;
         esac
         ;;
+    # ============================================================
+    # AUTONOMOUS BRAIN (Best - Full AI Control)
+    # ============================================================
+    brain)
+        case "$2" in
+            start|"")
+                start_brain
+                ;;
+            stop)
+                stop_brain
+                ;;
+            once)
+                python3 "$BRAIN" --once
+                ;;
+            status)
+                python3 "$BRAIN" --status
+                ;;
+            logs)
+                tail -f "$BRAIN_LOG"
+                ;;
+            *)
+                echo "Usage: $0 brain {start|stop|once|status|logs}"
+                ;;
+        esac
+        ;;
     *)
         echo "========================================"
-        echo "  Pokemon AI Auto-Improvement Daemons"
+        echo "  Pokemon AI Auto-Improvement System"
         echo "========================================"
         echo ""
         echo "Usage: $0 <command>"
         echo ""
-        echo "🔥 24/7 AUTO-RESTART (Recommended):"
-        echo "  watchdog [start|stop|logs]  - Use watchdog for auto-restart"
-        echo "  supervisor [start|stop]     - Use supervisord for process management"
+        echo "🧠 AUTONOMOUS BRAIN (Best - Fully Autonomous):"
+        echo "  brain [start|stop|once|status|logs]"
+        echo "    Uses: Haiku (fast) → Opus 4.5 (decisions) → Sonnet (code)"
+        echo "    Auto-decides AND auto-applies improvements!"
+        echo ""
+        echo "🔥 24/7 AUTO-RESTART:"
+        echo "  watchdog [start|stop|logs]  - Monitors & restarts daemons"
+        echo "  supervisor [start|stop]     - Professional process manager"
         echo ""
         echo "📦 Manual Control:"
         echo "  image {start|stop|once|status|logs}"
@@ -324,11 +404,10 @@ case "$1" in
         echo "  logs    - Tail all logs"
         echo ""
         echo "Examples:"
-        echo "  $0 watchdog           # Start 24/7 with auto-restart ⭐"
-        echo "  $0 supervisor         # Start with supervisord"
-        echo "  $0 all start          # Start both (no auto-restart)"
-        echo "  $0 status             # Check status"
-        echo "  $0 code apply         # Apply pending code changes"
+        echo "  $0 brain              # 🧠 Best: Fully autonomous AI ⭐"
+        echo "  $0 watchdog           # Auto-restart daemons"
+        echo "  $0 brain status       # Check brain learning progress"
+        echo "  $0 status             # Check all status"
         echo ""
         ;;
 esac
