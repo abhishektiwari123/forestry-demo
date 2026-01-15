@@ -6,7 +6,11 @@
 #   1. Image Improvement - Continuously improves prompts using Claude Vision
 #   2. Code Improvement - Continuously improves codebase using Claude API
 #
-# Usage:
+# 24/7 Auto-Restart Options:
+#   ./run_daemon.sh watchdog       - Start watchdog (auto-restarts crashed daemons)
+#   ./run_daemon.sh supervisor     - Use supervisord for process management
+#
+# Basic Usage:
 #   ./run_daemon.sh image start    - Start image improvement daemon
 #   ./run_daemon.sh code start     - Start code improvement daemon
 #   ./run_daemon.sh all start      - Start both daemons
@@ -25,8 +29,87 @@ CODE_DAEMON="$SCRIPT_DIR/code_improvement_daemon.py"
 CODE_PID="$SCRIPT_DIR/code_daemon.pid"
 CODE_LOG="$LOG_DIR/code_improvement.log"
 
+WATCHDOG="$SCRIPT_DIR/watchdog.py"
+WATCHDOG_PID="$SCRIPT_DIR/watchdog.pid"
+WATCHDOG_LOG="$LOG_DIR/watchdog.log"
+
 # Ensure log directory exists
 mkdir -p "$LOG_DIR"
+
+# ============================================================
+# WATCHDOG FUNCTIONS (24/7 Auto-Restart)
+# ============================================================
+start_watchdog() {
+    if [ -f "$WATCHDOG_PID" ] && ps -p "$(cat $WATCHDOG_PID)" > /dev/null 2>&1; then
+        echo "Watchdog already running (PID: $(cat $WATCHDOG_PID))"
+        return 1
+    fi
+
+    # Stop any existing daemons first
+    stop_daemon "$IMAGE_PID" "Image" 2>/dev/null
+    stop_daemon "$CODE_PID" "Code" 2>/dev/null
+
+    echo "🐕 Starting Watchdog (24/7 auto-restart mode)..."
+    nohup python3 "$WATCHDOG" > "$LOG_DIR/watchdog_stdout.log" 2> "$LOG_DIR/watchdog_stderr.log" &
+    echo $! > "$WATCHDOG_PID"
+    echo "Watchdog started (PID: $(cat $WATCHDOG_PID))"
+    echo ""
+    echo "✅ Daemons will now auto-restart if they crash!"
+    echo "📋 Monitor with: tail -f $WATCHDOG_LOG"
+}
+
+stop_watchdog() {
+    if [ -f "$WATCHDOG_PID" ]; then
+        PID=$(cat "$WATCHDOG_PID")
+        if ps -p "$PID" > /dev/null 2>&1; then
+            echo "Stopping watchdog (PID: $PID)..."
+            kill "$PID"
+            sleep 2
+            # Force kill if still running
+            if ps -p "$PID" > /dev/null 2>&1; then
+                kill -9 "$PID" 2>/dev/null
+            fi
+            rm "$WATCHDOG_PID"
+            echo "Watchdog stopped (daemons also stopped)"
+        else
+            echo "Watchdog not running (stale PID)"
+            rm "$WATCHDOG_PID"
+        fi
+    else
+        echo "Watchdog not running"
+    fi
+}
+
+# ============================================================
+# SUPERVISOR FUNCTIONS
+# ============================================================
+start_supervisor() {
+    if ! command -v supervisord &> /dev/null; then
+        echo "Supervisor not installed. Installing..."
+        pip install supervisor
+    fi
+
+    echo "Starting Supervisor..."
+    supervisord -c "$SCRIPT_DIR/supervisor.conf"
+    echo ""
+    echo "✅ Supervisor started! Commands:"
+    echo "   supervisorctl -c $SCRIPT_DIR/supervisor.conf status"
+    echo "   supervisorctl -c $SCRIPT_DIR/supervisor.conf restart all"
+    echo "   supervisorctl -c $SCRIPT_DIR/supervisor.conf tail -f image_daemon"
+}
+
+stop_supervisor() {
+    if [ -f "$SCRIPT_DIR/supervisord.pid" ]; then
+        echo "Stopping Supervisor..."
+        supervisorctl -c "$SCRIPT_DIR/supervisor.conf" shutdown
+    else
+        echo "Supervisor not running"
+    fi
+}
+
+supervisor_status() {
+    supervisorctl -c "$SCRIPT_DIR/supervisor.conf" status
+}
 
 start_image_daemon() {
     if [ -f "$IMAGE_PID" ] && ps -p "$(cat $IMAGE_PID)" > /dev/null 2>&1; then
@@ -187,35 +270,65 @@ case "$1" in
     logs)
         show_logs "$2"
         ;;
+    # ============================================================
+    # 24/7 AUTO-RESTART OPTIONS
+    # ============================================================
+    watchdog)
+        case "$2" in
+            start|"")
+                start_watchdog
+                ;;
+            stop)
+                stop_watchdog
+                ;;
+            logs)
+                tail -f "$WATCHDOG_LOG"
+                ;;
+            *)
+                echo "Usage: $0 watchdog {start|stop|logs}"
+                ;;
+        esac
+        ;;
+    supervisor)
+        case "$2" in
+            start|"")
+                start_supervisor
+                ;;
+            stop)
+                stop_supervisor
+                ;;
+            status)
+                supervisor_status
+                ;;
+            *)
+                echo "Usage: $0 supervisor {start|stop|status}"
+                ;;
+        esac
+        ;;
     *)
         echo "========================================"
         echo "  Pokemon AI Auto-Improvement Daemons"
         echo "========================================"
         echo ""
-        echo "Usage: $0 <daemon> <command>"
+        echo "Usage: $0 <command>"
         echo ""
-        echo "Daemons:"
-        echo "  image  - Image/prompt improvement using Claude Vision"
-        echo "  code   - Codebase improvement using Claude API"
-        echo "  all    - Both daemons"
+        echo "🔥 24/7 AUTO-RESTART (Recommended):"
+        echo "  watchdog [start|stop|logs]  - Use watchdog for auto-restart"
+        echo "  supervisor [start|stop]     - Use supervisord for process management"
         echo ""
-        echo "Commands:"
-        echo "  start  - Start daemon in background"
-        echo "  stop   - Stop running daemon"
-        echo "  once   - Run single improvement cycle"
-        echo "  status - Show daemon status"
-        echo "  logs   - Tail daemon logs"
-        echo ""
-        echo "Code daemon also supports:"
-        echo "  apply  - Interactively apply pending code changes"
+        echo "📦 Manual Control:"
+        echo "  image {start|stop|once|status|logs}"
+        echo "  code {start|stop|once|status|apply|logs}"
+        echo "  all {start|stop}"
+        echo "  status  - Show all daemon status"
+        echo "  logs    - Tail all logs"
         echo ""
         echo "Examples:"
-        echo "  $0 image start     # Start image improvement daemon"
-        echo "  $0 code start      # Start code improvement daemon"
-        echo "  $0 all start       # Start both daemons"
-        echo "  $0 status          # Show status of all daemons"
-        echo "  $0 code apply      # Review and apply pending code changes"
-        echo "  $0 logs            # Tail all logs"
+        echo "  $0 watchdog           # Start 24/7 with auto-restart ⭐"
+        echo "  $0 supervisor         # Start with supervisord"
+        echo "  $0 all start          # Start both (no auto-restart)"
+        echo "  $0 status             # Check status"
+        echo "  $0 code apply         # Apply pending code changes"
         echo ""
         ;;
 esac
