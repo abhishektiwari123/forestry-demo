@@ -30,40 +30,65 @@ PDF_SOURCES = {
         'pages': [6, 9, 10],
         'data_points': ['Total ITR Filers: 7.97 Cr', 'Income slab distribution', 'Salaried taxpayers: 3.80 Cr'],
         'highlights': {
-            6: [(10, 20, 90, 35, 'Total Filers: 7.97 Cr', 'yellow')],
-            9: [(10, 15, 90, 85, 'Income Slab Distribution Table 1.1', 'yellow')],
-            10: [(10, 20, 90, 40, 'Salaried Taxpayers: 3.80 Cr', 'green')]
+            6: [(5, 5, 95, 55, 'Total Filers: 7,97,12,145 | Individuals: 7,54,61,286', 'yellow')],
+            9: [(5, 8, 95, 92, 'Table 1.1: Income Slab Distribution (18 slabs)', 'green')],
+            10: [(5, 15, 95, 50, 'Salaried: 3,79,64,804 | Salary Income: Rs 35.23L Cr', 'cyan')]
+        }
+    },
+    'gi_council': {
+        'url': 'https://www.gicouncil.in/yearbook/2023-24/wp-content/uploads/GIC_Yearbook_2023-24.pdf',
+        'name': 'GI Council Yearbook 2023-24',
+        'pages': [1, 8, 12, 15],
+        'data_points': ['GDPI Rs 2,89,673 Cr', 'Health & PA 40.3%', 'Motor 31.7%', 'Growth 12.4%'],
+        'highlights': {
+            8: [(5, 10, 95, 85, 'Executive Summary: GDPI Rs 2,89,673 Cr | Growth 12.4%', 'yellow')],
+            12: [(5, 15, 95, 80, 'Health & PA: 40.3% of GDPI | Motor: 31.7%', 'green')],
+            15: [(5, 20, 95, 75, 'Segment-wise GDPI Breakdown', 'cyan')]
         }
     },
     'niva_drhp': {
         'url': 'https://transactions.nivabupa.com/pages/doc/drhp/Industry-Report.pdf',
-        'name': 'Niva Bupa DRHP Industry Report',
-        'pages': [1, 12, 15, 18],
-        'data_points': ['Health insurance market size', 'Retail 38.7%, Group 50.5%', 'SAHI growth 27.1%'],
+        'name': 'Niva Bupa DRHP Industry Report (Redseer)',
+        'pages': [5, 9, 12, 15, 17, 20],
+        'data_points': ['Health GWP Rs 1.08T', 'Retail 38.7%', 'Group 50.5%', 'SAHI 27.1% growth'],
         'highlights': {
-            12: [(10, 30, 90, 70, 'Market Size Data', 'yellow')],
-            15: [(10, 20, 90, 60, 'Retail 38.7% | Group 50.5%', 'green')],
-            18: [(10, 25, 90, 55, 'SAHI Growth 27.1%', 'cyan')]
+            5: [(5, 10, 95, 85, 'Health Insurance Market Overview', 'yellow')],
+            9: [(5, 15, 95, 80, 'India Internet Funnel: 800-850M users', 'green')],
+            12: [(5, 20, 95, 75, 'Digital Insurance Growth 30-35% CAGR', 'cyan')],
+            15: [(5, 10, 95, 85, 'Retail 38.7% | Group 50.5% | Govt 9.7%', 'yellow')],
+            17: [(5, 15, 95, 80, 'SAHI Growth 27.1% vs Industry 20.2%', 'green')],
+            20: [(5, 20, 95, 75, 'Retail Health Growth 19.1%', 'cyan')]
         }
     },
     'niva_ar': {
         'url': 'https://transactions.nivabupa.com/pages/doc/pub-dis/annual-reports/Annual-Report-FY-2023-24.pdf',
         'name': 'Niva Bupa Annual Report FY24',
-        'pages': [1, 10, 45],
-        'data_points': ['GWP Rs 5,499 Cr', 'Claims ratio', 'Distribution mix'],
+        'pages': [1, 8, 12, 45],
+        'data_points': ['GWP Rs 5,499 Cr', '41% Growth', 'CSR 100%', 'Distribution mix'],
         'highlights': {
-            10: [(10, 20, 90, 50, 'Financial Highlights', 'yellow')],
-            45: [(10, 30, 90, 70, 'Distribution Channel Mix', 'green')]
+            8: [(5, 15, 95, 80, 'Financial Highlights: GWP Rs 5,499 Cr', 'yellow')],
+            12: [(5, 20, 95, 75, 'Business Performance', 'green')],
+            45: [(5, 10, 95, 85, 'Distribution Channel Mix', 'cyan')]
         }
     },
-    'irdai_ar': {
-        'url': 'https://irdai.gov.in/documents/37343/418498/IRDAI+Annual+Report+2023-24.pdf',
-        'name': 'IRDAI Annual Report 2023-24',
-        'pages': [1, 45, 52],
-        'data_points': ['Total Premium Rs 11.19T', 'Penetration 3.7%', 'Claims Ratios'],
+    'star_health': {
+        'url': 'https://www.starhealth.in/sites/default/files/Star-Health-Annual-Report-2023-24.pdf',
+        'name': 'Star Health Annual Report FY24',
+        'pages': [1, 10, 25],
+        'data_points': ['GWP Rs 15,254 Cr', 'Claims Ratio 66.5%', '7L+ Agents'],
         'highlights': {
-            45: [(10, 20, 90, 60, 'Insurance Premium Summary', 'yellow')],
-            52: [(10, 30, 90, 70, 'Claims Ratio by Insurer Type', 'green')]
+            10: [(5, 15, 95, 80, 'Financial Summary: GWP Rs 15,254 Cr', 'yellow')],
+            25: [(5, 20, 95, 75, 'Claims Ratio 66.5%', 'green')]
+        }
+    },
+    'icici_lombard': {
+        'url': 'https://www.icicilombard.com/docs/default-source/financial-information/annualreport2024.pdf',
+        'name': 'ICICI Lombard Annual Report FY24',
+        'pages': [1, 15, 45],
+        'data_points': ['GDPI Rs 24,776 Cr', 'Market Share 8.67%', 'Solvency 2.69x'],
+        'highlights': {
+            15: [(5, 15, 95, 80, 'Financial Highlights: GDPI Rs 24,776 Cr', 'yellow')],
+            45: [(5, 20, 95, 75, 'Segment-wise Performance', 'green')]
         }
     }
 }
