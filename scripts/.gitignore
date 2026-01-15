@@ -24,6 +24,10 @@ brain_state.json
 improvements_history.json
 learned_practices.json
 
+# Cost tracking data
+cost_tracking.json
+api_cache.json
+
 # YouTube OAuth credentials (sensitive!)
 client_secrets.json
 youtube_oauth.json

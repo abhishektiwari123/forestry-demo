@@ -413,6 +413,46 @@ case "$1" in
                 ;;
         esac
         ;;
+    # ============================================================
+    # COST TRACKING (Budget & Quality Management)
+    # ============================================================
+    cost)
+        case "$2" in
+            status|"")
+                python3 "$SCRIPT_DIR/cost_tracker.py"
+                ;;
+            detailed)
+                python3 "$SCRIPT_DIR/cost_tracker.py" --detailed
+                ;;
+            cache)
+                python3 "$SCRIPT_DIR/cost_tracker.py" --cache-stats
+                ;;
+            reset)
+                python3 "$SCRIPT_DIR/cost_tracker.py" --reset-daily
+                ;;
+            model)
+                if [ -z "$3" ]; then
+                    echo "Usage: $0 cost model <task_type>"
+                    echo "Task types: quick_scan, code_generation, final_decision, security_analysis"
+                else
+                    python3 "$SCRIPT_DIR/cost_tracker.py" --model "$3"
+                fi
+                ;;
+            *)
+                echo "Usage: $0 cost {status|detailed|cache|reset|model}"
+                echo ""
+                echo "Commands:"
+                echo "  status    - Show current budget status"
+                echo "  detailed  - Show full cost breakdown"
+                echo "  cache     - Show response cache stats"
+                echo "  reset     - Reset daily counter"
+                echo "  model     - Get recommended model for task"
+                echo ""
+                echo "Budget: ₹15,000/month (~\$180 USD)"
+                echo "Quality preservation: Critical tasks never downgraded"
+                ;;
+        esac
+        ;;
     *)
         echo "========================================"
         echo "  Pokemon AI Auto-Improvement System"
@@ -432,6 +472,10 @@ case "$1" in
         echo "📺 YOUTUBE UPLOAD:"
         echo "  youtube {auth|status|upload}"
         echo ""
+        echo "💰 COST TRACKING (Budget ₹15k/month):"
+        echo "  cost {status|detailed|cache|reset|model}"
+        echo "  Quality preservation: Critical tasks never downgraded"
+        echo ""
         echo "📦 Manual Control:"
         echo "  image {start|stop|once|status|logs}"
         echo "  code {start|stop|once|status|apply|logs}"
@@ -441,9 +485,9 @@ case "$1" in
         echo ""
         echo "Examples:"
         echo "  $0 brain              # 🧠 Best: Fully autonomous AI ⭐"
+        echo "  $0 cost               # 💰 Check budget & spending"
         echo "  $0 youtube auth       # 📺 Setup YouTube upload"
         echo "  $0 watchdog           # Auto-restart daemons"
-        echo "  $0 brain status       # Check brain learning progress"
         echo ""
         ;;
 esac

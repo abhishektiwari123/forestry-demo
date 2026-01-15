@@ -29,6 +29,16 @@ from pathlib import Path
 from typing import Optional, Tuple
 from enum import Enum
 
+# Cost tracking for budget management
+try:
+    from cost_tracker import (
+        get_cost_aware_api, CostAwareAPI, BudgetStatus,
+        QUALITY_TIERS, get_response_cache
+    )
+    COST_TRACKING_ENABLED = True
+except ImportError:
+    COST_TRACKING_ENABLED = False
+
 # Setup
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
@@ -100,7 +110,7 @@ CONFIG = {
 
 
 class AutonomousBrain:
-    """Fully autonomous AI improvement system."""
+    """Fully autonomous AI improvement system with cost awareness."""
 
     def __init__(self):
         self.running = True
@@ -108,6 +118,16 @@ class AutonomousBrain:
         self.improvements_today = 0
         self.last_day = datetime.now().day
         self.last_research = None
+
+        # Initialize cost tracking (quality-preserving mode)
+        if COST_TRACKING_ENABLED:
+            self.cost_api = get_cost_aware_api()
+            self.cache = get_response_cache()
+            logger.info("💰 Cost tracking enabled with quality preservation")
+        else:
+            self.cost_api = None
+            self.cache = None
+            logger.warning("⚠️ Cost tracking not available")
 
     def load_state(self) -> dict:
         """Load brain state from file."""
@@ -136,14 +156,56 @@ class AutonomousBrain:
             logger.error(f"Error saving state: {e}")
 
     # ================================================================
-    # AI MODEL CALLS
+    # AI MODEL CALLS (with cost tracking & quality preservation)
     # ================================================================
 
-    def call_claude(self, prompt: str, model: Model, system: str = "", max_tokens: int = 4096) -> Optional[str]:
-        """Call Claude API with specified model."""
+    def _check_budget(self, task_type: str = "general") -> Tuple[bool, Optional[str]]:
+        """
+        Check if we can make an API call within budget.
+
+        Quality preservation: Critical tasks are never blocked except when budget exceeded.
+        """
+        if not self.cost_api:
+            return True, None
+
+        status, info = self.cost_api.tracker.get_budget_status()
+
+        if status == BudgetStatus.EXCEEDED:
+            logger.warning(f"❌ Budget exceeded! Monthly: ${info['monthly_spent_usd']:.2f}/${info['monthly_limit_usd']}")
+            return False, None
+
+        # Get recommended model (quality-preserving)
+        model = self.cost_api.get_model_for_task(task_type)
+        return True, model
+
+    def call_claude(self, prompt: str, model: Model, system: str = "",
+                    max_tokens: int = 4096, task_type: str = "general") -> Optional[str]:
+        """
+        Call Claude API with specified model.
+
+        Features:
+        - Cost tracking and budget enforcement
+        - Response caching to avoid duplicate calls
+        - Quality-preserving model selection
+        """
         if not ANTHROPIC_API_KEY:
             logger.error("No Anthropic API key!")
             return None
+
+        # Check budget (quality-preserving)
+        if self.cost_api:
+            can_call, recommended_model = self._check_budget(task_type)
+            if not can_call:
+                logger.warning(f"⏸️ Skipping API call due to budget constraints")
+                return None
+
+        # Check cache first (saves money!)
+        cache_key = f"{model.value}:{task_type}:{prompt[:500]}"
+        if self.cache:
+            cached = self.cache.get(prompt[:500], model.value, task_type)
+            if cached:
+                logger.info(f"💾 Cache hit for {task_type}! Saved API cost")
+                return cached
 
         try:
             payload = {
@@ -166,7 +228,25 @@ class AutonomousBrain:
             )
 
             if response.status_code == 200:
-                return response.json().get("content", [{}])[0].get("text", "")
+                result_json = response.json()
+                text_response = result_json.get("content", [{}])[0].get("text", "")
+
+                # Track cost
+                if self.cost_api:
+                    usage = result_json.get("usage", {})
+                    input_tokens = usage.get("input_tokens", 0)
+                    output_tokens = usage.get("output_tokens", 0)
+                    cost = self.cost_api.record_call(
+                        "claude", model.value, input_tokens, output_tokens, task_type
+                    )
+                    if cost > 0.01:
+                        logger.info(f"💰 Cost: ${cost:.4f} ({model.name})")
+
+                # Cache the response
+                if self.cache and text_response:
+                    self.cache.set(prompt[:500], model.value, task_type, text_response)
+
+                return text_response
             else:
                 logger.error(f"Claude API error: {response.status_code}")
                 return None
@@ -175,17 +255,17 @@ class AutonomousBrain:
             logger.error(f"Claude API error: {e}")
             return None
 
-    def call_haiku_fast(self, prompt: str, system: str = "") -> Optional[str]:
+    def call_haiku_fast(self, prompt: str, system: str = "", task_type: str = "quick_scan") -> Optional[str]:
         """Quick analysis with Haiku - for fast decisions."""
-        return self.call_claude(prompt, Model.HAIKU, system, max_tokens=1024)
+        return self.call_claude(prompt, Model.HAIKU, system, max_tokens=1024, task_type=task_type)
 
-    def call_opus_expert(self, prompt: str, system: str = "") -> Optional[str]:
-        """Expert analysis with Opus 4.5 - for complex decisions."""
-        return self.call_claude(prompt, Model.OPUS, system, max_tokens=8192)
+    def call_opus_expert(self, prompt: str, system: str = "", task_type: str = "final_decision") -> Optional[str]:
+        """Expert analysis with Opus 4.5 - for complex decisions (quality-critical)."""
+        return self.call_claude(prompt, Model.OPUS, system, max_tokens=8192, task_type=task_type)
 
-    def call_sonnet_balanced(self, prompt: str, system: str = "") -> Optional[str]:
+    def call_sonnet_balanced(self, prompt: str, system: str = "", task_type: str = "code_generation") -> Optional[str]:
         """Balanced analysis with Sonnet - for code generation."""
-        return self.call_claude(prompt, Model.SONNET, system, max_tokens=4096)
+        return self.call_claude(prompt, Model.SONNET, system, max_tokens=4096, task_type=task_type)
 
     # ================================================================
     # WEB RESEARCH
@@ -737,6 +817,24 @@ def print_status():
     print("  🧠 Autonomous Brain - Status")
     print("=" * 60)
 
+    # Cost tracking status
+    if COST_TRACKING_ENABLED:
+        try:
+            cost_api = get_cost_aware_api()
+            summary = cost_api.get_cost_summary()
+            print(f"\n💰 Budget Status: {summary['status'].upper()}")
+            print(f"   Daily: ${summary['daily_spent_usd']:.4f} / ${summary['daily_limit_usd']:.2f} ({summary['daily_percent']}%)")
+            print(f"   Monthly: ${summary['monthly_spent_usd']:.4f} / ${summary['monthly_limit_usd']:.2f} ({summary['monthly_percent']}%)")
+            print(f"   Monthly (INR): ₹{summary['monthly_spent_inr']:.0f}")
+            if summary.get('cache_entries', 0) > 0:
+                print(f"   Cache entries: {summary['cache_entries']} (saves repeat calls)")
+            if summary['quality_preservation_enabled']:
+                print(f"   🛡️ Quality preservation: ENABLED")
+        except Exception as e:
+            print(f"\n💰 Cost tracking error: {e}")
+    else:
+        print("\n⚠️ Cost tracking not enabled")
+
     if BRAIN_STATE_FILE.exists():
         with open(BRAIN_STATE_FILE) as f:
             state = json.load(f)
@@ -746,7 +844,7 @@ def print_status():
         failed = state.get("failed_improvements", 0)
         rate = (success / total * 100) if total > 0 else 0
 
-        print(f"\n📊 Statistics:")
+        print(f"\n📊 Improvement Statistics:")
         print(f"   Total improvements: {total}")
         print(f"   Successful: {success} ({rate:.1f}%)")
         print(f"   Failed: {failed}")
