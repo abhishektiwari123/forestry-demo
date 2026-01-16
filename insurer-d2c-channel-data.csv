@@ -21,7 +21,7 @@ HDFC ERGO,18567,6118,28% (Direct),Annual Report FY24,Channel Wise GWP Chart,"Dir
 Bajaj Allianz,20472,5500,Not Available,ICRA Rating Report,Distribution Section,"diversified distribution",https://www.icra.in/Rating/GetRationalReportFilePdf?id=134220
 Tata AIG,15090,3100,13.8%,ICRA Rating Report,Distribution Section,"direct" AND "13.8%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=134859
 Go Digit,7941,2000,16.4% (D2C),DRHP Page 234,Distribution Channels,"Direct to Consumer" AND "16.4%",https://www.godigit.com/investor-relations/view-rhp
-Acko,1870,500,100%,Inc42/Business Today,Business Model,"100% D2C digital-first",https://inc42.com/buzz/ackos-revenue-jumps-20-to-cross-inr-2000-cr-mark-in-fy24/
+Acko,2106,530,100% (D2C only),Annual Report FY24 + Business Model,"Zero Commission; Zero Agents","100% digital" AND "no agents",https://www.acko.com/annual-reports/
 Reliance General,11688,3000,Not Available,Annual Report,N/A,N/A,https://www.reliancegeneral.co.in/
 SBI General,12553,3500,Not Available,Annual Report,N/A,N/A,https://www.sbigeneral.in/
 Future Generali,4910,1200,Not Available,Annual Report,N/A,N/A,N/A
@@ -91,6 +91,25 @@ Others,4%,5%,4%,5%
 Source: HDFC ERGO Annual Report FY24 - Channel Wise GWP Chart
 Search_Term: "Channel wise GWP" OR "Direct" AND "28%"
 URL: https://www.hdfcergo.com/docs/default-source/default-document-library/hdfc-ergo---annual-report-fy-2023-2024.pdf
+
+ACKO DETAILED DATA (100% DIGITAL INSURER)
+=========================================
+Metric,FY23,FY24,FY25,Source
+Revenue (Cr),1758,2106,2836,Annual Reports
+GWP (Cr),1185,1587,N/A,Annual Reports
+Loss (Cr),739,670,424,Annual Reports
+D2C %,100%,100%,100%,Business Model
+
+Business Model: 100% Direct-to-Consumer (D2C)
+- Zero Commission: No agents or brokers
+- Zero Paperwork: Fully digital
+- 30-40% lower premiums vs traditional insurers
+- 70 million+ customers served
+- Valuation: $1.4 billion (FY24)
+
+Search_Term: "Zero Commission" OR "no agents" OR "100% digital"
+Source: https://www.acko.com/annual-reports/
+Source: https://startuptalky.com/acko-business-model/
 
 GO DIGIT D2C DATA (FROM DRHP)
 =============================
