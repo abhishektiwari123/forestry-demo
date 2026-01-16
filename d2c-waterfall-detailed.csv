@@ -1,0 +1,63 @@
+SHEET 1: MARKET SIZING WATERFALL (FY24)
+Step,Segment,Amount_Cr,Pct_of_Prior,Cumulative_Drop,Source,Source_URL
+1,Total Health Insurance GDPI,108000,100%,0%,IRDAI Annual Report 2023-24,https://www.business-standard.com/finance/insurance/irdai-annual-report-2023-24-insurance-penetration-decline-124122500470_1.html
+,Less: Group Insurance,-54000,50%,-50%,CareEdge Report Nov 2024,https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf
+,Less: Govt Schemes,-11880,11%,-61%,GI Council FY24,https://www.gicouncil.in/
+2,Retail Health Only,42200,39%,39%,Business Standard Nov 2024,https://www.business-standard.com/industry/news/sahis-share-in-retail-health-insurance-segment-rises-to-56-in-fy24-124110501329_1.html
+,Less: Rural/Tier3+,-8440,20%,-20%,Policybazaar Report,https://www.business-standard.com/finance/insurance/health-insurance-tier2-tier3-demand-policybazaar-fy26-125121101076_1.html
+3,Urban Retail (T1+T2),33760,80%,31%,IRDAI Urban/Rural Split,https://irdai.gov.in/handbook-of-indian-insurance
+,Less: Non-Digital,-6752,20%,-20%,Redseer InsurTech,https://redseer.com/newsletters/key-trends-that-are-shaping-insurtech-in-india/
+4,Digitally Influenced,27008,80%,25%,Google-ICICI Study,https://www.slideshare.net/ICICILombard/media-presentation-060515
+,Less: Offline Purchase,-22957,85%,-85%,The Actuary India,https://www.theactuaryindia.org/article/current-landscape-of-health-insurance-industry
+5,D2C Addressable,4051,15%,4%,SAHI DRHPs (Avg 7-17%),https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+,Less: Competition,-1641,40%,-40%,Market Share Split,https://www.gurufocus.com/news/2525846/
+6,Actual D2C (Top 3),2410,60%,2%,Combined DRHP Data,See Sheet 2
+
+SHEET 2: D2C BY INSURER (FY24)
+Insurer,Total_GDPI_Cr,Health_GDPI_Cr,D2C_Pct,D2C_Revenue_Cr,Source_Report,Source_URL
+Star Health,15254,15254,7%,1068,Q1 FY25 Earnings Call,https://www.gurufocus.com/news/2525846/
+ICICI Lombard,28900,8200,10%,820,ICRA Rating Report,https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+Niva Bupa,5494,5494,13.07%,718,DRHP FY24,https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Total Top 3,49648,28948,9%,2606,Combined,Multiple
+
+SHEET 3: DISTRIBUTION CHANNEL MIX
+Channel,Star_Health_Pct,Star_Source,Niva_Bupa_Pct,Niva_Source,ICICI_Lombard_Pct,ICICI_Source
+Individual Agents,80%,Q1 FY25 Earnings,32.07%,DRHP FY24,N/A,N/A
+Bancassurance,8%,Q1 FY25 Earnings,27.25%,DRHP FY24,7%,ICRA Report
+Brokers,N/A,N/A,27.04%,DRHP FY24,51.9%,ICRA Report
+Direct/D2C (Website/App),4.9%,Q1 FY25 Earnings,13.07%,DRHP FY24,17.4%,ICRA Report
+Web Aggregators,2.1%,Q1 FY25 Earnings,Included,In D2C,Included,In Direct
+Corporate,5%,Q1 FY25 Earnings,N/A,N/A,23.7%,ICRA Report
+Total,100%,,100%,,100%,
+
+SHEET 4: SOURCE LINKS MASTER LIST
+Metric,Value,Source_Name,Source_URL,Access_Date
+Total Health GDPI FY24,108000 Cr,IRDAI Annual Report,https://www.business-standard.com/finance/insurance/irdai-annual-report-2023-24-insurance-penetration-decline-124122500470_1.html,Jan 2026
+Health CAGR FY18-24,19.5%,Redseer/Niva Bupa DRHP,https://transactions.nivabupa.com/pages/doc/drhp/Industry-Report.pdf,Jan 2026
+Retail Health GDPI,42200 Cr,Business Standard,https://www.business-standard.com/industry/news/sahis-share-in-retail-health-insurance-segment-rises-to-56-in-fy24-124110501329_1.html,Jan 2026
+Retail Share,39%,CareEdge Report,https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf,Jan 2026
+Group+Govt Share,61%,GI Council,https://www.gicouncil.in/,Jan 2026
+Urban Premium Share,80%,IRDAI Handbook,https://irdai.gov.in/handbook-of-indian-insurance,Jan 2026
+Digitally Influenced,80%,Google-ICICI Study,https://www.slideshare.net/ICICILombard/media-presentation-060515,Jan 2026
+Digital Purchase Rate,12-15%,PolicyBazaar Report,https://www.policybazaar.com/pblife/newsroom/special-story/how-india-buys-insurance-key-takeaways-from-our-consumer-insights-report,Jan 2026
+Star Health GWP FY24,15254 Cr,Business Standard,https://www.business-standard.com/content/press-releases-ani/star-health-insurance-records-pat-growth-of-37-to-rs-845-crores-in-fy24-124050100274_1.html,Jan 2026
+Star Health D2C,7%,Q1 FY25 Earnings Call,https://www.gurufocus.com/news/2525846/,Jan 2026
+Niva Bupa GDPI FY24,5494 Cr,Niva Bupa DRHP,https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf,Jan 2026
+Niva Bupa D2C,13.07%,Niva Bupa DRHP,https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf,Jan 2026
+ICICI Lombard Direct,17.4%,ICRA Rating Report,https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063,Jan 2026
+Individual Agents Share,55%,The Actuary India,https://www.theactuaryindia.org/article/current-landscape-of-health-insurance-industry,Jan 2026
+Web Aggregator Share,0.9%,IRDAI Handbook,https://irdai.gov.in/handbook-of-indian-insurance,Jan 2026
+Digital CAGR,30-35%,IBEF Insurance,https://www.ibef.org/industry/insurance-sector-india,Jan 2026
+Future CAGR FY24-28,15-17%,Redseer Report,https://redseer.com/newsletters/key-trends-that-are-shaping-insurtech-in-india/,Jan 2026
+
+SHEET 5: VALIDATION SUMMARY
+Data_Point,Your_Value,Validated_Value,Variance,Status,Confidence
+Total Health GDPI,108000,108000,0%,VERIFIED,HIGH
+CAGR FY18-24,19.5%,19.5%,0%,VERIFIED,HIGH
+Retail Share,39%,39%,0%,VERIFIED,HIGH
+Retail GDPI,42200,42200,0%,VERIFIED,HIGH
+Group+Govt Share,50%,61%,+11%,UNDERSTATED,MEDIUM
+Urban Share,80%,80%,0%,ESTIMATE,MEDIUM
+Digitally Influenced,50%,80%,+30%,CONSERVATIVE,HIGH
+Digital Conversion,50%,15%,-35%,OVERSTATED,HIGH
+D2C Addressable Cr,8440,4051,-52%,OVERSTATED,HIGH
