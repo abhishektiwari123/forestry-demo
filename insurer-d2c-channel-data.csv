@@ -1,0 +1,92 @@
+INSURER D2C/DIRECT CHANNEL DATA - HEALTH INSURANCE (FY24)
+=========================================================
+
+STANDALONE HEALTH INSURERS (SAHIs)
+==================================
+Insurer,GDPI_FY24_Cr,D2C_Direct_%,D2C_Revenue_Cr,Source_Report,Page_Section,Search_Term,Source_URL
+Star Health,15254,7%,1068,Q1 FY25 Earnings Call,Channel Mix,"Digital Channel contributed 7%",https://www.gurufocus.com/news/2525846/
+Niva Bupa,5494,13.07%,718,DRHP FY24,Page 180-190 Distribution,"direct sales" AND "13.07%",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Care Health,6864,Not Available,N/A,Annual Report FY24,Management Discussion,Search "direct" OR "online" OR "digital",https://cms.careinsurance.com/cms/public/uploads/uploads/other_disclosure/Noticeof17thAGMndAnnualReportforFY2023-24_1725723132.pdf
+Aditya Birla Health,3701,~25% (est),925,Q4 FY24 Results,Channel Mix,"Within retail 50% banca; 25% agency",https://www.adityabirlacapital.com/investor-relations/financial-reports
+ManipalCigna,1691,Not Available,N/A,CARE Rating Report,Distribution Section,"brokers" AND "40%",https://www.careratings.com/upload/CompanyFiles/PR/202501140113_Manipal_Cigna_Health_Insurance_Company_Limited.pdf
+Narayana Health,2.37,Not Available,N/A,Not Available,N/A,N/A,N/A
+Galaxy Health,16.95,Not Available,N/A,Not Available,N/A,N/A,N/A
+Reliance Health Insurance,N/A,Not Available,N/A,Not Available,N/A,N/A,N/A
+
+PRIVATE SECTOR GENERAL INSURERS
+===============================
+Insurer,Total_GDPI_FY24_Cr,Health_GDPI_Est_Cr,D2C_Direct_%,Source_Report,Page_Section,Search_Term,Source_URL
+ICICI Lombard,24776,8200,17.4%,ICRA Rating Report,Distribution Section,"direct business" AND "17.4%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+HDFC ERGO,18567,6118,~15-20% (est),Annual Report FY24,Distribution Network,"94% retail policies issued digitally",https://www.hdfcergo.com/docs/default-source/default-document-library/hdfc-ergo---annual-report-fy-2023-2024.pdf
+Bajaj Allianz,20472,5500,Not Available,ICRA Rating Report,Distribution Section,"diversified distribution",https://www.icra.in/Rating/GetRationalReportFilePdf?id=134220
+Tata AIG,15090,3100,13.8%,ICRA Rating Report,Distribution Section,"direct" AND "13.8%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=134859
+Go Digit,7941,2000,~65% (est),DRHP/IPO Analysis,Distribution,"website stands as primary sales channel",https://www.godigit.com/investor-relations/view-rhp
+Acko,1870,500,100%,Inc42/Business Today,Business Model,"100% D2C digital-first",https://inc42.com/buzz/ackos-revenue-jumps-20-to-cross-inr-2000-cr-mark-in-fy24/
+Reliance General,11688,3000,Not Available,Annual Report,N/A,N/A,https://www.reliancegeneral.co.in/
+SBI General,12553,3500,Not Available,Annual Report,N/A,N/A,https://www.sbigeneral.in/
+Future Generali,4910,1200,Not Available,Annual Report,N/A,N/A,N/A
+Cholamandalam MS,7532,1800,Not Available,Annual Report,N/A,N/A,N/A
+Royal Sundaram,3637,900,Not Available,Annual Report,N/A,N/A,N/A
+Shriram General,3036,Not Health,N/A,N/A,N/A,N/A,N/A
+Universal Sompo,4622,1100,Not Available,Annual Report,N/A,N/A,N/A
+Magma General,3044,800,Not Available,Annual Report,N/A,N/A,N/A
+Liberty General,2155,500,Not Available,Annual Report,N/A,N/A,N/A
+Navi General,70,20,Not Available,Annual Report,N/A,N/A,N/A
+Raheja QBE,295,80,Not Available,Annual Report,N/A,N/A,N/A
+Zuno General,833,200,Not Available,Annual Report,N/A,N/A,N/A
+Kshema General,568,150,Not Available,Annual Report,N/A,N/A,N/A
+IFFCO Tokio,9835,2500,Not Available,Annual Report,N/A,N/A,N/A
+Zurich Kotak,1587,400,Not Available,Annual Report,N/A,N/A,N/A
+
+PUBLIC SECTOR INSURERS
+======================
+Insurer,Total_GDPI_FY24_Cr,Health_GDPI_Est_Cr,D2C_Direct_%,Source_Report,Page_Section,Search_Term,Source_URL
+National Insurance,15180,4500,~32% (industry),IRDAI/CareEdge,Group segment,"direct channels for group",https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf
+New India Assurance,40363,12000,~32% (industry),IRDAI/CareEdge,Group segment,"direct channels for group",https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf
+Oriental Insurance,18794,5500,~32% (industry),IRDAI/CareEdge,Group segment,"direct channels for group",N/A
+United India,19852,5800,~32% (industry),IRDAI/CareEdge,Group segment,"direct channels for group",N/A
+
+SPECIALIZED INSURERS
+====================
+Insurer,Total_GDPI_FY24_Cr,Health_Related,D2C_%,Notes
+Agriculture Insurance,9940,N/A,N/A,Crop insurance focus
+ECGC Ltd,1270,N/A,N/A,Export credit guarantee
+
+SUMMARY BY CATEGORY
+===================
+Category,Total_GDPI_Cr,D2C_Available_Count,Avg_D2C_%,Notes
+SAHIs,33119,3 of 7,7-13%,Star Niva Bupa Aditya Birla have data
+Private Insurers,155090,5 of 20,13-100%,Acko is 100% digital; Go Digit ~65%
+Public Insurers,94191,0 of 4,~32% est,Mostly group/govt business via direct
+Specialized,11210,0 of 2,N/A,Not health focused
+
+KEY FINDINGS
+============
+Finding,Details
+Highest D2C (SAHIs),Niva Bupa at 13.07%
+Highest D2C (Private),Acko at 100% (digital-only model)
+Industry Average,7-17% for traditional insurers
+Digital-First Players,"Acko (100%); Go Digit (~65%)"
+Data Gaps,"Care Health; ManipalCigna; Bajaj Allianz; most PSUs"
+
+SEARCH TIPS FOR FINDING D2C DATA
+================================
+Report_Type,Where_to_Search,What_to_Search
+Annual Report,Management Discussion & Analysis,"distribution channel" OR "direct" OR "online"
+DRHP/RHP,Business Overview Section,"channel mix" OR "distribution"
+Earnings Call,Channel Mix Segment,"digital" OR "direct" OR "D2C"
+ICRA/CARE Rating,Distribution Analysis,"direct" AND percentage
+IRDAI Public Disclosure,Annexure Tables,Channel-wise premium
+
+DATA QUALITY NOTES
+==================
+Insurer,Data_Quality,Notes
+Star Health,HIGH,Direct from earnings call transcript
+Niva Bupa,HIGH,Direct from DRHP filing
+ICICI Lombard,HIGH,Direct from ICRA rating report
+Acko,HIGH,100% D2C is core business model
+Go Digit,MEDIUM,Estimated from IPO analysis
+Tata AIG,MEDIUM,Overall direct not health-specific
+HDFC ERGO,LOW,Digital issuance not same as D2C channel
+Aditya Birla,MEDIUM,Derived from channel mix disclosure
+Others,LOW,Not publicly disclosed
