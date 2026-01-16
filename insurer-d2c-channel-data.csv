@@ -20,7 +20,7 @@ ICICI Lombard,24776,8200,17.4%,ICRA Rating Report,Distribution Section,"direct b
 HDFC ERGO,18567,6118,~15-20% (est),Annual Report FY24,Distribution Network,"94% retail policies issued digitally",https://www.hdfcergo.com/docs/default-source/default-document-library/hdfc-ergo---annual-report-fy-2023-2024.pdf
 Bajaj Allianz,20472,5500,Not Available,ICRA Rating Report,Distribution Section,"diversified distribution",https://www.icra.in/Rating/GetRationalReportFilePdf?id=134220
 Tata AIG,15090,3100,13.8%,ICRA Rating Report,Distribution Section,"direct" AND "13.8%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=134859
-Go Digit,7941,2000,~65% (est),DRHP/IPO Analysis,Distribution,"website stands as primary sales channel",https://www.godigit.com/investor-relations/view-rhp
+Go Digit,7941,2000,28% (Direct) / 16.4% (D2C),DRHP Page 234,Channel Wise GWP,"Direct to Consumer" AND "16.4%",https://www.godigit.com/investor-relations/view-rhp
 Acko,1870,500,100%,Inc42/Business Today,Business Model,"100% D2C digital-first",https://inc42.com/buzz/ackos-revenue-jumps-20-to-cross-inr-2000-cr-mark-in-fy24/
 Reliance General,11688,3000,Not Available,Annual Report,N/A,N/A,https://www.reliancegeneral.co.in/
 SBI General,12553,3500,Not Available,Annual Report,N/A,N/A,https://www.sbigeneral.in/
@@ -77,6 +77,30 @@ DRHP/RHP,Business Overview Section,"channel mix" OR "distribution"
 Earnings Call,Channel Mix Segment,"digital" OR "direct" OR "D2C"
 ICRA/CARE Rating,Distribution Analysis,"direct" AND percentage
 IRDAI Public Disclosure,Annexure Tables,Channel-wise premium
+
+GO DIGIT DETAILED CHANNEL DATA (FROM DRHP)
+==========================================
+Channel,FY22_%,FY23_%,FY24_%,YoY_Growth
+Agents,20%,19%,19%,9%
+Brokers,30%,33%,33%,12%
+Corp. Agents,5%,5%,5%,11%
+Bancassurance,11%,9%,10%,32%
+Direct,30%,29%,28%,7%
+Others,4%,5%,4%,5%
+
+GO DIGIT D2C (WEBSITE + WEB AGGREGATORS) TREND
+==============================================
+Period,D2C_%,D2C_Revenue_Cr,Source
+9M FY24,16.4%,1099,DRHP Page 234
+9M FY23,18.1%,955,DRHP Page 234
+FY23 Full,18.9%,1370,DRHP Page 234
+FY22,25.0%,1315,DRHP Page 234
+FY21,33.3%,1078,DRHP Page 234
+
+Note: "Direct" (28%) in chart includes direct sales team + D2C website
+Note: "D2C" (16.4%) specifically = website + web aggregators only
+Search_Term: "Direct to Consumer" AND "16.4%" AND "website"
+Page_Reference: DRHP Page 234 - Distribution Channels Section
 
 DATA QUALITY NOTES
 ==================
