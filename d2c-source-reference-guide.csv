@@ -1,0 +1,82 @@
+D2C WATERFALL - SOURCE REFERENCE GUIDE
+=====================================
+How to find each metric in the source reports
+
+METRIC,VALUE,REPORT_NAME,PAGE/SECTION,SEARCH_TERM_IN_PDF,DIRECT_URL
+Total Health GDPI FY24,₹1.08 Tn,IRDAI Annual Report 2023-24,Chapter on Health Insurance,"health insurance GDPI" OR "1.08 trillion",https://www.business-standard.com/finance/insurance/irdai-annual-report-2023-24-insurance-penetration-decline-124122500470_1.html
+Health CAGR 19.5%,19.5%,Niva Bupa DRHP - Redseer Industry Report,Page 75-80 (Industry Overview),"CAGR of 19.5%" OR "FY18 to FY24",https://transactions.nivabupa.com/pages/doc/drhp/Industry-Report.pdf
+Retail Health Share,39%,CareEdge Health Insurance Report,Page 3-4 (Executive Summary),"retail" AND "39%",https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf
+Retail GDPI ₹42200 Cr,₹42200 Cr,Business Standard Article,Article Body,"Rs 42,200 crore" OR "42200",https://www.business-standard.com/industry/news/sahis-share-in-retail-health-insurance-segment-rises-to-56-in-fy24-124110501329_1.html
+Group+Govt Share 61%,61%,CareEdge Health Insurance Report,Page 5-6,"group" AND "61%" OR "60%",https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf
+Urban Premium 80%,80%,IRDAI Handbook,State-wise Data Section,"urban" AND "rural" AND "premium",https://irdai.gov.in/handbook-of-indian-insurance
+Digitally Influenced 80%,80%,Google-ICICI Lombard Study,Slide 8-12,"research online" OR "80%",https://www.slideshare.net/ICICILombard/media-presentation-060515
+Individual Agents 55%,55%,The Actuary India,Distribution Section,"individual agents" AND "55%",https://www.theactuaryindia.org/article/current-landscape-of-health-insurance-industry
+Web Aggregator 0.17%,0.17%,IRDAI Handbook 2022-23,Distribution Channel Table,"web aggregator" AND "0.17",https://irdai.gov.in/handbook-of-indian-insurance
+
+STAR HEALTH DATA
+================
+METRIC,VALUE,REPORT_NAME,SECTION,EXACT_QUOTE,DIRECT_URL
+Digital Channel,7%,Q1 FY25 Earnings Call Transcript,Channel Mix Section,"Digital Channel contributed 7% of overall GWP",https://www.gurufocus.com/news/2525846/
+D2C (of Digital),70%,Q1 FY25 Earnings Call Transcript,Digital Breakdown,"70% from direct-to-consumer",https://www.gurufocus.com/news/2525846/
+Web Aggregators (of Digital),30%,Q1 FY25 Earnings Call Transcript,Digital Breakdown,"30% from online brokers and web aggregators",https://www.gurufocus.com/news/2525846/
+Agency Business,80%,Q1 FY25 Earnings Call Transcript,Channel Mix Section,"Agency business contributed 80% of overall business",https://www.gurufocus.com/news/2525846/
+Agent Count,718000,Q1 FY25 Earnings Call Transcript,Distribution Network,"718,000 agents",https://www.gurufocus.com/news/2525846/
+Banca Channel,8%,Q1 FY25 Earnings Call Transcript,Channel Mix Section,"Banca Channel contributed 8% of GWP",https://www.gurufocus.com/news/2525846/
+Corporate Channel,5%,Q1 FY25 Earnings Call Transcript,Channel Mix Section,"Corporate Channel contributed 5%",https://www.gurufocus.com/news/2525846/
+GWP FY24,₹15254 Cr,Business Standard Press Release,Financial Results,"Rs 15254 crore" OR "PAT Growth of 37%",https://www.business-standard.com/content/press-releases-ani/star-health-insurance-records-pat-growth-of-37-to-rs-845-crores-in-fy24-124050100274_1.html
+
+NIVA BUPA DATA
+==============
+METRIC,VALUE,REPORT_NAME,PAGE/SECTION,SEARCH_TERM_IN_PDF,DIRECT_URL
+Direct Sales,13.07%,Niva Bupa DRHP,Page 180-190 (Distribution),"direct sales" AND "13.07%",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Individual Agents,32.07%,Niva Bupa DRHP,Page 180-190 (Distribution),"individual agents" AND "32.07%",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Corporate Agents,27.25%,Niva Bupa DRHP,Page 180-190 (Distribution),"corporate agents" AND "27.25%",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Brokers,27.04%,Niva Bupa DRHP,Page 180-190 (Distribution),"brokers" AND "27.04%",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Total GDPI FY24,₹5494 Cr,Niva Bupa DRHP,Page 40-50 (Financial Summary),"GDPI" AND "5,494" OR "5494",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+GWP FY24,₹5607 Cr,Niva Bupa DRHP,Page 40-50 (Financial Summary),"GWP" AND "5,607" OR "5607",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Market Share,16.24%,Niva Bupa DRHP,Page 100-110 (Market Position),"market share" AND "16.24%",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+Retail Health Focus,68.47%,Niva Bupa DRHP,Page 60-70 (Business Overview),"retail health" AND "68.47%",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+
+ICICI LOMBARD DATA
+==================
+METRIC,VALUE,REPORT_NAME,PAGE/SECTION,SEARCH_TERM_IN_PDF,DIRECT_URL
+Direct Business,17.4%,ICRA Rating Report FY25,Distribution Section,"direct business" AND "17.4%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+Brokers,51.9%,ICRA Rating Report FY25,Distribution Section,"brokers" AND "51.9%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+Bancassurance,7.0%,ICRA Rating Report FY25,Distribution Section,"bancassurance" AND "7.0%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+Health Segment Share,28.6%,ICRA Rating Report FY25,Product Mix Section,"health" AND "28.6%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+Market Share,9.0%,ICRA Rating Report FY25,Market Position,"market share" AND "9.0%",https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+Total GDPI FY24,₹28900 Cr,ICICI Lombard Annual Report,Financial Highlights,"GDPI" AND "28,900" OR "28900",https://www.icicilombard.com/docs/default-source/financial-information/annualreport2024.pdf
+
+REDSEER/INDUSTRY DATA
+=====================
+METRIC,VALUE,REPORT_NAME,PAGE/SECTION,SEARCH_TERM_IN_PDF,DIRECT_URL
+Digital CAGR 30-35%,30-35%,IBEF Insurance Report,Digital Section,"digital" AND "CAGR" AND "30",https://www.ibef.org/industry/insurance-sector-india
+InsurTech Market Share Growth,10% to 30%,Redseer InsurTech Report,Market Share Section,"10% to 30%" OR "aggregators",https://redseer.com/newsletters/key-trends-that-are-shaping-insurtech-in-india/
+Future CAGR 15-17%,15-17%,Redseer/Niva Bupa Industry Report,Page 90-100 (Projections),"CAGR" AND "15" AND "FY28",https://transactions.nivabupa.com/pages/doc/drhp/Industry-Report.pdf
+Digital Penetration India,2%,Redseer InsurTech Report,Comparison Section,"digital penetration" AND "2%",https://redseer.com/newsletters/key-trends-that-are-shaping-insurtech-in-india/
+
+SEARCH TIPS FOR PDF REPORTS
+===========================
+1. Use Ctrl+F in PDF viewer
+2. Search exact percentages with % symbol
+3. Search amounts without commas first (e.g., "42200" not "42,200")
+4. Try both "Cr" and "crore" variations
+5. Look in Table of Contents for section names
+6. Check Annexures/Appendices for detailed tables
+
+KEY PAGES TO CHECK IN NIVA BUPA DRHP
+====================================
+Section,Approximate_Page_Range,Key_Data
+Industry Overview,75-120,Market size; CAGR; Growth projections
+Our Business,130-180,Distribution channel mix
+Financial Information,40-75,GDPI; GWP; Revenue
+Risk Factors,30-40,Market risks; Competition
+Strengths,20-30,D2C capabilities; Digital platform
+
+KEY SECTIONS IN STAR HEALTH EARNINGS CALL
+=========================================
+Topic,Timestamp/Section,Key_Data
+Channel Mix,Opening Remarks,Agency 80%; Digital 7%; Banca 8%; Corporate 5%
+Digital Breakdown,Q&A Section,D2C 70%; Web Aggregators 30%
+Agent Network,Distribution Update,718000 agents; 17000 net addition
+Premium Growth,Financial Highlights,GWP ₹3476 Cr; 18% YoY growth

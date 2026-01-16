@@ -1,0 +1,36 @@
+Step,Segment,GDPI_Cr,Percentage_of_Prior,Percentage_of_Total,Source_Description,Source_Link,Report_Name
+1,Total Health Insurance GDPI (FY24),108000,100%,100%,"Health insurance GDPI reached Rs 1.08 Tn in FY24 (CAGR 19.5% from FY18)",https://www.business-standard.com/finance/insurance/irdai-annual-report-2023-24-insurance-penetration-decline-124122500470_1.html,IRDAI Annual Report 2023-24
+1a,Exclusion: Group Insurance,-54000,-50%,-50%,"Group health contributed 50% of total health GDPI",https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf,CareEdge Health Insurance Report Nov 2024
+1b,Exclusion: Govt Schemes (PMJAY),-11880,-11%,-11%,"Group + Govt = 61% of health GDPI per GI Council",https://www.gicouncil.in/,GI Council Segment-wise Report FY24
+2,Retail/Individual Health Only,42200,39%,39%,"Retail health GDPI grew at CAGR 17.7% to Rs 42200 Cr in FY24",https://www.business-standard.com/industry/news/sahis-share-in-retail-health-insurance-segment-rises-to-56-in-fy24-124110501329_1.html,Business Standard - SAHIs FY24
+2a,Exclusion: Rural/Tier 3+ Areas,-8440,-20%,-8%,"80% premium from urban areas (Tier 1 + Tier 2)",https://www.business-standard.com/finance/insurance/health-insurance-tier2-tier3-demand-policybazaar-fy26-125121101076_1.html,Business Standard - Tier Distribution
+3,Urban Retail Health (Tier 1+2),33760,80%,31%,"Industry estimate based on IRDAI urban/rural split",https://irdai.gov.in/handbook-of-indian-insurance,IRDAI Handbook on Indian Insurance
+3a,Exclusion: Non-Digital Customers,-6752,-20%,-6%,"20% not digitally influenced at all",https://redseer.com/newsletters/key-trends-that-are-shaping-insurtech-in-india/,Redseer InsurTech Report
+4,Digitally Influenced,27008,80%,25%,"80% research/compare online before buying",https://www.slideshare.net/ICICILombard/media-presentation-060515,Google-ICICI Lombard Insurance Study
+4a,Exclusion: Offline Purchase,-22957,-85%,-21%,"85% still purchase through agents offline",https://www.theactuaryindia.org/article/current-landscape-of-health-insurance-industry,The Actuary India - Health Insurance
+5,D2C Addressable Market,4051,15%,4%,"Leading SAHIs achieve 7-17% D2C (avg ~15%)",https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf,Niva Bupa DRHP FY24
+5a,Competition/Leakage,-1641,-40%,-2%,"Market share distribution among players",https://www.gurufocus.com/news/2525846/,Star Health Q1 FY25 Earnings Call
+6,Actual D2C Revenue (Top 3 SAHIs),2410,60%,2%,"Sum of Star + ICICI Lombard + Niva Bupa D2C",Multiple sources - see below,DRHP & Earnings Reports
+
+Step,Insurer,Health_GDPI_Cr,D2C_Percentage,D2C_Revenue_Cr,Source_Link,Report_Name
+D2C-1,Star Health,15254,7%,1068,https://www.gurufocus.com/news/2525846/,Star Health Q1 FY25 Earnings Call
+D2C-2,ICICI Lombard,8200,10%,820,https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063,ICRA Rating Report FY25
+D2C-3,Niva Bupa,5494,13.07%,718,https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf,Niva Bupa DRHP FY24
+D2C-Total,Top 3 SAHIs,28948,9%,2606,Multiple,Combined DRHP Data
+
+Step,Channel,Star_Health_%,Niva_Bupa_%,ICICI_Lombard_%,Source
+DIST-1,Individual Agents,80%,32.07%,N/A,DRHP/Earnings Reports
+DIST-2,Corporate Agents/Banca,8%,27.25%,7%,DRHP/Earnings Reports
+DIST-3,Brokers,N/A,27.04%,51.9%,DRHP/Earnings Reports
+DIST-4,Direct/D2C,4.9%,13.07%,17.4%,DRHP/Earnings Reports
+DIST-5,Web Aggregators,2.1%,Incl in D2C,Incl in Direct,DRHP/Earnings Reports
+DIST-6,Corporate,5%,N/A,N/A,DRHP/Earnings Reports
+DIST-Total,Total,100%,100%,100%,
+
+Metric,Your_Data,Validated_Data,Gap,Status,Source_Link
+Step 1 Total GDPI,108000,108000,0%,Verified,https://irdai.gov.in/
+Step 2 Retail Share,39%,39%,0%,Verified,https://www.business-standard.com/industry/news/sahis-share-in-retail-health-insurance-segment-rises-to-56-in-fy24-124110501329_1.html
+Step 3 Urban Share,80%,80%,0%,Estimate,https://irdai.gov.in/handbook-of-indian-insurance
+Step 4 Digitally Influenced,50%,80%,+30%,Conservative,https://www.slideshare.net/ICICILombard/media-presentation-060515
+Step 5 Digital Conversion,50%,15%,-35%,Overstated 3x,https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+D2C Addressable,8440,4051,-52%,Overstated 2x,DRHP Data

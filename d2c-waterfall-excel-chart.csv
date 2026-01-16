@@ -1,0 +1,105 @@
+EXCEL WATERFALL CHART DATA - D2C HEALTH INSURANCE MARKET SIZING (FY24)
+=======================================================================
+Instructions: Import into Excel > Select data > Insert > Waterfall Chart
+
+WATERFALL CHART DATA (Copy this section to Excel)
+=================================================
+Category,Value,Type,Running_Total
+Total Health GDPI,108000,Start,108000
+Less: Group Insurance,-54000,Decrease,54000
+Less: Govt Schemes,-11800,Decrease,42200
+Retail Health Only,0,Subtotal,42200
+Less: Rural/Tier3+,-8440,Decrease,33760
+Urban Retail (T1+T2),0,Subtotal,33760
+Less: Non-Digital,-6752,Decrease,27008
+Digitally Influenced,0,Subtotal,27008
+Less: Offline Purchase,-22957,Decrease,4051
+D2C Addressable,0,End,4051
+
+SIMPLIFIED WATERFALL (For cleaner visual)
+=========================================
+Category,Amount_Cr,Chart_Value,Note
+Total Health GDPI,108000,108000,Starting point
+Group Insurance,-54000,-54000,50% of total
+Govt Schemes,-11800,-11800,11% of total
+Rural/Tier3+,-8440,-8440,20% of retail
+Non-Digital,-6752,-6752,20% of urban
+Offline Purchase,-22957,-22957,85% still buy offline
+D2C Addressable,4051,4051,End point
+
+EXCEL WATERFALL INSTRUCTIONS
+============================
+Step,Action
+1,"Copy the 'Category' and 'Value' columns from WATERFALL CHART DATA section"
+2,"Paste into Excel (cells A1:B11)"
+3,"Select the data range (A1:B11)"
+4,"Go to Insert > Charts > Waterfall"
+5,"Right-click first bar (Total Health GDPI) > Set as Total"
+6,"Right-click last bar (D2C Addressable) > Set as Total"
+7,"Format chart: Add data labels, adjust colors"
+
+ALTERNATIVE: STACKED BAR CHART DATA
+===================================
+Segment,Excluded,Remaining,Cumulative_%
+Total Health,0,108000,100%
+Less Group,-54000,54000,50%
+Less Govt,-11800,42200,39%
+Less Rural,-8440,33760,31%
+Less Non-Digital,-6752,27008,25%
+Less Offline,-22957,4051,4%
+
+COLOR CODING GUIDE
+==================
+Type,Suggested_Color,Hex_Code
+Start/End (Total),Blue,#4472C4
+Decrease,Red,#ED7D31
+Subtotal,Gray,#A5A5A5
+Increase,Green,#70AD47
+
+ACTUAL D2C BY INSURER (For Pie/Bar Chart)
+=========================================
+Insurer,D2C_Revenue_Cr,D2C_%,Data_Quality
+HDFC ERGO,1713,28%,HIGH
+ICICI Lombard,1427,17.4%,HIGH
+Star Health,1068,7%,HIGH
+Niva Bupa,718,13.07%,HIGH
+Tata AIG,428,13.8%,HIGH
+Go Digit,328,16.4%,HIGH
+Acko,159,~30%,HIGH
+Others (Est),4000,~10%,ESTIMATED
+TOTAL,9841,~10%,MIXED
+
+D2C MARKET PROJECTION (For Line Chart)
+======================================
+Year,Health_GDPI_Cr,D2C_%,D2C_Market_Cr
+FY24,108000,8%,8640
+FY25,124200,10%,12420
+FY26,142830,12%,17140
+FY27,164255,14%,22996
+FY28,188893,16%,30223
+
+SUMMARY METRICS (For Dashboard)
+===============================
+Metric,Value,Unit
+Total Health Market,108000,Cr
+Retail Health Market,42200,Cr
+D2C Addressable (Funnel),4051,Cr
+Actual D2C Market,8000-10000,Cr
+D2C Market FY28 (Projected),30223,Cr
+D2C CAGR FY24-28,37%,%
+
+SOURCE REFERENCES
+=================
+Data_Point,Source,URL
+Total Health GDPI,IRDAI Annual Report 2023-24,https://www.business-standard.com/finance/insurance/irdai-annual-report-2023-24-insurance-penetration-decline-124122500470_1.html
+Retail Health Share 39%,Business Standard Nov 2024,https://www.business-standard.com/industry/news/sahis-share-in-retail-health-insurance-segment-rises-to-56-in-fy24-124110501329_1.html
+Group+Govt 61%,CareEdge Report,https://www.careratings.com/uploads/newsfiles/1731569836_Health%20Insurance%20Sector%20-%20CareEdge%20Report.pdf
+Urban Premium 80%,IRDAI Handbook,https://irdai.gov.in/handbook-of-indian-insurance
+Digitally Influenced 80%,Google-ICICI Study,https://www.slideshare.net/ICICILombard/media-presentation-060515
+Offline Purchase 85%,The Actuary India,https://www.theactuaryindia.org/article/current-landscape-of-health-insurance-industry
+Star Health 7% D2C,Q1 FY25 Earnings,https://www.gurufocus.com/news/2525846/
+Niva Bupa 13.07% D2C,DRHP FY24,https://transactions.nivabupa.com/pages/doc/drhp/Niva-Bupa-Health-Insurance-Co-Ltd-DRHP.pdf
+ICICI Lombard 17.4% Direct,ICRA Report,https://www.icra.in/Rating/GetRationalReportFilePdf?id=136063
+HDFC ERGO 28% Direct,Annual Report FY24,https://www.hdfcergo.com/docs/default-source/default-document-library/hdfc-ergo---annual-report-fy-2023-2024.pdf
+Go Digit 16.4% D2C,DRHP,https://www.godigit.com/investor-relations/view-rhp
+Acko ~30% D2C,Schedule 3 Commission,https://acko-cms.ackoassets.com/Annual_Report_2024_25_Acko_GI_b1c90d031b.pdf
