@@ -453,12 +453,23 @@ case "$1" in
                 ;;
         esac
         ;;
+    # ============================================================
+    # DASHBOARD
+    # ============================================================
+    dashboard|dash)
+        echo "🖥️ Starting Dashboard..."
+        echo "Open http://localhost:8501 in your browser"
+        streamlit run "$SCRIPT_DIR/dashboard.py" --server.port 8501
+        ;;
     *)
         echo "========================================"
         echo "  Pokemon AI Auto-Improvement System"
         echo "========================================"
         echo ""
         echo "Usage: $0 <command>"
+        echo ""
+        echo "🖥️ DASHBOARD:"
+        echo "  dashboard              - Open web dashboard (http://localhost:8501)"
         echo ""
         echo "🧠 AUTONOMOUS BRAIN (Best - Fully Autonomous):"
         echo "  brain [start|stop|once|status|logs]"
@@ -484,10 +495,10 @@ case "$1" in
         echo "  logs    - Tail all logs"
         echo ""
         echo "Examples:"
-        echo "  $0 brain              # 🧠 Best: Fully autonomous AI ⭐"
+        echo "  $0 dashboard           # 🖥️ Open web dashboard"
+        echo "  $0 brain              # 🧠 Best: Fully autonomous AI"
         echo "  $0 cost               # 💰 Check budget & spending"
         echo "  $0 youtube auth       # 📺 Setup YouTube upload"
-        echo "  $0 watchdog           # Auto-restart daemons"
         echo ""
         ;;
 esac
