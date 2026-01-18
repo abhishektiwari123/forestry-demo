@@ -18,16 +18,26 @@ from typing import Optional, List
 
 @dataclass
 class PromptValidationResult:
-    """Result of prompt validation."""
-    prompt_type: str  # "image", "video", "scene"
+    """Result of prompt validation.
+    
+    Attributes:
+        prompt_type: Type of prompt validated ("image", "video", or "scene").
+        passed: Whether the prompt passed validation checks.
+        score: Validation score from 0.0 (worst) to 1.0 (best).
+        issues: List of critical issues that must be fixed.
+        warnings: List of non-critical warnings to consider.
+        suggestions: List of suggestions to improve the prompt.
+        improved_prompt: Auto-improved version of the prompt if available.
+    """
+    prompt_type: str
     passed: bool
-    score: float  # 0.0 - 1.0
+    score: float
     issues: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
     suggestions: List[str] = field(default_factory=list)
     improved_prompt: Optional[str] = None
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, any]:
         return {
             "prompt_type": self.prompt_type,
             "passed": self.passed,

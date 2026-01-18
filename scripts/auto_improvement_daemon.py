@@ -403,6 +403,31 @@ Generate the improved prompt:"""
             logger.error(f"Prompt improvement error: {e}")
             return None
 
+    def generate_base_prompt(self, pokemon1: str, pokemon2: str, environment: str) -> str:
+        """Generate a base prompt for Pokemon battle image with consistent lighting."""
+        # Environment-specific lighting settings for natural, consistent shadows
+        lighting_settings = {
+            "volcanic": "dramatic rim lighting from lava glow below, strong directional light from above-left casting consistent shadows to the right, volumetric light through volcanic smoke",
+            "thunderstorm": "dynamic lightning illumination from above, consistent shadow direction downward-right, electric blue rim lighting on characters, dramatic contrast",
+            "ocean": "soft diffused sunlight from above filtering through water, caustic light patterns, consistent underwater shadows pointing downward, ambient ocean glow",
+            "haunted_mansion": "eerie moonlight from upper-left window, consistent long shadows to lower-right, subtle ghostly rim lighting, candlelight fill from below",
+            "psychic_arena": "ethereal purple-pink ambient lighting from energy orbs, soft consistent shadows with slight glow edges, dramatic top-down key light"
+        }
+        
+        lighting = lighting_settings.get(environment, "natural sunlight from upper-left, consistent shadows to lower-right, soft ambient fill")
+        
+        base_prompt = f"""Epic Pokemon battle scene: {pokemon1} facing {pokemon2} in a {environment.replace('_', ' ')} environment.
+
+Lighting direction: {lighting}
+
+Both Pokemon rendered with consistent shadow direction matching the key light source, 
+natural shadow softness based on distance from ground, proper ambient occlusion where bodies meet surfaces.
+
+High detail, dramatic composition, professional digital art style, volumetric lighting, 
+cinematic quality, 8K resolution, sharp focus on both Pokemon."""
+        
+        return base_prompt
+
     def run_improvement_cycle(self):
         """Run one improvement cycle."""
         logger.info("=" * 60)
@@ -427,7 +452,7 @@ Generate the improved prompt:"""
             "environment": environment
         }
 
-        # Generate base prompt
+        # Generate base prompt with lighting consistency
         base_prompt = self.generate_base_prompt(pokemon1, pokemon2, environment)
         logger.info(f"Testing: {pokemon1} vs {pokemon2} in {environment}")
         logger.info(f"Base prompt: {base_prompt[:100]}...")

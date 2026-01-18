@@ -27,6 +27,7 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from dataclasses import dataclass, field
 
 # Setup logging
 LOG_DIR = Path(__file__).parent / "logs"
@@ -67,27 +68,31 @@ load_env()
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
-# Configuration
-CONFIG = {
-    "check_interval_seconds": 600,  # 10 minutes between improvement cycles
-    "max_improvements_per_day": 20,
-    "backup_before_changes": True,
-    "auto_apply_safe_changes": False,  # Set to True for fully autonomous
-    "require_test_pass": True,
-    "target_files": [
+@dataclass
+class DaemonConfig:
+    """Configuration for the code improvement daemon."""
+    check_interval_seconds: int = 600  # 10 minutes between improvement cycles
+    max_improvements_per_day: int = 20
+    backup_before_changes: bool = True
+    auto_apply_safe_changes: bool = False  # Set to True for fully autonomous
+    require_test_pass: bool = True
+    target_files: list = field(default_factory=lambda: [
         "scripts/pokemon_studio_app.py",
         "scripts/prompt_validator.py",
         "scripts/auto_improvement_daemon.py"
-    ],
-    "improvement_categories": [
+    ])
+    improvement_categories: list = field(default_factory=lambda: [
         "bug_fix",
         "performance",
         "code_quality",
         "new_feature",
         "ui_improvement",
         "documentation"
-    ]
-}
+    ])
+
+
+# Default configuration instance
+CONFIG = DaemonConfig()
 
 # File paths
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -99,7 +104,9 @@ BACKUP_DIR = Path(__file__).parent / "backups"
 class CodeImprovementDaemon:
     """Daemon for autonomous code improvement using Claude API."""
 
-    def __init__(self):
+    def __init__(self, config: Optional[DaemonConfig] = None, api_key: Optional[str] = None):
+        self.config = config or CONFIG
+        self.api_key = api_key or ANTHROPIC_API_KEY
         self.running = True
         self.improvements_today = 0
         self.last_day_reset = datetime.now().day
@@ -151,7 +158,7 @@ class CodeImprovementDaemon:
 
     def backup_file(self, file_path: Path) -> Optional[Path]:
         """Create a backup of a file before modification."""
-        if not CONFIG["backup_before_changes"]:
+        if not self.config.backup_before_changes:
             return None
 
         BACKUP_DIR.mkdir(exist_ok=True)
@@ -179,7 +186,7 @@ class CodeImprovementDaemon:
 
     def analyze_code_with_claude(self, file_path: str, code: str) -> dict:
         """Analyze code quality and identify improvements using Claude."""
-        if not ANTHROPIC_API_KEY:
+        if not self.api_key:
             return {"error": "No API key"}
 
         system_prompt = """You are an expert Python code reviewer and software architect.
@@ -243,7 +250,7 @@ Provide your analysis as JSON:"""
             response = requests.post(
                 "https://api.anthropic.com/v1/messages",
                 headers={
-                    "x-api-key": ANTHROPIC_API_KEY,
+                    "x-api-key": self.api_key,
                     "anthropic-version": "2023-06-01",
                     "content-type": "application/json"
                 },
@@ -469,7 +476,7 @@ Generate the code changes as JSON:"""
             "status": "pending"
         }
 
-        should_auto_apply = CONFIG["auto_apply_safe_changes"] and risk == "low"
+        should_auto_apply = self.config.auto_apply_safe_changes and risk == "low"
         if not should_auto_apply:
             self.improvements["pending"].append(pending_item)
             logger.info("Stored for manual review")
@@ -481,7 +488,7 @@ Generate the code changes as JSON:"""
         if not self.apply_changes(file_path, code_changes["changes"]):
             return False
 
-        if CONFIG["require_test_pass"] and not self.run_tests():
+        if self.config.require_test_pass and not self.run_tests():
             logger.warning("Tests failed! Rolling back...")
             if backup:
                 self.rollback_file(file_path, backup)
