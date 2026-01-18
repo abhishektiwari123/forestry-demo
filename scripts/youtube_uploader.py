@@ -126,7 +126,7 @@ class YouTubeUploader:
         """
         Authenticate with YouTube using OAuth 2.0.
 
-        First time: Opens browser for authorization
+        First time: Opens browser for authorization (or console-based if no browser)
         Subsequent: Uses stored credentials
         """
         try:
@@ -167,12 +167,34 @@ class YouTubeUploader:
                     creds = None
 
             if not creds:
-                logger.info("Starting OAuth flow (browser will open)...")
+                logger.info("Starting OAuth flow...")
                 flow = InstalledAppFlow.from_client_secrets_file(
                     str(CLIENT_SECRETS_FILE),
                     scopes=[YOUTUBE_UPLOAD_SCOPE, YOUTUBE_READONLY_SCOPE]
                 )
-                creds = flow.run_local_server(port=8080)
+
+                # Try browser first, fall back to console
+                try:
+                    creds = flow.run_local_server(port=8080)
+                except Exception as e:
+                    logger.info("Browser not available, using console authentication...")
+                    # Console-based auth (for headless environments)
+                    flow.redirect_uri = "urn:ietf:wg:oauth:2.0:oob"
+                    auth_url, _ = flow.authorization_url(prompt='consent')
+
+                    print("\n" + "=" * 60)
+                    print("  YouTube Authentication")
+                    print("=" * 60)
+                    print("\n1. Open this URL in your browser:\n")
+                    print(auth_url)
+                    print("\n2. Sign in and authorize the application")
+                    print("3. Copy the authorization code and paste it below\n")
+
+                    code = input("Enter authorization code: ").strip()
+
+                    flow.fetch_token(code=code)
+                    creds = flow.credentials
+
                 logger.info("Authentication successful!")
 
             # Save credentials for next time
