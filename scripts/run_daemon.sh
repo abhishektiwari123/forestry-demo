@@ -37,6 +37,10 @@ BRAIN="$SCRIPT_DIR/autonomous_brain.py"
 BRAIN_PID="$SCRIPT_DIR/brain.pid"
 BRAIN_LOG="$LOG_DIR/autonomous_brain.log"
 
+VIDEO_PIPELINE="$SCRIPT_DIR/auto_video_pipeline.py"
+VIDEO_PID="$SCRIPT_DIR/video_pipeline.pid"
+VIDEO_LOG="$LOG_DIR/video_pipeline.log"
+
 # Ensure log directory exists
 mkdir -p "$LOG_DIR"
 
@@ -461,6 +465,78 @@ case "$1" in
         echo "Open http://localhost:8501 in your browser"
         streamlit run "$SCRIPT_DIR/dashboard.py" --server.port 8501
         ;;
+    # ============================================================
+    # VIDEO PIPELINE (Auto Generate & Upload)
+    # ============================================================
+    video)
+        case "$2" in
+            start|"")
+                if [ -f "$VIDEO_PID" ] && ps -p "$(cat $VIDEO_PID)" > /dev/null 2>&1; then
+                    echo "Video pipeline already running (PID: $(cat $VIDEO_PID))"
+                else
+                    echo "🎬 Starting Video Pipeline Daemon..."
+                    echo "   Generates Pokemon battle videos automatically"
+                    echo "   Uploads to YouTube after quality check"
+                    nohup python3 "$VIDEO_PIPELINE" --daemon > "$LOG_DIR/video_stdout.log" 2> "$LOG_DIR/video_stderr.log" &
+                    echo $! > "$VIDEO_PID"
+                    echo "Video pipeline started (PID: $(cat $VIDEO_PID))"
+                fi
+                ;;
+            stop)
+                if [ -f "$VIDEO_PID" ]; then
+                    PID=$(cat "$VIDEO_PID")
+                    if ps -p "$PID" > /dev/null 2>&1; then
+                        echo "Stopping video pipeline (PID: $PID)..."
+                        kill "$PID"
+                        rm "$VIDEO_PID"
+                        echo "Video pipeline stopped"
+                    else
+                        echo "Video pipeline not running (stale PID)"
+                        rm "$VIDEO_PID"
+                    fi
+                else
+                    echo "Video pipeline not running"
+                fi
+                ;;
+            once)
+                echo "🎬 Generating single video..."
+                shift 2
+                python3 "$VIDEO_PIPELINE" "$@"
+                ;;
+            logs)
+                tail -f "$VIDEO_LOG"
+                ;;
+            status)
+                echo "=== VIDEO PIPELINE STATUS ==="
+                if [ -f "$VIDEO_PID" ] && ps -p "$(cat $VIDEO_PID)" > /dev/null 2>&1; then
+                    echo "Status: ✅ RUNNING (PID: $(cat $VIDEO_PID))"
+                else
+                    echo "Status: ⏹️  STOPPED"
+                fi
+                echo ""
+                if [ -f "$SCRIPT_DIR/video_projects.json" ]; then
+                    echo "Recent projects:"
+                    python3 -c "import json; projects=json.load(open('$SCRIPT_DIR/video_projects.json'));
+for p in projects[-5:]: print(f\"  {p['project_id']}: {p['status']} - {p.get('youtube_url', 'no upload')}\")" 2>/dev/null
+                fi
+                ;;
+            *)
+                echo "Usage: $0 video {start|stop|once|status|logs}"
+                echo ""
+                echo "Commands:"
+                echo "  start   - Start video daemon (auto-generates every 6h)"
+                echo "  stop    - Stop video daemon"
+                echo "  once    - Generate single video"
+                echo "  status  - Show pipeline status"
+                echo "  logs    - Tail video logs"
+                echo ""
+                echo "Examples:"
+                echo "  $0 video start                              # Start daemon"
+                echo "  $0 video once --pokemon pikachu charizard   # One-off video"
+                echo "  $0 video once --style 'anime dramatic'      # Custom style"
+                ;;
+        esac
+        ;;
     *)
         echo "========================================"
         echo "  Pokemon AI Auto-Improvement System"
@@ -480,6 +556,11 @@ case "$1" in
         echo "  watchdog [start|stop|logs]  - Monitors & restarts daemons"
         echo "  supervisor [start|stop]     - Professional process manager"
         echo ""
+        echo "🎬 VIDEO PIPELINE (Auto Generate & Upload):"
+        echo "  video {start|stop|once|status|logs}"
+        echo "    Auto-generates Pokemon videos with Claude Vision"
+        echo "    Quality checks before upload, posts to YouTube"
+        echo ""
         echo "📺 YOUTUBE UPLOAD:"
         echo "  youtube {auth|status|upload}"
         echo ""
@@ -495,6 +576,8 @@ case "$1" in
         echo "  logs    - Tail all logs"
         echo ""
         echo "Examples:"
+        echo "  $0 video start         # 🎬 Start auto video generation"
+        echo "  $0 video once          # 🎬 Generate single video now"
         echo "  $0 dashboard           # 🖥️ Open web dashboard"
         echo "  $0 brain              # 🧠 Best: Fully autonomous AI"
         echo "  $0 cost               # 💰 Check budget & spending"
