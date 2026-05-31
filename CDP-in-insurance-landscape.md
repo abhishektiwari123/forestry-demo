@@ -181,3 +181,77 @@ There is no rigorous, independent, insurance-specific CDP ROI benchmark.
 - CDP Institute (FS & insurance): https://www.cdpinstitute.org/resourcesindustry/financial-services-and-insurance/
 
 *Note: most quantitative figures are vendor-sourced marketing unless an independent corroborating outlet is listed. Figures were extracted from search-result summaries; for citation-grade verbatim quotes, the primary URLs above should be retrieved through an unblocked browser or scraper.*
+
+---
+
+# Part II — Operational use-case catalog (deep dive)
+
+*Added from a second research wave (five parallel use-case-focused sweeps). Every metric is labeled by source quality; vendor case-study numbers are self-reported unless an independent outlet is noted.*
+
+## How a CDP runs operationally
+
+The loop: **ingest → resolve identity → score/segment → trigger → activate → measure → feed back.** Three things make the insurance version distinctive:
+
+1. **Identity resolution must solve agent-vs-direct.** A lead arrives via agent, web self-serve, aggregator, or social; the CDP stitches them so suppression/attribution work regardless of channel. LexisNexis **LexID** (household-level, ~2.3B records) is the real workhorse, often augmenting the CDP.
+2. **The sale closes offline, days later** — so the high-leverage tactic is the **offline-conversion feedback loop**: fire `bound-policy` + value back to Meta CAPI / Google Enhanced Conversions for Leads so value-based bidding optimizes to real policies, not clicks.
+3. **Consent must be enforced, not just captured.** Client-side tags can't be trusted to honor opt-outs (healthcare paid $100M+ in pixel-tracking fines since 2023; FTC is expanding GLBA reach). CDPs evaluate each event server-side against purpose rules + the Global Privacy Control signal and block non-compliant events before activation.
+
+## Catalog by lifecycle stage
+
+**1. Acquisition & paid media** — retargeting on hashed first-party audiences (Google Customer Match / Meta / TikTok / LinkedIn); suppression of current customers (fastest ROI; "10–20% budget waste" is vendor-repeated/uncorroborated); high-LTV/multi-policy lookalike seeds; cookieless/UID2 on The Trade Desk; offline-conversion loop via CAPI / Enhanced Conversions for Leads; lead scoring + speed-to-lead. *Toggle (Farmers) / Twilio Segment: –67% CPA. Insurance Choice / Optilead: connect ~1 min → +150% policies, ~80% abandoned quotes connected.* Contact within 60s → +391% conversion (Velocify). Independent anchor: Velocify audit of 25 carriers — 2.3-day avg callback, ~40% never called.
+
+**2. Drop-off / abandonment recovery** — quote (≈84% abandon; second spike at price reveal), application, eKYC, checkout, renewal. Mechanic: detect funnel step → SMS deep link → "resume where you left off" with prefilled data → escalate SMS (~42 min) → WhatsApp → voice. *L&G (Tealium+Snowflake): abandoners routed to a briefed agent → +54% call-to-lead, +15% completions. Generali (Insider): –17% eKYC drop-offs.* Checkout recovery for high-value carts = immediate human call.
+
+**3. Onboarding & activation** — welcome journeys, OTP-assisted purchase completion, app install/engagement. *AIA Singapore (Lemnisk): +63% lead gen; AIA Philam Life: digital-onboarding pilot.*
+
+**4. Cross-sell / upsell / next-best-product** — life-event/milestone triggers (new home, marriage, child, anniversary, maturing deposit), cross-LOB (auto→home→life→health), agent/RM copilot with live recs. Act on demonstrated intent. Realistic cross-sell ML ≈75% accuracy (the "0.99" claims = likely leakage); Insider's "85% save / 27% upsell" triple is unattributed.
+
+**5. Retention / renewal / churn / win-back** — offline→online renewal migration; predictive churn scored 30–60 days pre-renewal on rate-shopping/competitor-quote/claim-dissatisfaction signals; risk-tier→NBA retention engine (NGDATA). *Income Insurance: car early-online renewal 44%→72%, motorcycle 52%→68% (best operational metric). Liberty Mutual: +15% retention via predictive segmentation (3rd-party-sourced).* Win-back/lapsed is thinly evidenced.
+
+**6. Personalization & decisioning** — on-site/app individualization (recently-viewed, behavior-driven banners); NBA arbitration via Pega's **P×C×V×L** (Propensity×Context×Value×Levers), Salesforce Einstein/Agentforce, Adobe Journey Optimizer; channel-propensity + Send-Time Optimization. *Generali/Zeta: +24% close rate; Prudential/Adobe: +135% engagement <30 days; Etiqa/Insider: 4.74% vs 2.17%; Aegon Life/Lemnisk "Ramanujan": +19% web conv.*
+
+**7. Claims & service** — sub-100ms contact-center screen pops (Tealium → Amazon Connect/Diabolocom) with active-claim status before pickup; intent-based routing; proactive status comms + post-settlement NPS + de-escalation; fraud signals. *USAA (Tealium EventStream): real-time fraud signals, latency 1hr→<1s (anecdotal, no fraud-$ metric). ForMotiv behavioral biometrics: agent quote-manipulation –18%.*
+
+**8. Member/app engagement & wellness** — *John Hancock Vitality (wearables + points + premium discounts): 20+ engagements/month, Apple Watch users 7× more engaged, ~90% earned premium savings — **company-direct + independent Conference Board corroboration** (strongest independent engagement data).* Same model underpins AIA's "Healthier, Longer, Better Lives."
+
+**9. Bancassurance / embedded** — partner (bank) data pre-fills the application. *Chubb Studio via DBS app; Nubank Vida 560k+ active policies* — note Chubb Studio is an embedded-insurance API platform, not a CDP.
+
+**10. Consent / governance** — centralized opt-in/out, DSARs, suppression lists, audit logs, server-side opt-out propagation downstream, do-not-call/channel-specific rules. GLBA (opt-out + ban on sharing account numbers for marketing), PIPEDA (meaningful consent).
+
+## Consolidated named-deployment table (deep dive)
+
+| Insurer | Region | Stack | Use case | Metric | Evidence |
+|---|---|---|---|---|---|
+| Income Insurance | SG | Tealium+Merkle | Offline→online renewal | renewal 44→72%, –40% CPA, +452% online rev | Vendor + Drum Award |
+| Legal & General | UK | Tealium+Snowflake | Abandoned-app recovery | +54% call-to-lead, +15% completions | Vendor (newswires) |
+| Prudential | US | Adobe RT-CDP | Personalization at scale | +135% engagement <30 days | Vendor + indep. press |
+| Generali (A) | EU | Zeta | Website individualization | +24% close rate | Vendor |
+| Generali (B) | EU | Insider | Lead scoring / eKYC | 3× leads, –17% eKYC drop-off | Vendor — do not merge with A |
+| Etiqa | MY/SG | Insider | Banner personalization | 4.74% vs 2.17% | Vendor |
+| AIA Singapore | SG | Lemnisk | Lead gen / app | +63% leads, 2.3× CTR | Vendor |
+| Aegon Life | IN | Lemnisk | Channel propensity | +19% web conv | Vendor PR |
+| nib | AU | Tealium | Unified profiles | +175% marketable leads | Vendor |
+| USAA | US | Tealium | Real-time fraud signals | latency 1hr→<1s | Vendor anecdote |
+| Toggle (Farmers) | US | Twilio Segment | Retargeting / lookalikes | –67% CPA | Vendor |
+| The Zebra | US | Hightouch+Snowflake | Conversion enrichment | +170% FB match, +50% email CTR | Vendor |
+| Liberty Mutual | US | unspecified | Predictive retention | +15% retention | 3rd-party |
+| Insurance Choice | UK | Optilead | Speed-to-lead | +150% policies | Vendor |
+| John Hancock | US | Vitality+wearables | Engagement / wellness | 20+/mo, Apple Watch 7× | Company + Conference Board |
+| Sedgwick | US | MS Sidekick | Agentic claims | +30% efficiency | Vendor |
+
+## What's real vs. marketing
+- **Most credible:** John Hancock Vitality (independent corroboration); Income Insurance's operational renewal-rate shifts; the Velocify carrier audit (proves insurers execute speed-to-lead poorly).
+- **Quarantined:** the flashiest "propensity routing → call center" numbers (57.97%, 58%, 2× contactability) are **telco/banking**, not insurers; a "Geico –20% cost-per-quote" claim with no primary source (likely fabricated).
+- **Generali caveat:** Insider and Zeta both claim Generali with non-overlapping metrics — different regional units; never aggregate.
+- **Under-evidenced if pitched:** win-back/lapsed-policy and bancassurance-CDP.
+
+### Additional source URLs (Part II)
+- Lemnisk insurance use cases: https://www.lemnisk.co/blog/cdp-use-cases-for-insurance/ · https://www.lemnisk.co/ramanujan/
+- Tealium: contact centers https://tealium.com/tealium-for-contact-centers/ · L&G https://tealium.com/resource/case-study/legal-general-transforms-customer-engagement-through-real-time-data-and-insight/ · consent https://docs.tealium.com/consent/consent-overview/
+- Insider Generali: https://useinsider.com/case-studies/generali/ · Zeta Generali: https://zetaglobal.com/resource-center/how-generali-leveraged-ai-based-website-individualization-to-increase-close-rates-by-24/
+- Twilio Segment Toggle: https://segment.com/customers/toggle/ · Hightouch The Zebra: https://hightouch.com/customers/the-zebra
+- Optilead Insurance Choice: https://www.optilead.co.uk/case-studies/insurance-choice/ · Velocify carrier study: https://www.prnewswire.com/news-releases/biggest-insurance-companies-keep-their-customers-waiting-velocify-study-finds-258281391.html
+- Pega NBA arbitration: https://academy.pega.com/topic/action-arbitration/v3 · Salesforce Agentforce: https://www.salesforce.com/news/stories/how-data-cloud-powers-agentforce/
+- John Hancock Vitality (company): https://www.johnhancock.com/about-us/newsroom.html · Conference Board (independent): https://www.conference-board.org/research/economy-strategy-finance-briefs/John-Hancock-Customer-Engagement-Increase
+- Chubb Studio embedded: https://about.chubb.com/stories/banks-and-the-digital-wallet-race-the-embedded-insurance-strategy.html
+- LexisNexis LexID for insurance: https://risk.lexisnexis.co.uk/products/lexid-for-insurance · GLBA (FTC): https://www.ftc.gov/business-guidance/resources/how-comply-privacy-consumer-financial-information-rule-gramm-leach-bliley-act
